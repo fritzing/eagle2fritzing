@@ -281,31 +281,31 @@ Here is a quick look at some of features of a .params file.
     <fake-vias>
         <connector signal='' id='173' package='1X3_STRIP' element='U$10' name='2' type='pad'/>
         <connector signal='' id='174' package='1X3_STRIP' element='U$10' name='3' type='pad'/>
-        ... 
-	</fake-vias>
+        ..
+    </fake-vias>
 
 *   We refer to internal connections as 'buses'. To set up
       internal connections in a part, for example if there are
       multiple GND connectors, use the &lt;buses&gt; element
       (another &lt;connectors&gt; sibling). Here is another snippet:
 
-	<buses>
-	     <bus>
-	         <connector signal='5V' id='160' package='1X12_STRIP' element='U$9' name='1' type='pad'/>
-	         <connector signal='VCC' id='126' package='1X22_STRIP' element='U$7' name='1' type='pad'/>
-	     </bus>
-	     ...
-	</buses>
+    <buses>
+        <bus>
+            <connector signal='5V' id='160' package='1X12_STRIP' element='U$9' name='1' type='pad'/>
+            <connector signal='VCC' id='126' package='1X22_STRIP' element='U$7' name='1' type='pad'/>
+        </bus>
+        ..
+    </buses>
 
 *   Sometimes a signal is not named very clearly, and it would be
       nice to provide a more explanatory label. If you don't want to
       change the original .brd file, you can use renaming in the
-      .params file. The &lt;rename&gt; element is a child of the
-      &lt;connectors&gt; element:
+      .params file. The `<rename>` element is a child of the
+      `<connectors>` element:
 
-	<renames>
-	    <rename element='JP2' package='1X02' signal='N$223' to='+3V3' />
-	    <rename element='JP1' package='1X02' signal='N$223' to='+3V3' />
-	</renames>
+    <renames>
+        <rename element='JP2' package='1X02' signal='N$223' to='+3V3' />
+        <rename element='JP1' package='1X02' signal='N$223' to='+3V3' />
+    </renames>
 
 
