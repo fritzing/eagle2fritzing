@@ -278,6 +278,8 @@ Here is a quick look at some of features of a .params file.
       the following xml snippet sets up the beginning of one such
       grid:
 
+-
+
     <fake-vias>
         <connector signal='' id='173' package='1X3_STRIP' element='U$10' name='2' type='pad'/>
         <connector signal='' id='174' package='1X3_STRIP' element='U$10' name='3' type='pad'/>
@@ -288,6 +290,8 @@ Here is a quick look at some of features of a .params file.
       internal connections in a part, for example if there are
       multiple GND connectors, use the &lt;buses&gt; element
       (another &lt;connectors&gt; sibling). Here is another snippet:
+
+-
 
     <buses>
         <bus>
@@ -302,6 +306,8 @@ Here is a quick look at some of features of a .params file.
       change the original .brd file, you can use renaming in the
       .params file. The `<rename>` element is a child of the
       `<connectors>` element:
+
+-
 
     <renames>
         <rename element='JP2' package='1X02' signal='N$223' to='+3V3' />
