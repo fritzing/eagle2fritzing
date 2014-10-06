@@ -5,7 +5,7 @@
 # -------------------------------------------------
 
 # change FRITZING_SRC to match your local Fritzing source installation
-FRITZING_SRC = ../../fritzing-app/src
+FRITZING_SRC = ../../fritzing-apptest/src
 
 
 

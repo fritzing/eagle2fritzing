@@ -422,9 +422,18 @@ void BrdApplication::start() {
 		qSort(names);
 		QString packageString;
 		packageString += "<packages>\n";
-		foreach (QString name, names) {
-            packageString += QString("<package name='%1' ic='no' />\n").arg(name.toHtmlEscaped());
-		}
+
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+        foreach (QString name, names) {
+            packageString += QString("<package name='%1' ic='no' />\n").arg(Qt::escape(name));
+         }
+
+#else
+        foreach (QString name, names) {
+          packageString += QString("<package name='%1' ic='no' />\n").arg(name.toHtmlEscaped());
+        }
+#endif
 		packageString += "</packages>\n";
 		saveFile(packageString, AllPackagesPath);
 	}
