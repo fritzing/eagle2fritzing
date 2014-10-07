@@ -17,6 +17,11 @@ release/
 *.pdb
 ipch/
 
+# Input directories #
+#####################
+smd-*
+
+
 # Compiled source #
 ###################
 *.pyc
