@@ -1,5 +1,5 @@
 #include "lbrapplication.h"
-#include "../tools/brd2svg/miscutils.h"
+#include "../brd2svg/miscutils.h"
 #include "utils/textutils.h"
 #include "utils/schematicrectconstants.h"
 #include "svg/svgfilesplitter.h"

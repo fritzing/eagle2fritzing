@@ -21,6 +21,7 @@ TEMPLATE = app
 SOURCES += main.cpp \
     lbrapplication.cpp \
     ../brd2svg/miscutils.cpp \
+    ../brd2svg/brdapplication.cpp \
     $$FRITZING_SRC/utils/textutils.cpp \
     $$FRITZING_SRC/utils/schematicrectconstants.cpp \
     $$FRITZING_SRC/utils/misc.cpp \
@@ -33,6 +34,7 @@ SOURCES += main.cpp \
 
 HEADERS += lbrapplication.h \
     ../brd2svg/miscutils.h \
+    ../brd2svg/brdapplication.h \
     $$FRITZING_SRC/installedfonts.h \
     $$FRITZING_SRC/utils/textutils.h \
     $$FRITZING_SRC/utils/schematicrectconstants.h \
