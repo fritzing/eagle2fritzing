@@ -1,5 +1,3 @@
-
-
 #ifndef MISCUTILS_H
 #define MISCUTILS_H
 

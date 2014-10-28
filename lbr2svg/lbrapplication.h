@@ -37,7 +37,7 @@ class LbrApplication : public QCoreApplication
 {
 public:
 	LbrApplication(int argc, char *argv[]);
-	~LbrApplication();
+    ~LbrApplication();
 
     void start();
 
@@ -70,6 +70,7 @@ protected:
     void prepPackage(const QDomElement & package);
     bool checkRectangular(const QDomElement & root, const QRectF & bounds, const QHash<QString, QString> & colors, QString & svg);
     void makeBin(const QStringList & moduleIDs, const QString & libraryName, const QDir & binsFolder);
+    bool registerFonts();
 
 protected:
     QString m_workingPath;

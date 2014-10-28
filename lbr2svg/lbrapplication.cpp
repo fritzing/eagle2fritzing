@@ -1,5 +1,5 @@
 #include "lbrapplication.h"
-#include "../brd2svg/miscutils.h"
+#include "miscutils.h"
 #include "utils/textutils.h"
 #include "utils/schematicrectconstants.h"
 #include "svg/svgfilesplitter.h"
@@ -13,6 +13,7 @@
 #include <QDate>
 #include <QBitArray>
 #include <limits>
+#include <QGuiApplication>
 
 ///////////////////////////////////////////////////////////
 
@@ -61,6 +62,7 @@ static QRegExp dipper("di[lp][\\s\\-_]{0,1}\\d");
 
 // temporary for debugging
 static QStringList SquareNames;
+
 
 ///////////////////////////////////////////////////////////
 
@@ -331,13 +333,14 @@ PartDescr::PartDescr(const QHash<QString, int> indexes, const QStringList & valu
 
 ///////////////////////////////////////////////////////////
 
+
 LbrApplication::LbrApplication(int argc, char *argv[]) : QCoreApplication(argc, argv)
 {   
-    int result = QFontDatabase::addApplicationFont(":/resources/fonts/DroidSans.ttf");
-	result = QFontDatabase::addApplicationFont(":/resources/fonts/DroidSans-Bold.ttf");
-	result = QFontDatabase::addApplicationFont(":/resources/fonts/DroidSansMono.ttf");
-	result = QFontDatabase::addApplicationFont(":/resources/fonts/OCRA.ttf");
-	m_core = "core";
+//    int result = QFontDatabase::addApplicationFont(":/resources/fonts/DroidSans.ttf");
+ //   result = QFontDatabase::addApplicationFont(":/resources/fonts/DroidSans-Bold.ttf");
+ //   result = QFontDatabase::addApplicationFont(":/resources/fonts/DroidSansMono.ttf");
+ //   result = QFontDatabase::addApplicationFont(":/resources/fonts/OCRA.ttf");
+    m_core = "core";
 }
 
 LbrApplication::~LbrApplication()
@@ -2857,4 +2860,19 @@ void LbrApplication::makeBin(const QStringList & moduleIDs, const QString & libr
 		out << bin;
 		file.close();
 	}
+}
+
+bool LbrApplication::registerFonts() {
+
+    int ix = QFontDatabase::addApplicationFont(":/resources/fonts/DroidSans.ttf");
+    if (ix < 0) return false;
+
+    ix = QFontDatabase::addApplicationFont(":/resources/fonts/DroidSans-Bold.ttf");
+    if (ix < 0) return false;
+
+    ix = QFontDatabase::addApplicationFont(":/resources/fonts/DroidSansMono.ttf");
+    if (ix < 0) return false;
+
+    ix = QFontDatabase::addApplicationFont(":/resources/fonts/OCRA.ttf");
+    return ix >= 0;
 }
