@@ -1,7 +1,7 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include <QCoreApplication>
+#include <QApplication>
 #include <QDomDocument>
 #include <QRectF>
 #include <QDir>
@@ -16,7 +16,7 @@ struct FillStroke {
 	qreal strokeWidth;
 };
 
-class BrdApplication : public QCoreApplication
+class BrdApplication : public QApplication
 {
 public:
     BrdApplication(int &argc, char **argv[]);
