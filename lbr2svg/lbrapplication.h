@@ -36,7 +36,7 @@ struct PartDescr {
 class LbrApplication : public QCoreApplication
 {
 public:
-	LbrApplication(int argc, char *argv[]);
+    LbrApplication(int &argc, char **argv[]);
     ~LbrApplication();
 
     void start();

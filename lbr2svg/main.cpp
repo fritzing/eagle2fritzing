@@ -5,6 +5,6 @@
 int main(int argc, char *argv[])
 {
 
-    LbrApplication a(argc, argv);
+    LbrApplication a(argc, &argv);
     a.start();
 }

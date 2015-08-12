@@ -175,7 +175,7 @@ Renamer::Renamer(const QDomElement & element)
 
 ///////////////////////////////////////////////////////
 
-BrdApplication::BrdApplication(int argc, char *argv[]) : QCoreApplication(argc, argv)
+BrdApplication::BrdApplication(int& argc, char **argv[]) : QCoreApplication(argc, *argv)
 {
 	m_networkAccessManager = NULL;
 

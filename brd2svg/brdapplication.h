@@ -19,7 +19,7 @@ struct FillStroke {
 class BrdApplication : public QCoreApplication
 {
 public:
-    BrdApplication(int argc, char *argv[]);
+    BrdApplication(int &argc, char **argv[]);
     void start();
 
 protected:
