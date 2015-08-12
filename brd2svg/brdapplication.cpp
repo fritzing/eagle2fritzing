@@ -175,7 +175,7 @@ Renamer::Renamer(const QDomElement & element)
 
 ///////////////////////////////////////////////////////
 
-BrdApplication::BrdApplication(int& argc, char **argv[]) : QCoreApplication(argc, *argv)
+BrdApplication::BrdApplication(int& argc, char **argv[]) : QApplication(argc, *argv)
 {
 	m_networkAccessManager = NULL;
 
@@ -568,7 +568,7 @@ void BrdApplication::saveFile(const QString & content, const QString & path)
 bool BrdApplication::initArguments() {
 	m_workingPath = m_eaglePath = "";
 	m_genericSMD = false;
-    QStringList args = QCoreApplication::arguments();
+    QStringList args = QApplication::arguments();
     for (int i = 0; i < args.length(); i++) {
         if ((args[i].compare("-h", Qt::CaseInsensitive) == 0) ||
             (args[i].compare("-help", Qt::CaseInsensitive) == 0) ||
