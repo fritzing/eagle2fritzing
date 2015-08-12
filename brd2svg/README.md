@@ -69,8 +69,10 @@ parts folder are organized the same way as they are in the Fritzing
 distribution: .fzp files are placed in parts/core and the svg files
 are place into parts/svg/core/breadboard, parts/svg/core/schematic,
 and parts/svg/core/pcb. There is an option to place parts into
-'contrib' instead of 'core' folders. To test your new parts in
-Fritzing, you only need to copy the parts folder into your local
+'contrib' instead of 'core' folders. 
+
+**To test your new parts in
+Fritzing**, you only need to copy the parts folder into your local
 Fritzing user storage area into the 'parts' folder you find there
 (in other words, this is a merge operation--which works nicely under
 Windows and has become recently available under Mac; perhaps this is
@@ -85,7 +87,8 @@ Bin the next time you run Fritzing. Use the Parts Bin search field
 to find the new parts. Alternatively, brd2svg also creates a bin
 (.fzb) file. Once Fritzing is launched, use the File > Open menu
 item to load the .fzp file and all the new parts you have created
-should be visible in that bin.
+should be visible in that bin. This only works if you have already
+copied all parts files as described above.
 
 ## Usage
 
@@ -172,7 +175,7 @@ best to look at the sample metadata.csv file in the project's 'and'
 folder to get a sense of the spreadsheet. Remember to export the
 spreadsheet as a .dif or brd2svg will ignore it. 
 
-Note: **'family' is required for every Friting part**. Generally
+Note: **'family' is required for every Fritzing part**. Generally
 a single family contains a group of closely related parts which have
 different properties. For example, a family of different resistors
 each having a different value of resistance and tolerance (where
