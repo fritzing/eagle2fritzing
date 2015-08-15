@@ -160,10 +160,7 @@ The set of columns in metadata.dif is:
 Tags are comma-separated strings. Properties are name/value pairs,
 where the name is separated from the value by a colon and the pairs
 are separated by semicolons. For example here are three properties:
-"Voltage: 3.3V; Digital Pins: 14; Analog Pins: 6". Perhaps it is
-best to look at the sample metadata.csv file in the project's 'and'
-folder to get a sense of the spreadsheet. Remember to export the
-spreadsheet as a .dif or brd2svg will ignore it. 
+"Voltage: 3.3V; Digital Pins: 14; Analog Pins: 6". 
 
 Note: **'family' is required for every Fritzing part**. Generally
 a single family contains a group of closely related parts which have
@@ -189,6 +186,10 @@ into the appropriate descriptions.txt file. Once a descriptions.txt
 file is created, it is not overwritten in subsequent runs of
 brd2svg.
 
+Perhaps it is
+best to look at the sample metadata.csv file in the project's 'and'
+folder to get a sense of the spreadsheet. Remember to export the
+spreadsheet as a .dif or brd2svg will ignore it. 
 
 #### 2. description files
 
