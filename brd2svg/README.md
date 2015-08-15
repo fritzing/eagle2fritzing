@@ -123,8 +123,8 @@ image is reused for the icon view.
 There are four ways you can influence what brd2svg writes into the
 .fzp and .svg files (beyond what the original .brd file specifies):
 
-1.  .txt files in the descriptions folder (one per .brd file)
 1.  metadata.dif (one per working folder)
+1.  .txt files in the descriptions folder (one per .brd file)
 1.  all.packages.txt (tends to be used across projects, found in
     'and')
 1.  .params files (one per .brd file)
@@ -137,15 +137,7 @@ description files are for part metadata. If both params.xml and
 metadata.dif contain a value for the same piece of metadata for a
 part (i.e. board color), metadata.dif overrides .params.
 
-#### 1. description files
-
-A description file is a text file containing the
-description metadata for a given part. The description file has the
-same basename as the .brd file it relates to, with a .txt extension.
-The description can contain html, but it must be of the limited
-variety that [QtRichText](http://qt-project.org/doc/qt-4.8/richtext-html-subset.html) can support.
-
-#### 2. metadata.dif
+#### 1. metadata.dif
 
 The metadata.dif file is a spreadsheet
 that has been exported in [data interchange format](http://en.wikipedia.org/wiki/Data_Interchange_Format) (.dif). The metadata file must be called
@@ -196,6 +188,17 @@ feed on the SparkFun site) and will save the resulting description
 into the appropriate descriptions.txt file. Once a descriptions.txt
 file is created, it is not overwritten in subsequent runs of
 brd2svg.
+
+
+#### 2. description files
+
+A description file is a text file containing a textual description
+for a given part. It's a separate file, because it could contain HTML and doesn't fit 
+well into the .dif file which has all the other metadata. 
+The description file has the same basename as the .brd file it relates to, with a .txt extension.
+The description can contain html, but it must be of the limited
+variety that [QtRichText](http://doc.qt.io/qt-5/richtext-html-subset.html) can support.
+
 
 #### 3. all.packages.txt
 
