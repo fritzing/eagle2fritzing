@@ -149,7 +149,7 @@ sufficient.
 The set of columns in metadata.dif is:
 
 *   Name (this will become the part's title)
-*   URL
+*   URL (the online documentation for this part)
 *   Filename (the .brd file associated with this set of metadata)
 *   Author
 *   Family
@@ -180,9 +180,10 @@ string, but the following presets are available:
 
 The url has an interesting feature in metadata.dif. Because SparkFun
 boards are frequently converted to Fritzing parts, brd2svg will
-attempt to follow the link given in the url (which leads to an RSS
-feed on the SparkFun site) and will save the resulting description
-into the appropriate descriptions.txt file. Once a descriptions.txt
+attempt to follow the link given in the url by appending a '.json' and will save the resulting description
+into the appropriate descriptions.txt file. 
+
+Once a descriptions.txt
 file is created, it is not overwritten in subsequent runs of
 brd2svg.
 
