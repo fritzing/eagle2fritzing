@@ -11,9 +11,15 @@ overall Fritzing project (GPL2/GPL3).
 
 Brd2svg relies on the Qt Framework, and should work with versions 4 and 5.
 **To build brd2svg, you first have to install the [Qt SDK](http://www.qt.io/download-open-source/)**, and then
-easiest path for building it is to use Qt Creator (an IDE that comes with the SDK) to open brd2svg.pro. We have built and used
-brd2svg on both Mac and Windows (though it has been some time since
-anyone has used the Mac build). It should also work under Linux.
+easiest path for building it is to use **Qt Creator** (an IDE that comes with the SDK) to open brd2svg.pro. We have built and used brd2svg on both Mac and Windows (though it has been some time since anyone has used the Mac build). It should also work under Linux.
+
+If you prefer the command line, you can also build it like this:
+
+**Mac**
+
+    brew install qt
+    qmake -spec macx-g++ brd2svg.pro
+    make
 
 ## How it works
 
