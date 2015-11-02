@@ -2,6 +2,7 @@
 #define APPLICATION_H
 
 #include <QCoreApplication>
+#include <QGuiApplication>
 #include <QDomDocument>
 #include <QRectF>
 #include <QDir>
@@ -33,7 +34,7 @@ struct PartDescr {
     PartDescr(const QHash<QString, int> indexes, const QStringList & values);
 };
 
-class LbrApplication : public QCoreApplication
+class LbrApplication : public QGuiApplication
 {
 public:
     LbrApplication(int &argc, char **argv[]);
