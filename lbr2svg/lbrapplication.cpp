@@ -334,7 +334,7 @@ PartDescr::PartDescr(const QHash<QString, int> indexes, const QStringList & valu
 ///////////////////////////////////////////////////////////
 
 
-LbrApplication::LbrApplication(int &argc, char **argv[]) : QCoreApplication(argc, *argv)
+LbrApplication::LbrApplication(int &argc, char **argv[]) : QGuiApplication(argc, *argv)
 {   
 //    int result = QFontDatabase::addApplicationFont(":/resources/fonts/DroidSans.ttf");
  //   result = QFontDatabase::addApplicationFont(":/resources/fonts/DroidSans-Bold.ttf");
