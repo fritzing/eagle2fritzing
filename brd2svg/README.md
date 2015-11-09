@@ -21,6 +21,11 @@ If you prefer the command line, you can also build it like this:
     qmake -spec macx-g++ brd2svg.pro
     make
 
+**GNU/Linux**
+
+    qmake brd2svg.pro
+    make
+
 ## How it works
 
 First create a working folder. Inside that folder, create a
