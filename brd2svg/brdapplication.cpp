@@ -658,12 +658,13 @@ void BrdApplication::usage() {
 }
 
 void BrdApplication::message(const QString & msg) {
-   // QTextStream cout(stdout);
-  //  cout << msg;
-   // cout.flush();
+	QTextStream cout(stdout);
+	cout << msg;
+	cout << '\n';
+	cout.flush();
 
-	qDebug() << msg;
- }
+	// qDebug() << msg;
+}
 
 void BrdApplication::collectLayerElements(QList<QDomElement> & from, QList<QDomElement> & to, const QString & layerID) {
 	foreach (QDomElement element, from) {
@@ -1642,7 +1643,10 @@ void BrdApplication::addSubparts(QDomElement & root, QDomElement & paramsRoot, Q
 
 			//qDebug() << subpartsFolder.absoluteFilePath(name + ".svg");
 			QString sname = findSubpart(name, subpartAliases, subpartsFolder);
-			if (sname.isEmpty()) continue;
+			if (sname.isEmpty()) {
+				qDebug() << "\tsubpart not found (2)" << name;
+				continue;
+			}
 
             qDebug() << "\tfound subpart (2)" << name << sname;
 

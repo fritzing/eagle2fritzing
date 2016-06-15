@@ -288,5 +288,9 @@
 <map package='wifly-gsx' to='wifly_gsx' />
 <map package='usb-microb' to='CON2_USB_MICRO_B_AT' />
 
+<!-- Adafruit additions/changes -->
+<map package='0805' to='0805-NO' />
+<map package='CHIPLED-0805' to='CHIPLED_0805_NOOUTLINE' />
+<map package='eia3528' to='eia3528-21/b-r' />
 
 </packages>
