@@ -1623,21 +1623,25 @@ void BrdApplication::addSubparts(QDomElement & root, QDomElement & paramsRoot, Q
 	if (gotPackage) {
 		foreach (QDomElement package, packages) {
 			QString name = package.attribute("name", "").toLower();
-// MICROBUILDER KLUDGE:
-// rename generic 0805 to resistor or cap as needed,
-// rename generic chip LED to suitable color
-if(name == "0805-no") {
-	QString elementName = package.parentNode().toElement().attribute("name", "").toUpper();
-	if(     elementName[0] == 'C') name = "0805-cap";
-	else if(elementName[0] == 'R') name = "0805-res";
-} else if(name == "chipled_0805_nooutline") {
-	QString elementValue = package.parentNode().toElement().attribute("value", "").toUpper();
-	if(     elementValue == "RED")    name="0805-led-red";
-	else if(elementValue == "YELLOW") name="0805-led-yellow";
-	else if(elementValue == "GREEN")  name="0805-led-green";
-	else if(elementValue == "BLUE")   name="0805-led-blue";
-	else if(elementValue == "WHITE")  name="0805-led-white";
-}
+
+			// ADAFRUIT 2016-06-16: MICROBUILDER LIBRARY KLUDGE:
+			if(name == "0805-no") {
+				// Rename generic 0805 to resistor or cap as needed,
+				// based on parent element name (starts with 'C' or 'R').
+				QString elementName = package.parentNode().toElement().attribute("name", "").toUpper();
+				if(     elementName[0] == 'C') name = "0805-cap";
+				else if(elementName[0] == 'R') name = "0805-res";
+			} else if(name == "chipled_0805_nooutline") {
+				// Rename generic chip LED to suitable color,
+				// based on parent element value ("RED", "GREEN", etc.).
+				QString elementValue = package.parentNode().toElement().attribute("value", "").toUpper();
+				if(     elementValue == "RED")    name="0805-led-red";
+				else if(elementValue == "ORANGE") name="0805-led-yellow"; // No orange part; use yellow
+				else if(elementValue == "YELLOW") name="0805-led-yellow";
+				else if(elementValue == "GREEN")  name="0805-led-green";
+				else if(elementValue == "BLUE")   name="0805-led-blue";
+				else if(elementValue == "WHITE")  name="0805-led-white";
+			}
 
 			qreal offsetX = 0;
 			qreal offsetY = 0;
@@ -1647,8 +1651,9 @@ if(name == "0805-no") {
 			while (!nudge.isNull()) {
 				if (nudge.attribute("package").compare(name, Qt::CaseInsensitive) == 0) {
 					QDomElement parent = package.parentNode().toElement();
+// ADAFRUIT 2016-06-16: 'nudge' KLUDGE:
+// Ignore 'element' attribute -- compare 'package' only
 //					if (parent.attribute("name").compare(nudge.attribute("element"), Qt::CaseInsensitive) == 0) {
-// Ignore 'element' attribute -- just compare package
 					if (1) {
 						offsetX = TextUtils::convertToInches(nudge.attribute("x", "0")) * 1000;
 						offsetY = TextUtils::convertToInches(nudge.attribute("y", "0")) * 1000;
@@ -2403,7 +2408,9 @@ void BrdApplication::genLayerElements(QDomElement &root, QDomElement &paramsRoot
 	from.append(root.firstChildElement("wires"));
 	from.append(root.firstChildElement("circles"));
 	from.append(root.firstChildElement("polygons"));
-	if(root.attribute("name", "") != "ADAFRUIT_2.5MM") // Don't output logo rects; have optimized svg for this
+	// ADAFRUIT 2016-06-16: LOGO KLUDGE:
+	// Don't output rects for Adafruit logo -- an optimized .svg is substituted for this part
+	if(root.attribute("name", "") != "ADAFRUIT_2.5MM")
 		from.append(root.firstChildElement("rects"));
 	from.append(root.firstChildElement("texts"));
 
@@ -2496,8 +2503,9 @@ void BrdApplication::genText(QDomElement & element, const QString & text, QStrin
 					parent = parent.parentNode().toElement();
 				}
 			}
+// ADAFRUIT 2016-06-16: 'nudge' KLUDGE:
+// Ignore 'element' attribute -- compare 'package' only
 //			if (nudge.attribute("element").compare(elementName) == 0) { 
-// Ignore 'element', just consider package
 			if (1) {
 				bool doNudge = true;
 				QDomElement match = nudge.firstChildElement("match");
@@ -2639,9 +2647,10 @@ void BrdApplication::genLayerElement(QDomElement & paramsRoot, QDomElement & ele
 			QDomElement nudges = bb.firstChildElement("nudges");
 			QDomElement nudge = nudges.firstChildElement("nudge");
 			while (!nudge.isNull()) {
+// ADAFRUIT 2016-06-16: 'nudge' KLUDGE:
+// Ignore 'element' attribute -- compare 'package' only
 //				if (nudge.attribute("package").compare(packageName, Qt::CaseInsensitive) == 0 && 
 //					nudge.attribute("element").compare(elementName, Qt::CaseInsensitive) == 0) 
-// Ignore element, use package only
 				if (nudge.attribute("package").compare(packageName, Qt::CaseInsensitive) == 0)
 				{
 					if (nudge.attribute("lines").compare("no") == 0) {

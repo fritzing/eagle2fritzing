@@ -30,30 +30,25 @@ To use, create a working folder (let's call it "FOO"), then create a subfolder i
         |-- board2.brd
         |-- board3.brd
 
-MANUAL EDITING STEP: before running the conversion, the .brd file(s) require some hand editing. TODO: try to automate or eliminate this step. WORKING FROM A COPY (save your original .brds), in each .brd file:
-
-* In the <packages> section of the file, in each package, delete the text elements in layers 25 and 27 (typically these will be strings like "NAME" and "VALUE"). Just delete those entire lines. Although the converter program skips these layers, those text elements still throw off the bounding rectangle calculation for some parts. (You can leave the NAME and VALUE attributes in the <elements> section of the file -- these don't seem to affect the bounds calc.)
-* Also in the <packages> section, for any packages starting with CHIPLED*, look for two <smd> elements with names "A" and "C" and delete those lines. Similar reasons...these throw off the bounding-rect calculation.
-
-Then run the brd2svg program (pass 1 of 2), passing in the various working directories:
+We won't be using the normal brd2svg program invocation, but if we did it would look like:
 
 ./brd2svg -w /Absolute/path/to/FOO -e /Applications/EAGLE-7.6.0/EAGLE.app/Contents/MacOS/EAGLE -c contrib -s ../subparts -a ./and
+
+Instead, use the shell script "run.sh". This does some preprocessing on the .brd file(s) (via 'sed') to avoid some rendering artifacts. RUN.SH MODIFIES THE .BRD FILES. ALWAYS KEEP A BACKUP OF THE ORIGINALS IN A DIFFERENT DIRECTORY!
+
+* Any <text> elements that are NOT in layer 21 (tPlace) are deleted. They throw off the bounding rect calculation for some parts.
+* Any <attribute> elements with name= "NAME" or "VALUE" are deleted, for similar reasons...bounding rect calcs.
 
 Adjacent to the 'brds' folder, two new directories will be created: 'params' and 'xml'. For each .brd file in 'brds', a corresponding .params and .xml file will be created in those directories.
 
-Edit the .params file. There's a section called <unused> containing a bunch of copper pads. MOVE all of these UP into the <right> section. If you convert a board and find most of the copper pads are missing in the final .svg, this is why. TODO: why are these pads going in 'unused'?
+Normally the .params file will contain a lot of items in the <unused> section...these are related to how copper pads are rendered. The brd2svg program has been tweaked to move these items into the <right> section instead. TODO: why are these pads going in 'unused' in the first place?
 
 The board color can be changed. It's early in this file, look for the "breadboard-color" attribute, provide a hex RGB value.
 
-Also in the .params file: the microbuilder library doesn't distinguish between certain parts footprints. For example, SMD resistors and capacitors will both have a 'package' attribute of "0802-NO". Search the file for "0802-NO" and replace each with either "0802-res" or "0802-cap" depending on the element name (e.g. "R1" or "C1"). Similarly, all SMD LEDs have the same package, but these can be changed (e.g. "0802-led-yellow"). TO DO: can some/all of this be automated?
+After editing .params to your liking, running run.sh a second time then converts the .params and .xml files into .svg.
 
-Edit the .xml file, making similar changes. "0805-NO" can be replaced with "0805-res" or "0805-cap", and LEDs similarly substituted. In this file, you can determine the LED colors by looking at the parent <element> -- there's an attribute called "value" that'll indicate red/blue/etc.
-
-Running brd2svg a second time (exact same arguments) then converts the .params and .xml files into .svg:
-
-./brd2svg -w /Absolute/path/to/FOO -e /Applications/EAGLE-7.6.0/EAGLE.app/Contents/MacOS/EAGLE -c contrib -s ../subparts -a ./and
+brd2svg has also been tweaked to modify the output of some components in the Microbuilder library: 0805 resistors and capacitors normally use a generic footprint, but the code distinguishes between the two so they appear different in the resulting .svg. Similarly, 0805 LEDs were generic, some decisions are made in the code to substitute specific colors.
 
 The .svg files will usually require a little cleanup in Illustrator or similar:
 
 * Any text that wasn't bottom-left-aligned in EAGLE will be positioned wrong (centering and other alignments weren't added until later EAGLE releases). Usually just a few (if any) - easy to move any such text items manually.
-* Boards with the 2.5mm Adafruit logo will get an "optimized" vector version placed close to the raster logo, but the position will need some fine-tuning. Then you'll want to hide this element, delete the raster logo (a zillion rectangles) and unhide the vector logo before saving.
