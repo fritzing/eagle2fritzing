@@ -20,9 +20,10 @@ for FILENAME in $BRDPATH/*.brd; do
   # Delete all <text> lines where layer!=21 (tplace)
   # Ugly brute force hack because weird OSX regex?
   sed -i .orig -E '/^\s*<text\ .*layer="([0-9]|2[02-9]|[13-9][0-9]|[0-9][0-9][0-9])"/d' "$FILENAME"
+  # Delete 'NAME' and 'VALUE' attributes for similar reasons
   sed -i .orig -E '/^\s*<attribute name="(NAME|VALUE)"/d' "$FILENAME"
-
-
+  # These throw off the part boundary calculation in EAGLE...
+  # trying to do the same in the .ulp script is too late.
 done
 
 #exit 0

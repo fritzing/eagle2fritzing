@@ -1018,11 +1018,9 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 	params += QString("</includes>\n");
 	params += QString("<!-- Add 'nudges' to modify how packages and texts are displayed  -->\n");
 	params += QString("<nudges>\n"
-					  "<!-- <nudge element='JP13' package='SFE-NEW-WEBLOGO' lines='no'/> -->\n"
-					  "<!-- <nudge element='JP20' package='SFE-NEW-WEBLOGO' show='no'/> -->\n"
-					  "<!-- <nudge element='JP17' package='1X08' x='-1.1mm' y='0.2mm' angle='90' gender='female' />  -->\n"
-					  "<!-- <nudge element='R1' text='330' x='2mm'><match y='2299' /></nudge>  -->\n"
-					  "</nudges>\n");
+			"<nudge element='U$28' package='ADAFRUIT_2.5MM' x='0.5mm' y='-0.5mm' />\n"
+			"<nudge element='U1' package='pvqfn-16' x='-0.21mm' />\n"
+		"</nudges>\n");
 
 	params += QString("</breadboard>\n");
 
@@ -1068,12 +1066,21 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 	foreach(QDomElement contact, rights) {
 		params += genContact(contact);
 	}
+#if 0
 	params += QString("</right>\n");
 	params += QString("<unused>\n");
 	foreach(QDomElement contact, unused) {
 		params += genContact(contact);
 	}
 	params += QString("</unused>\n");
+#else
+	// Kludge: put 'unused' elements into 'right' group instead
+	// (many pads not showing up otherwise) ???
+	foreach(QDomElement contact, unused) {
+		params += genContact(contact);
+	}
+	params += QString("</right>\n");
+#endif
 
 	params += QString("</connectors>\n");
 
@@ -1616,6 +1623,21 @@ void BrdApplication::addSubparts(QDomElement & root, QDomElement & paramsRoot, Q
 	if (gotPackage) {
 		foreach (QDomElement package, packages) {
 			QString name = package.attribute("name", "").toLower();
+// MICROBUILDER KLUDGE:
+// rename generic 0805 to resistor or cap as needed,
+// rename generic chip LED to suitable color
+if(name == "0805-no") {
+	QString elementName = package.parentNode().toElement().attribute("name", "").toUpper();
+	if(     elementName[0] == 'C') name = "0805-cap";
+	else if(elementName[0] == 'R') name = "0805-res";
+} else if(name == "chipled_0805_nooutline") {
+	QString elementValue = package.parentNode().toElement().attribute("value", "").toUpper();
+	if(     elementValue == "RED")    name="0805-led-red";
+	else if(elementValue == "YELLOW") name="0805-led-yellow";
+	else if(elementValue == "GREEN")  name="0805-led-green";
+	else if(elementValue == "BLUE")   name="0805-led-blue";
+	else if(elementValue == "WHITE")  name="0805-led-white";
+}
 
 			qreal offsetX = 0;
 			qreal offsetY = 0;
@@ -1625,7 +1647,9 @@ void BrdApplication::addSubparts(QDomElement & root, QDomElement & paramsRoot, Q
 			while (!nudge.isNull()) {
 				if (nudge.attribute("package").compare(name, Qt::CaseInsensitive) == 0) {
 					QDomElement parent = package.parentNode().toElement();
-					if (parent.attribute("name").compare(nudge.attribute("element"), Qt::CaseInsensitive) == 0) {
+//					if (parent.attribute("name").compare(nudge.attribute("element"), Qt::CaseInsensitive) == 0) {
+// Ignore 'element' attribute -- just compare package
+					if (1) {
 						offsetX = TextUtils::convertToInches(nudge.attribute("x", "0")) * 1000;
 						offsetY = TextUtils::convertToInches(nudge.attribute("y", "0")) * 1000;
 						if (!nudge.attribute("angle").isEmpty()) {
@@ -2379,7 +2403,8 @@ void BrdApplication::genLayerElements(QDomElement &root, QDomElement &paramsRoot
 	from.append(root.firstChildElement("wires"));
 	from.append(root.firstChildElement("circles"));
 	from.append(root.firstChildElement("polygons"));
-	from.append(root.firstChildElement("rects"));
+	if(root.attribute("name", "") != "ADAFRUIT_2.5MM") // Don't output logo rects; have optimized svg for this
+		from.append(root.firstChildElement("rects"));
 	from.append(root.firstChildElement("texts"));
 
 	QList<QDomElement> to;
@@ -2471,7 +2496,9 @@ void BrdApplication::genText(QDomElement & element, const QString & text, QStrin
 					parent = parent.parentNode().toElement();
 				}
 			}
-			if (nudge.attribute("element").compare(elementName) == 0) { 
+//			if (nudge.attribute("element").compare(elementName) == 0) { 
+// Ignore 'element', just consider package
+			if (1) {
 				bool doNudge = true;
 				QDomElement match = nudge.firstChildElement("match");
 				if (!match.isNull()) {
@@ -2612,8 +2639,10 @@ void BrdApplication::genLayerElement(QDomElement & paramsRoot, QDomElement & ele
 			QDomElement nudges = bb.firstChildElement("nudges");
 			QDomElement nudge = nudges.firstChildElement("nudge");
 			while (!nudge.isNull()) {
-				if (nudge.attribute("package").compare(packageName, Qt::CaseInsensitive) == 0 && 
-					nudge.attribute("element").compare(elementName, Qt::CaseInsensitive) == 0) 
+//				if (nudge.attribute("package").compare(packageName, Qt::CaseInsensitive) == 0 && 
+//					nudge.attribute("element").compare(elementName, Qt::CaseInsensitive) == 0) 
+// Ignore element, use package only
+				if (nudge.attribute("package").compare(packageName, Qt::CaseInsensitive) == 0)
 				{
 					if (nudge.attribute("lines").compare("no") == 0) {
 						// don't draw the layer element
