@@ -996,7 +996,7 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 	params += QString("<!-- <property name='family'>sample family</property> -->\n");
     params += QString("</properties>\n");
 
-	params += QString("<breadboard breadboard-color='%1'>\n").arg("#1F7A34");
+	params += QString("<breadboard breadboard-color='%1'>\n").arg("#1a234d");
 	params += QString("<extra-layers>\n");
 	params += ("<!-- to add extra layers to the breadboard,\n"
 					"uncomment the following <layer> elements,\n"
