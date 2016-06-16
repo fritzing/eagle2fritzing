@@ -36,12 +36,12 @@ We won't be using the normal brd2svg program invocation, but if we did it would 
 
 Instead, use the shell script "run.sh". This does some preprocessing on the .brd file(s) (via 'sed') to avoid some rendering artifacts. RUN.SH MODIFIES THE .BRD FILES. ALWAYS KEEP A BACKUP OF THE ORIGINALS IN A DIFFERENT DIRECTORY!
 
-* Any <text> elements that are NOT in layer 21 (tPlace) are deleted. They throw off the bounding rect calculation for some parts.
-* Any <attribute> elements with name= "NAME" or "VALUE" are deleted, for similar reasons...bounding rect calcs.
+* Any \<text\> elements that are NOT in layer 21 (tPlace) are deleted. They throw off the bounding rect calculation for some parts.
+* Any \<attribute\> elements with name= "NAME" or "VALUE" are deleted, for similar reasons...bounding rect calcs.
 
 Adjacent to the 'brds' folder, two new directories will be created: 'params' and 'xml'. For each .brd file in 'brds', a corresponding .params and .xml file will be created in those directories.
 
-Normally the .params file will contain a lot of items in the <unused> section...these are related to how copper pads are rendered. The brd2svg program has been tweaked to move these items into the <right> section instead. TODO: why are these pads going in 'unused' in the first place?
+Normally the .params file will contain a lot of items in the \<unused\> section...these are related to how copper pads are rendered. The brd2svg program has been tweaked to move these items into the \<right\> section instead. TODO: why are these pads going in 'unused' in the first place?
 
 The board color can be changed. It's early in this file, look for the "breadboard-color" attribute, provide a hex RGB value.
 
