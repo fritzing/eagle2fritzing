@@ -1021,6 +1021,7 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 			"<nudge package='ADAFRUIT_2.5MM' x='0.5mm' y='-0.5mm' />\n"
 			"<nudge package='pvqfn-16' x='-0.21mm' />\n"
 			"<nudge package='jstph2' y='0.25mm' />\n"
+			"<nudge package='usb_host-pth' x='0.3mm' />\n"
 		"</nudges>\n");
 
 	params += QString("</breadboard>\n");
