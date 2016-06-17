@@ -1018,8 +1018,9 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 	params += QString("</includes>\n");
 	params += QString("<!-- Add 'nudges' to modify how packages and texts are displayed  -->\n");
 	params += QString("<nudges>\n"
-			"<nudge element='U$28' package='ADAFRUIT_2.5MM' x='0.5mm' y='-0.5mm' />\n"
-			"<nudge element='U1' package='pvqfn-16' x='-0.21mm' />\n"
+			"<nudge package='ADAFRUIT_2.5MM' x='0.5mm' y='-0.5mm' />\n"
+			"<nudge package='pvqfn-16' x='-0.21mm' />\n"
+			"<nudge package='jstph2' y='0.25mm' />\n"
 		"</nudges>\n");
 
 	params += QString("</breadboard>\n");
@@ -1673,7 +1674,7 @@ void BrdApplication::addSubparts(QDomElement & root, QDomElement & paramsRoot, Q
 			//qDebug() << subpartsFolder.absoluteFilePath(name + ".svg");
 			QString sname = findSubpart(name, subpartAliases, subpartsFolder);
 			if (sname.isEmpty()) {
-				qDebug() << "\tsubpart not found (2)" << name;
+				qDebug() << "\t*** subpart not found (2)" << name;
 				continue;
 			}
 
