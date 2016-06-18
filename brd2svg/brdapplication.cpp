@@ -1653,10 +1653,10 @@ void BrdApplication::addSubparts(QDomElement & root, QDomElement & paramsRoot, Q
 			while (!nudge.isNull()) {
 				if (nudge.attribute("package").compare(name, Qt::CaseInsensitive) == 0) {
 					QDomElement parent = package.parentNode().toElement();
-// ADAFRUIT 2016-06-16: 'nudge' KLUDGE:
-// Ignore 'element' attribute -- compare 'package' only
-//					if (parent.attribute("name").compare(nudge.attribute("element"), Qt::CaseInsensitive) == 0) {
-					if (1) {
+					// ADAFRUIT 2016-06-17: 'nudge' KLUDGE:
+					// If 'element' attribute is missing, use 'package' only for comparison
+					if (parent.attribute("name").isNull() ||
+					    parent.attribute("name").compare(nudge.attribute("element"), Qt::CaseInsensitive) == 0) {
 						offsetX = TextUtils::convertToInches(nudge.attribute("x", "0")) * 1000;
 						offsetY = TextUtils::convertToInches(nudge.attribute("y", "0")) * 1000;
 						if (!nudge.attribute("angle").isEmpty()) {
@@ -2505,10 +2505,10 @@ void BrdApplication::genText(QDomElement & element, const QString & text, QStrin
 					parent = parent.parentNode().toElement();
 				}
 			}
-// ADAFRUIT 2016-06-16: 'nudge' KLUDGE:
-// Ignore 'element' attribute -- compare 'package' only
-//			if (nudge.attribute("element").compare(elementName) == 0) { 
-			if (1) {
+			// ADAFRUIT 2016-06-17: 'nudge' KLUDGE:
+			// If 'element' attribute is missing, use 'package' only for comparison
+			if (nudge.attribute("element").isNull() ||
+			    nudge.attribute("element").compare(elementName) == 0) { 
 				bool doNudge = true;
 				QDomElement match = nudge.firstChildElement("match");
 				if (!match.isNull()) {
@@ -2649,11 +2649,11 @@ void BrdApplication::genLayerElement(QDomElement & paramsRoot, QDomElement & ele
 			QDomElement nudges = bb.firstChildElement("nudges");
 			QDomElement nudge = nudges.firstChildElement("nudge");
 			while (!nudge.isNull()) {
-// ADAFRUIT 2016-06-16: 'nudge' KLUDGE:
-// Ignore 'element' attribute -- compare 'package' only
-//				if (nudge.attribute("package").compare(packageName, Qt::CaseInsensitive) == 0 && 
-//					nudge.attribute("element").compare(elementName, Qt::CaseInsensitive) == 0) 
-				if (nudge.attribute("package").compare(packageName, Qt::CaseInsensitive) == 0)
+				// ADAFRUIT 2016-06-17: 'nudge' KLUDGE:
+				// If 'element' attribute is missing, use 'package' only for comparison
+				if ((nudge.attribute("package").compare(packageName, Qt::CaseInsensitive) == 0) &&
+				    (nudge.attribute("element").isNull() ||
+				    (nudge.attribute("element").compare(elementName, Qt::CaseInsensitive) == 0)))
 				{
 					if (nudge.attribute("lines").compare("no") == 0) {
 						// don't draw the layer element
