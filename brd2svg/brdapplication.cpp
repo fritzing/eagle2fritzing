@@ -1068,7 +1068,7 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 	foreach(QDomElement contact, rights) {
 		params += genContact(contact);
 	}
-#if 0
+#if 1
 	params += QString("</right>\n");
 	params += QString("<unused>\n");
 	foreach(QDomElement contact, unused) {
@@ -1078,6 +1078,11 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 #else
 	// Kludge: put 'unused' elements into 'right' group instead
 	// (many pads not showing up otherwise) ???
+	// EDIT: this causes other problems when part's loaded into
+	// Fritzing -- whole board lights up like a tree when connections
+	// are made, since SMD pads are connected to those.  So instead,
+	// default behavior ('unused' group) has been restored (#if 1
+	// above) and problem is addressed elsewhere.
 	foreach(QDomElement contact, unused) {
 		params += genContact(contact);
 	}
@@ -1992,7 +1997,8 @@ void BrdApplication::genCopperElements(QDomElement &root, QDomElement & paramsRo
 	}
 
 	foreach (QDomElement contact, contacts) {
-		if (!isUsed(contact)) continue;
+		// ADAFRUIT 2016-06-20 - line disabled so pads are generated for SMD parts:
+		// if (!isUsed(contact)) continue;
 
 		genPad(contact, svg, layerID, copperColor, padString, integrateVias);
 	}
@@ -3171,7 +3177,9 @@ QString BrdApplication::genMaxShape(QDomElement & root, QDomElement & paramsRoot
 		QStringList busNames;
 		collectContacts(root, paramsRoot, contacts, busNames);
 		foreach (QDomElement contact, contacts) {
-			if (!isUsed(contact)) continue;
+			// ADAFRUIT 2016-02-20 - line disabled so holes are generated
+			// for 'unused' parts (mounting holes, etc.):
+			// if (!isUsed(contact)) continue;
 
 			QDomElement pad = contact.firstChildElement("pad");
 			if (!pad.isNull()) {
@@ -3320,6 +3328,10 @@ void BrdApplication::genOverlaps(QDomElement & root, const FillStroke & fsNormal
 			fs = &fsIC;
 			//qDebug() << "using IC" << packageName << r.width() << r.height();
 		}
+
+		// ADAFRUIT 2016-06-20 -- don't draw transparent elements --
+		// typically part bounds, not desirable on breadboard image:
+		if(fs->fillOpacity < 1.0) continue;
 
 		double angle = package.parentNode().toElement().attribute("angle", "0").toDouble();
 		if ((qRound(angle) / 45) % 2 == 1) {

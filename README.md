@@ -41,13 +41,11 @@ Instead, use the shell script "run.sh". This does some preprocessing on the .brd
 
 Adjacent to the 'brds' folder, two new directories will be created: 'params' and 'xml'. For each .brd file in 'brds', a corresponding .params and .xml file will be created in those directories.
 
-Normally the .params file will contain a lot of items in the \<unused\> section...these are related to how copper pads are rendered. The brd2svg program has been tweaked to move these items into the \<right\> section instead. TODO: why are these pads going in 'unused' in the first place?
-
 The board color can be changed. It's early in this file, look for the "breadboard-color" attribute, provide a hex RGB value.
 
 After editing .params to your liking, running run.sh a second time then converts the .params and .xml files into .svg.
 
-brd2svg has also been tweaked to modify the output of some components in the Microbuilder library: 0805 resistors and capacitors normally use a generic footprint, but the code distinguishes between the two so they appear different in the resulting .svg. Similarly, 0805 LEDs were generic, some decisions are made in the code to substitute specific colors.
+brd2svg has been tweaked to modify the output of some components in the Microbuilder library: 0805 resistors and capacitors normally use a generic footprint, but the code distinguishes between the two so they appear different in the resulting .svg. Similarly, 0805 LEDs were generic, some decisions are made in the code to substitute specific colors.
 
 The .svg files will usually require a little cleanup in Illustrator or similar:
 
