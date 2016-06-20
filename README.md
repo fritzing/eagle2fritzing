@@ -52,3 +52,5 @@ brd2svg has also been tweaked to modify the output of some components in the Mic
 The .svg files will usually require a little cleanup in Illustrator or similar:
 
 * Any text that wasn't bottom-left-aligned in EAGLE will be positioned wrong (centering and other alignments weren't added until later EAGLE releases). Usually just a few (if any) - easy to move any such text items manually.
+
+Note about \<nudge\> elements in the .params file: I'm trying to avoid some/most of these by strategically sizing the artboard of the component .svgs -- it's typical to have the artboard exactly match the component bounds, but these dimensions may vary from EAGLE's concept of the same component. brd2svg centers component SVGs within their EAGLE bounds (but does not crop) -- so, for example, if all USB host ports need to scoot 0.3mm toward the opening, add 0.6mm to the opposite bounding edge.
