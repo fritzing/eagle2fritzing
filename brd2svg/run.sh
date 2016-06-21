@@ -4,9 +4,12 @@
 EXEC=/Applications/EAGLE-7.6.0/EAGLE.app/Contents/MacOS/EAGLE
 # Default brd2svg working path (override by passing argument to this script)
 WORKPATH=/Users/pburgess/Desktop/FritzingTest
-# Other paths used by brd2svg
+# Other paths used by brd2svg:
+# PARTPATH and ANDPATH are relative to brd2svg application.
+# BACKUPPATH is relative to 'brds' directory in WORKPATH
 PARTPATH=../subparts
 ANDPATH=./and
+BACKUPPATH=bak
 
 # If argument is passed to script, this overrides WORKPATH
 if [ -n "$1" ]
@@ -17,16 +20,23 @@ fi
 # Preprocess each .brd file
 BRDPATH=$WORKPATH/brds
 for FILENAME in $BRDPATH/*.brd; do
-  # Delete all <text> lines where layer!=21 (tplace)
-  # Ugly brute force hack because weird OSX regex?
-  sed -i .orig -E '/^\s*<text\ .*layer="([0-9]|2[02-9]|[13-9][0-9]|[0-9][0-9][0-9])"/d' "$FILENAME"
-  # Delete 'NAME' and 'VALUE' attributes for similar reasons
-  sed -i .orig -E '/^\s*<attribute name="(NAME|VALUE)"/d' "$FILENAME"
-  # These throw off the part boundary calculation in EAGLE...
-  # trying to do the same in the .ulp script is too late.
+  python preprocess.py "$FILENAME" "$FILENAME.tmp"
+  OLDSIZE=$(wc -c <"$FILENAME")
+  NEWSIZE=$(wc -c <"$FILENAME.tmp")
+  if [ $NEWSIZE -lt $OLDSIZE ]; then
+    # File size changed; copy original to BACKUPPATH
+    mkdir -p "$BRDPATH/$BACKUPPATH"
+    cp "$FILENAME" "$BRDPATH/$BACKUPPATH"
+    # Then overwrite original with new (smaller) file.
+    mv "$FILENAME.tmp" "$FILENAME"
+    # It's done this way because getting the brd2svg application
+    # and .ulp script to process the .brd.tmp files isn't working;
+    # need to use the original .brd filename.
+  else
+    # No change in file size; delete temp file.
+    rm -f "$FILENAME.tmp"
+  fi
 done
-
-#exit 0
 
 ./brd2svg -c contrib -w $WORKPATH -e $EXEC -s $PARTPATH -a $ANDPATH
 

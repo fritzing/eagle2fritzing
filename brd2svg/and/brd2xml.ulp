@@ -436,50 +436,50 @@ void xmlWriteBoard(string fileName) {
       board(B) {
         xmlWriteBoardHeader(B);
         
-		printf("<circles>\n");
-        B.circles(C)    { xmlWriteCircle(C); }       
-		printf("</circles>\n");
+        printf("<circles>\n");
+        B.circles(C) { xmlWriteCircle(C); }       
+        printf("</circles>\n");
 
-		printf("<texts>\n");
-		B.texts(T)      { xmlWriteText(T); }
-		printf("</texts>\n");
+        printf("<texts>\n");
+        B.texts(T) { xmlWriteText(T); }
+        printf("</texts>\n");
 
-		printf("<rects>\n");
+        printf("<rects>\n");
         B.rectangles(R) { xmlWriteRectangle(R); }
-		printf("</rects>\n");
+        printf("</rects>\n");
 
-		printf("<polygons>\n");
-        B.polygons(P)   { xmlWritePolygon(P); }
-		printf("</polygons>\n");
+        printf("<polygons>\n");
+        B.polygons(P) { xmlWritePolygon(P); }
+        printf("</polygons>\n");
 
-		printf("<wires>\n");
-        B.wires(W)      { xmlWriteWire(W); }
-		printf("</wires>\n");
+        printf("<wires>\n");
+        B.wires(W) { xmlWriteWire(W); }
+        printf("</wires>\n");
 
-		printf("<elements>\n");
-        B.elements(E)   { xmlWriteElement(E); }
-		printf("</elements>\n");
+        printf("<elements>\n");
+        B.elements(E) { xmlWriteElement(E); }
+        printf("</elements>\n");
 
-		printf("<holes>\n");
-        B.holes(H)      { xmlWriteHole(H); }
-		printf("</holes>\n");
+        printf("<holes>\n");
+        B.holes(H) { xmlWriteHole(H); }
+        printf("</holes>\n");
 
-		printf("<signals>\n");
-        B.signals(S)    { xmlWriteSignal(S); }
-		printf("</signals>\n");
+        printf("<signals>\n");
+        B.signals(S) { xmlWriteSignal(S); }
+        printf("</signals>\n");
 
-		printf("<frames>\n");
-		B.frames(F)		{ xmlWriteFrame(F); }
-		printf("</frames>\n");
+        printf("<frames>\n");
+        B.frames(F) { xmlWriteFrame(F); }
+        printf("</frames>\n");
 
-		printf("<layers>\n");
-		B.layers(L)	    { xmlWriteLayer(L); }
-		printf("</layers>\n");
-		 
+        printf("<layers>\n");
+        B.layers(L) { xmlWriteLayer(L); }
+        printf("</layers>\n");
+
         xmlWriteBoardFooter(B);
       }
-    }  
-  }   
+    }
+  }
 }
 
 
