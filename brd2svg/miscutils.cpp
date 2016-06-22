@@ -136,22 +136,26 @@ bool MiscUtils::makePartsDirectories(const QDir & workingFolder, const QString &
 	return true;
 }
 
-void MiscUtils::calcTextAngle(qreal & angle, int mirror, int spin, qreal size, qreal & x, qreal & y, bool & anchorAtStart)
+void MiscUtils::calcTextAngle(qreal & angle, int mirror, int spin, qreal size, qreal & x, qreal & y, int & anchor)
 {
-	bool anchorAtTop;
+//	bool anchorAtTop;
 
 	if ( mirror > 0 ) {
 		if (angle >= 0 && angle < 90) {
-			anchorAtStart=false; anchorAtTop=false;
+//			anchorAtStart=false; anchorAtTop=false;
+			anchor = 2; // Bottom-right
 		}
 		else if (angle >= 90 && angle < 180) {
-			anchorAtStart=true; anchorAtTop=true;
+//			anchorAtStart=true; anchorAtTop=true;
+			anchor = 6; // Top-left
 		}
 		else if (angle >= 180 && angle < 270) {
-			anchorAtStart=true; anchorAtTop=true;
+//			anchorAtStart=true; anchorAtTop=true;
+			anchor = 6; // Top-left
 		}
 		else if (angle >= 270 && angle < 360) {
-			anchorAtStart=false; anchorAtTop=false;
+//			anchorAtStart=false; anchorAtTop=false;
+			anchor = 2; // Bottom-right
 		}
 		else {
 			qDebug() << "bad angle in gen text" << angle;
@@ -161,10 +165,12 @@ void MiscUtils::calcTextAngle(qreal & angle, int mirror, int spin, qreal size, q
 	else
 	{
 		if (angle >= 0 && angle <= 90) {
-			anchorAtStart=true; anchorAtTop=false;
+//			anchorAtStart=true; anchorAtTop=false;
+			anchor = 0; // Bottom-left
 		}
 		else if (angle > 90 && angle < 360) {
-			anchorAtStart=false; anchorAtTop=true;
+//			anchorAtStart=false; anchorAtTop=true;
+			anchor = 8; // Top-right
 		}
 		else {
 			qDebug() << "bad angle in gen text" << angle;
@@ -178,20 +184,23 @@ void MiscUtils::calcTextAngle(qreal & angle, int mirror, int spin, qreal size, q
 		angle = 360 - angle;
 	}
 	else if (angle > 90 && angle <= 180) {
-		if (anchorAtTop)  {
+//		if (anchorAtTop)  {
+		if(anchor >= 6) {
 			y -= size;
 		}
 		angle = 180 - angle;
 	}
 	else if (angle > 180 && angle < 270) {
-		if (anchorAtTop)  {
+//		if (anchorAtTop)  {
+		if(anchor >= 6) {
 			y -= size;
 		}
 		angle = 180 - angle;
 	}
 	else
 	{
-		if (anchorAtTop) {
+//		if (anchorAtTop) {
+		if(anchor >= 6) {
 			x += size;
 		}
 
@@ -202,25 +211,30 @@ void MiscUtils::calcTextAngle(qreal & angle, int mirror, int spin, qreal size, q
 		if (angle == 0) {
 		}
 		else if (angle > 0 && angle < 90) {
-			anchorAtStart = !anchorAtStart;
+//			anchorAtStart = !anchorAtStart;
+			anchor = anchor + 2 - (anchor % 3); // Reverse X anchor
 			angle += 180;
-			if (anchorAtTop)  {
+//			if (anchorAtTop)  {
+			if(anchor >= 6) {
 				y += size;
 			}		
 		}
 		else {
 			if (angle >= 180 && angle < 270) {
-				if (anchorAtTop)  {
+//				if (anchorAtTop)  {
+				if(anchor >= 6) {
 					y += size;
 				}
 			}
 			else {
-				if (anchorAtTop) {
+//				if (anchorAtTop) {
+				if(anchor >= 6) {
 					x -= size;
 				}
 			}
 
-			anchorAtStart = !anchorAtStart;
+//			anchorAtStart = !anchorAtStart;
+			anchor = anchor + 2 - (anchor % 3); // Reverse X anchor
 			angle += 180;
 		}
 	}

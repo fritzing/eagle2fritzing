@@ -73,7 +73,7 @@ QDomElement Spacer;
 // do not register, creating problems for the text clipping.  Super
 // hacky kludge just completely turns off this text clipping if a
 // FeatherWing is detected among the components used.  Ugh.
-uint8_t textClipEnabled = 1;
+bool textClipEnabled = true;
 
 
 bool cxcyrw(QDomElement & element, qreal & cx, qreal & cy, qreal & radius, qreal & width);
@@ -2206,7 +2206,7 @@ void BrdApplication::collectPackages(QDomElement &root, QList<QDomElement> & pac
 				// ADAFRUIT 2016-06-21: if package is "FEATHERWING", disable text clipping.
 				// Ugly kludge, it's explained a bit near the top of this file.
 				QString name = package.attribute("name");
-				if(name == "FEATHERWING") textClipEnabled = 0;
+				if(name == "FEATHERWING") textClipEnabled = false;
 				//qDebug() << name;
 				if (inBounds(package)) {
 					packages.append(package);
@@ -2523,6 +2523,11 @@ void BrdApplication::genText(QDomElement & element, const QString & text, QStrin
 		return;
 	}
 
+	// ADAFRUIT 2016-06-22: starting to handle text alignment
+	QString align = element.attribute("align", "");
+	int anchor = element.attribute("align", "").toInt(&ok);
+	if (!ok) anchor = ALIGN_TOP_LEFT;
+
 	qreal angle = element.attribute("angle", "").toDouble(&ok);
 	if (!ok) return;
 
@@ -2595,8 +2600,11 @@ void BrdApplication::genText(QDomElement & element, const QString & text, QStrin
 	size *= 1.16;			// this is a hack, but it seems to help
 	width *= ((width <= 7) ? 0.75 : 0.60);
 
-	bool anchorAtStart;
-	MiscUtils::calcTextAngle(angle, mirror, spin, size, x, y, anchorAtStart);
+	// ADAFRUIT 2016-06-22: starting to handle text alignment
+//	bool anchorAtStart;
+	int dummyAnchor;
+//	MiscUtils::calcTextAngle(angle, mirror, spin, size, x, y, anchor);
+	MiscUtils::calcTextAngle(angle, mirror, spin, size, x, y, dummyAnchor);
 
 	if (!checkedWires) {
 		QRectF r(x, y, width, size);
@@ -2614,11 +2622,13 @@ void BrdApplication::genText(QDomElement & element, const QString & text, QStrin
 		x = m_trueBounds.left();
 		y = m_trueBounds.bottom();
 	}
+	// ADAFRUIT 2016-06-22: starting to handle text alignment
+	const char *anchorString[] = { "start", "middle", "end" };
 	svg += QString("<text font-family='OCRA' stroke='none' stroke-width='%6' fill='%7' font-size='%1' x='%2' y='%3' text-anchor='%4'>%5</text>\n")
 	  .arg(size)
 	  .arg(x - m_trueBounds.left())
 	  .arg(flipy(y))
-	  .arg(anchorAtStart ? "start" : "end")
+	  .arg(anchorString[anchor % 3])
 	  .arg(TextUtils::escapeAnd(text))
 	  .arg(0)  // SW(width)
 	  .arg(textColor)
