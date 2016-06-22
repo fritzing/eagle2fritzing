@@ -8,11 +8,11 @@
 
 
 
-WireTree::WireTree(QDomElement & w) 
+WireTree::WireTree(QDomElement & w)
 {
-    element = w;
+	element = w;
 	sweep = 0;
-    failed = false;
+	failed = false;
 	MiscUtils::x1y1x2y2(w, x1, y1, x2, y2);
 	curve = w.attribute("curve", "0").toDouble();
 	//qDebug() << "wiretree" << this << x1 << y1 << x2 << y2 << curve;
@@ -142,7 +142,7 @@ void MiscUtils::calcTextAngle(qreal & angle, int mirror, int spin, qreal size, q
 
 	if ( mirror > 0 ) {
 		if (angle >= 0 && angle < 90) {
-			anchorAtStart=false; anchorAtTop=false; 
+			anchorAtStart=false; anchorAtTop=false;
 		}
 		else if (angle >= 90 && angle < 180) {
 			anchorAtStart=true; anchorAtTop=true;
@@ -151,14 +151,14 @@ void MiscUtils::calcTextAngle(qreal & angle, int mirror, int spin, qreal size, q
 			anchorAtStart=true; anchorAtTop=true;
 		}
 		else if (angle >= 270 && angle < 360) {
-			anchorAtStart=false; anchorAtTop=false; 
+			anchorAtStart=false; anchorAtTop=false;
 		}
 		else {
 			qDebug() << "bad angle in gen text" << angle;
 			return;
-		} 
-	} 
-	else 
+		}
+	}
+	else
 	{
 		if (angle >= 0 && angle <= 90) {
 			anchorAtStart=true; anchorAtTop=false;
@@ -169,7 +169,7 @@ void MiscUtils::calcTextAngle(qreal & angle, int mirror, int spin, qreal size, q
 		else {
 			qDebug() << "bad angle in gen text" << angle;
 			return;
-		} 
+		}
 	}
 
 	if (angle == 0) {
@@ -188,8 +188,8 @@ void MiscUtils::calcTextAngle(qreal & angle, int mirror, int spin, qreal size, q
 			y -= size;
 		}
 		angle = 180 - angle;
-	} 
-	else 
+	}
+	else
 	{
 		if (anchorAtTop) {
 			x += size;
@@ -228,23 +228,23 @@ void MiscUtils::calcTextAngle(qreal & angle, int mirror, int spin, qreal size, q
 
 
 QString MiscUtils::makeGeneric(const QDir & workingFolder, const QString & boardColor, QList<QDomElement> & powers,
-                                const QString & copper, const QString & boardName, QSizeF outerChipSize, QSizeF innerChipSize,
-								GetConnectorNameFn getConnectorName, GetConnectorNameFn getConnectorIndex, bool noText)
+  const QString & copper, const QString & boardName, QSizeF outerChipSize, QSizeF innerChipSize,
+  GetConnectorNameFn getConnectorName, GetConnectorNameFn getConnectorIndex, bool noText)
 {
-    // assumes 1000 dpi
+	// assumes 1000 dpi
 
-    bool includeChip = innerChipSize.width() > 0 && innerChipSize.height() > 0;
+	bool includeChip = innerChipSize.width() > 0 && innerChipSize.height() > 0;
 
-    QString copper_local = copper;
-    copper_local.remove(QRegExp("id=.connector[\\d]*p..."));
+	QString copper_local = copper;
+	copper_local.remove(QRegExp("id=.connector[\\d]*p..."));
 
 	int halfPowers = powers.count() / 2;
 	qreal width = halfPowers * 100;		// width in mils; assume we always have an even number
 
 	qreal chipDivisor = includeChip ? 2 : 1;
-    if (outerChipSize.width() / chipDivisor > width - 200) {
-        width = (outerChipSize.width() / chipDivisor) + 200;
-    }
+	if (outerChipSize.width() / chipDivisor > width - 200) {
+		width = (outerChipSize.width() / chipDivisor) + 200;
+	}
 
 	//qreal chipHeight = qSqrt((bounds.width() * bounds.width()) + (bounds.height() * bounds.height()));
 	qreal chipHeight = outerChipSize.height() / chipDivisor;
@@ -275,79 +275,78 @@ QString MiscUtils::makeGeneric(const QDir & workingFolder, const QString & board
 
 	qreal subx = outerChipSize.width() / 2;
 	qreal suby = outerChipSize.height() / 2;
-    if (!includeChip) {
-	    svg += QString("<g transform='translate(%1,%2)'>\n")
-		    .arg((width / 2) - subx)
-		    .arg((height / 2) - suby);
-        svg += TextUtils::removeSVGHeader(copper_local);
-        svg += "</g>\n";
-    }
-    else {
-	    QMatrix matrix;
-	    matrix.translate(subx, suby);
-	    //matrix.rotate(45);
-	    matrix.scale(1 / chipDivisor, 1 / chipDivisor);
-	    matrix.translate(-subx, -suby);  
-	    svg += QString("<g transform='translate(%1,%2)'>\n")
-		    .arg((width / 2) - subx)
-		    .arg((height / 2) - suby);
-	    svg += QString("<g transform='%1'>\n").arg(TextUtils::svgMatrix(matrix));
+	if (!includeChip) {
+		svg += QString("<g transform='translate(%1,%2)'>\n")
+		  .arg((width / 2) - subx)
+		  .arg((height / 2) - suby);
+		svg += TextUtils::removeSVGHeader(copper_local);
+		svg += "</g>\n";
+	}
+	else {
+		QMatrix matrix;
+		matrix.translate(subx, suby);
+		//matrix.rotate(45);
+		matrix.scale(1 / chipDivisor, 1 / chipDivisor);
+		matrix.translate(-subx, -suby);
+		svg += QString("<g transform='translate(%1,%2)'>\n")
+		  .arg((width  / 2) - subx)
+		  .arg((height / 2) - suby);
+		svg += QString("<g transform='%1'>\n").arg(TextUtils::svgMatrix(matrix));
 
-        svg += TextUtils::removeSVGHeader(copper_local);
+		svg += TextUtils::removeSVGHeader(copper_local);
 
-	    qreal icLeft = (outerChipSize.width() - innerChipSize.width()) / 2;
-	    qreal icTop = (outerChipSize.height() - innerChipSize.height()) / 2;
-	    svg += QString("<rect x='%1' y='%2' fill='#303030' width='%3' height='%4' stroke='none' stroke-width='0' />\n")
-						    .arg(icLeft)
-						    .arg(icTop)
-						    .arg(innerChipSize.width())
-						    .arg(innerChipSize.height());
-	    svg += QString("<polygon fill='#1f1f1f' points='%1,%2 %3,%2 %4,%5 %6,%5' />\n")
-						    .arg(icLeft)
-						    .arg(icTop)
-						    .arg(icLeft + innerChipSize.width())
-						    .arg(icLeft + innerChipSize.width() - 10)
-						    .arg(icTop + 10)
-						    .arg(icLeft + 10);
-	    svg += QString("<polygon fill='#1f1f1f' points='%1,%2 %3,%2 %4,%5 %6,%5' />\n")
-						    .arg(icLeft)
-						    .arg(icTop + innerChipSize.height())
-						    .arg(icLeft + innerChipSize.width())
-						    .arg(icLeft + innerChipSize.width() - 10)
-						    .arg(icTop + innerChipSize.height() - 10)
-						    .arg(icLeft + 10);
-	    svg += QString("<polygon fill='#000000' points='%1,%2 %1,%3 %4,%5 %4,%6' />\n")
-						    .arg(icLeft)
-						    .arg(icTop)
-						    .arg(icTop + innerChipSize.height())
-						    .arg(icLeft + 10)
-						    .arg(icTop + innerChipSize.height() - 10)
-						    .arg(icTop +  10);
-	    svg += QString("<polygon fill='#3d3d3d' points='%1,%2 %1,%3 %4,%5 %4,%6' />\n")
-						    .arg(icLeft + innerChipSize.width())
-						    .arg(icTop)
-						    .arg(icTop + innerChipSize.height())
-						    .arg(icLeft + innerChipSize.width() - 10)
-						    .arg(icTop + innerChipSize.height() - 10)
-						    .arg(icTop +  10);
-	    svg += QString("<circle fill='#1f1f1f' cx='%1' cy='%2' r='10' stroke='none' stroke-width='0' />\n")
-				    .arg(icLeft + 10 + 10 + 10)
-				    .arg(icTop + innerChipSize.height() - 10 - 10 - 10);
+		qreal icLeft = (outerChipSize.width()  - innerChipSize.width()) / 2;
+		qreal icTop  = (outerChipSize.height() - innerChipSize.height()) / 2;
+		svg += QString("<rect x='%1' y='%2' fill='#303030' width='%3' height='%4' stroke='none' stroke-width='0' />\n")
+		  .arg(icLeft)
+		  .arg(icTop)
+		  .arg(innerChipSize.width())
+		  .arg(innerChipSize.height());
+		svg += QString("<polygon fill='#1f1f1f' points='%1,%2 %3,%2 %4,%5 %6,%5' />\n")
+		  .arg(icLeft)
+		  .arg(icTop)
+		  .arg(icLeft + innerChipSize.width())
+		  .arg(icLeft + innerChipSize.width() - 10)
+		  .arg(icTop  + 10)
+		  .arg(icLeft + 10);
+		svg += QString("<polygon fill='#1f1f1f' points='%1,%2 %3,%2 %4,%5 %6,%5' />\n")
+		  .arg(icLeft)
+		  .arg(icTop  + innerChipSize.height())
+		  .arg(icLeft + innerChipSize.width())
+		  .arg(icLeft + innerChipSize.width() - 10)
+		  .arg(icTop  + innerChipSize.height() - 10)
+		  .arg(icLeft + 10);
+		svg += QString("<polygon fill='#000000' points='%1,%2 %1,%3 %4,%5 %4,%6' />\n")
+		  .arg(icLeft)
+		  .arg(icTop)
+		  .arg(icTop + innerChipSize.height())
+		  .arg(icLeft + 10)
+		  .arg(icTop + innerChipSize.height() - 10)
+		  .arg(icTop +  10);
+		svg += QString("<polygon fill='#3d3d3d' points='%1,%2 %1,%3 %4,%5 %4,%6' />\n")
+		  .arg(icLeft + innerChipSize.width())
+		  .arg(icTop)
+		  .arg(icTop + innerChipSize.height())
+		  .arg(icLeft + innerChipSize.width() - 10)
+		  .arg(icTop + innerChipSize.height() - 10)
+		  .arg(icTop +  10);
+		svg += QString("<circle fill='#1f1f1f' cx='%1' cy='%2' r='10' stroke='none' stroke-width='0' />\n")
+		  .arg(icLeft + 10 + 10 + 10)
+		  .arg(icTop + innerChipSize.height() - 10 - 10 - 10);
+	}
 
-    }
+	svg += "</g>\n"; // chip xform
+	svg += "</g>\n"; // chip xform
 
-	svg += "</g>\n";		// chip xform
-	svg += "</g>\n";		// chip xform
-
-    if (!noText) {
-	    qreal fontSize = 65;
-	    svg += QString("<text id='label' font-family='OCRA' stroke='none' stroke-width='0' fill='white' font-size='%1' x='%2' y='%3' text-anchor='%4'>%5</text>\n")
-							    .arg(fontSize)
-							    .arg(50)
-							    .arg((height / 2.0) + (fontSize / 2) - (fontSize / 8))
-							    .arg("start")
-							    .arg(boardName);
-    }
+	if (!noText) {
+		qreal fontSize = 65;
+		svg += QString("<text id='label' font-family='OCRA' stroke='none' stroke-width='0' fill='white' font-size='%1' x='%2' y='%3' text-anchor='%4'>%5</text>\n")
+		  .arg(fontSize)
+		  .arg(50)
+		  .arg((height / 2.0) + (fontSize / 2) - (fontSize / 8))
+		  .arg("start")
+		  .arg(boardName);
+	}
 
 	bool gotIncludes = false;
 	qreal sWidth, sHeight;
@@ -367,49 +366,48 @@ QString MiscUtils::makeGeneric(const QDir & workingFolder, const QString & board
 		}
 	}
 
-    double xOffset = (width - (halfPowers * 100)) / 2;
+	double xOffset = (width - (halfPowers * 100)) / 2;
 	if (gotIncludes) {
 		qreal fontSize = 45;
 		for (int i = 0; i < halfPowers; i++) {
 			qreal x = (i * 100) + 50 + (fontSize / 2) - (fontSize / 5);
-			qreal y = height - 50 - 8 - (sHeight * 1000 / 2); 
+			qreal y = height - 50 - 8 - (sHeight * 1000 / 2);
 	
 			QDomElement power = powers.at(i);
-            if (power.attribute("empty", "").isEmpty() && !noText) {
-			    svg += QString("<g transform='translate(%1,%2)'><g transform='rotate(%3)'>\n")
-				    .arg(x + xOffset)
-				    .arg(y)
-				    .arg(-90);
-			    svg += QString("<text font-family='OCRA' stroke='none' stroke-width='0' fill='white' font-size='%1' x='%2' y='%3' text-anchor='%4'>%5</text>\n")
-							    .arg(fontSize)
-							    .arg(0)
-							    .arg(0)
-							    .arg("start")
-							    .arg(TextUtils::escapeAnd(getConnectorName(power)));
-			    svg += "</g></g>\n";
-            }
+			if (power.attribute("empty", "").isEmpty() && !noText) {
+				svg += QString("<g transform='translate(%1,%2)'><g transform='rotate(%3)'>\n")
+				  .arg(x + xOffset)
+				  .arg(y)
+				  .arg(-90);
+				svg += QString("<text font-family='OCRA' stroke='none' stroke-width='0' fill='white' font-size='%1' x='%2' y='%3' text-anchor='%4'>%5</text>\n")
+				  .arg(fontSize)
+				  .arg(0)
+				  .arg(0)
+				  .arg("start")
+				  .arg(TextUtils::escapeAnd(getConnectorName(power)));
+				svg += "</g></g>\n";
+			}
 
 			y = 50 + 8 + (sHeight * 1000 / 2);
 			power = powers.at(powers.count() - 1 - i);
-            if (power.attribute("empty", "").isEmpty() && !noText) {
-			    svg += QString("<g transform='translate(%1,%2)'><g transform='rotate(%3)'>\n")
-				    .arg(x + xOffset)
-				    .arg(y)
-				    .arg(-90);
-			    svg += QString("<text font-family='OCRA' stroke='none' stroke-width='0' fill='white' font-size='%1' x='%2' y='%3' text-anchor='%4'>%5</text>\n")
-							    .arg(fontSize)
-							    .arg(0)
-							    .arg(0)
-							    .arg("end")
-							    .arg(TextUtils::escapeAnd(getConnectorName(power)));
-			    svg += "</g></g>\n";
-            }
-
+			if (power.attribute("empty", "").isEmpty() && !noText) {
+				svg += QString("<g transform='translate(%1,%2)'><g transform='rotate(%3)'>\n")
+				  .arg(x + xOffset)
+				  .arg(y)
+				  .arg(-90);
+				svg += QString("<text font-family='OCRA' stroke='none' stroke-width='0' fill='white' font-size='%1' x='%2' y='%3' text-anchor='%4'>%5</text>\n")
+				  .arg(fontSize)
+				  .arg(0)
+				  .arg(0)
+				  .arg("end")
+				  .arg(TextUtils::escapeAnd(getConnectorName(power)));
+				svg += "</g></g>\n";
+			}
 		}
 	}
 
-	svg += "</g>\n";		// icon
-	svg += "</g>\n";		// breadboard
+	svg += "</g>\n"; // icon
+	svg += "</g>\n"; // breadboard
 	svg += "</svg>\n";
 
 	if (!gotIncludes) return svg;
@@ -421,14 +419,14 @@ QString MiscUtils::makeGeneric(const QDir & workingFolder, const QString & board
 		qreal x = (i * 100) + 50 - (sWidth * 1000 / 2);
 		QDomElement power = powers.at(i);
 		qreal y = height - 50 - (sHeight * 1000 / 2);
-        if (power.attribute("empty", "").isEmpty()) {
-		    includeSvg2(doc, includesFolder.absoluteFilePath("bb_pin.svg"), getConnectorIndex(power), x + xOffset, y);
-        }
+		if (power.attribute("empty", "").isEmpty()) {
+			includeSvg2(doc, includesFolder.absoluteFilePath("bb_pin.svg"), getConnectorIndex(power), x + xOffset, y);
+		}
 	
 		power = powers.at(powers.count() - 1 - i);
-        if (power.attribute("empty", "").isEmpty()) {
-		    includeSvg2(doc, includesFolder.absoluteFilePath("bb_pin.svg"), getConnectorIndex(power), x + xOffset, 50 - (sHeight * 1000 / 2));
-        }
+		if (power.attribute("empty", "").isEmpty()) {
+			includeSvg2(doc, includesFolder.absoluteFilePath("bb_pin.svg"), getConnectorIndex(power), x + xOffset, 50 - (sHeight * 1000 / 2));
+		}
 	}
 
 	svg = TextUtils::mergeSvgFinish(doc);
@@ -453,7 +451,7 @@ void MiscUtils::includeSvg2(QDomDocument & doc, const QString & path, const QStr
 		child.setAttribute("id", name);
 	}
 
-    double factor;
+	double factor;
 	splitter.normalize(1000, "", false, factor);
 	QHash<QString, QString> attributes;
 	attributes.insert("transform", QString("translate(%1,%2)").arg(x).arg(y));
@@ -461,7 +459,7 @@ void MiscUtils::includeSvg2(QDomDocument & doc, const QString & path, const QStr
 	TextUtils::mergeSvg(doc, splitter.toString(), "breadboard");
 }
 
-bool MiscUtils::makeWireTrees(QList<QDomElement> & wireList, QList<WireTree *> & wireTrees) 
+bool MiscUtils::makeWireTrees(QList<QDomElement> & wireList, QList<WireTree *> & wireTrees)
 {
 	foreach (QDomElement wire, wireList) {
 		WireTree * wireTree = new WireTree(wire);
@@ -523,7 +521,7 @@ bool MiscUtils::makeWireTrees(QList<QDomElement> & wireList, QList<WireTree *> &
 			QString info = QString("x1:%1 y1:%2 x2:%3 y2:%4 c:%5").arg(wt->x1).arg(wt->y1).arg(wt->x2).arg(wt->y2).arg(wt->curve);
 			//qreal radius, angle1, angle2;
 			//qDebug() << "wiretree failure" << wt << wt->left << wt->right << info;
-            wt->failed = true;
+			wt->failed = true;
 		}
 		return false;
 	}
@@ -553,27 +551,27 @@ bool MiscUtils::x1y1x2y2(const QDomElement & element, qreal & x1, qreal & y1, qr
 	bool ok = true;
 	x1 = element.attribute("x1", "").toDouble(&ok);
 	if (!ok) {
-        x1 = strToMil(element.attribute("x1", ""), ok);
-        if (!ok) return false;
-    }
+		x1 = strToMil(element.attribute("x1", ""), ok);
+		if (!ok) return false;
+	}
 
 	y1 = element.attribute("y1", "").toDouble(&ok);
 	if (!ok) {
-        y1 = strToMil(element.attribute("y1", ""), ok);
-        if (!ok) return false;
-    }
+		y1 = strToMil(element.attribute("y1", ""), ok);
+		if (!ok) return false;
+	}
 
 	x2 = element.attribute("x2", "").toDouble(&ok);
 	if (!ok) {
-        x2 = strToMil(element.attribute("x2", ""), ok);
-        if (!ok) return false;
-    }
+		x2 = strToMil(element.attribute("x2", ""), ok);
+		if (!ok) return false;
+	}
 
 	y2 = element.attribute("y2", "").toDouble(&ok);
 	if (!ok) {
-        y2 = strToMil(element.attribute("y2", ""), ok);
-    }
-    return ok;
+		y2 = strToMil(element.attribute("y2", ""), ok);
+	}
+	return ok;
 }
 
 

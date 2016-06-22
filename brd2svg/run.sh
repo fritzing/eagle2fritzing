@@ -23,7 +23,7 @@ for FILENAME in $BRDPATH/*.brd; do
   python preprocess.py "$FILENAME" "$FILENAME.tmp"
   OLDSIZE=$(wc -c <"$FILENAME")
   NEWSIZE=$(wc -c <"$FILENAME.tmp")
-  if [ $NEWSIZE -lt $OLDSIZE ]; then
+  if [ $NEWSIZE -ne $OLDSIZE ]; then
     # File size changed; copy original to BACKUPPATH
     mkdir -p "$BRDPATH/$BACKUPPATH"
     cp "$FILENAME" "$BRDPATH/$BACKUPPATH"

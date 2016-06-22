@@ -21,7 +21,7 @@
 #include <QNetworkRequest>
 //#include <QScriptEngine>
 //#include <QScriptValue>
-#include <QTextDocument> 
+#include <QTextDocument>
 
 #include <limits>
 
@@ -38,7 +38,7 @@
 
 /////////////////////////////////
 //
-//	TODO:  
+//	TODO:
 //
 //		elliptical pads
 //		draw holes with metal, but not treated as connector
@@ -46,7 +46,7 @@
 //      pcb fails with no connectors
 //
 /////////////////////////////////
- 
+
 const QString DimensionsLayer("20");
 const QString TopLayer("1");
 const QString BottomLayer("16");
@@ -66,6 +66,16 @@ QString HybridString(" hybrid='yes' ");
 
 QDomElement Spacer;
 
+
+// ADAFRUIT 2016-06-21 MEGA KLUDGE: normally text elements outside the
+// board bounds are discarded...however, in the case of FeatherWings,
+// these use a library component as the board itself, and the bounds
+// do not register, creating problems for the text clipping.  Super
+// hacky kludge just completely turns off this text clipping if a
+// FeatherWing is detected among the components used.  Ugh.
+uint8_t textClipEnabled = 1;
+
+
 bool cxcyrw(QDomElement & element, qreal & cx, qreal & cy, qreal & radius, qreal & width);
 
 inline QString SW(qreal strokeWidth)
@@ -81,7 +91,7 @@ bool numericByIndex(QDomElement & e1, QDomElement & e2)
 }
 
 QString getConnectorIndex(const QDomElement & element) {
-    return "connector" + element.attribute("connectorIndex") + "pin";
+	return "connector" + element.attribute("connectorIndex") + "pin";
 }
 
 QString getConnectorName(const QDomElement & element)
@@ -93,28 +103,28 @@ QString getConnectorName(const QDomElement & element)
 	QString signal = element.attribute("signal");
 	QList<Renamer *> renamers = Renamers.values(signal);
 	if (renamers.count() > 0) {
-        QDomElement package = element.parentNode().parentNode().toElement();
+		QDomElement package = element.parentNode().parentNode().toElement();
 		QString packageName = package.attribute("name");
 		QString elementName = package.parentNode().toElement().attribute("name");
-        QString signalName = element.attribute("name");
+		QString signalName = element.attribute("name");
 
-        qDebug() << packageName << elementName << signalName;
+		qDebug() << packageName << elementName << signalName;
 
-        foreach (Renamer * renamer, renamers) {
-            qDebug() << "\t" << renamer->package << renamer->element << renamer->name;
+		foreach (Renamer * renamer, renamers) {
+			qDebug() << "\t" << renamer->package << renamer->element << renamer->name;
 
-            if (renamer->package.compare(packageName) == 0
-                   && renamer->name.compare(signalName) == 0)
-            {
-                return renamer->to;
-            }
-        }
-        foreach (Renamer * renamer, renamers) {
-            if (renamer->package.compare(packageName) == 0 && renamer->element.compare(elementName) == 0) {
-                return renamer->to;
-            }
-        }
-    }
+			if (renamer->package.compare(packageName) == 0
+			  && renamer->name.compare(signalName) == 0)
+			{
+				return renamer->to;
+			}
+		}
+		foreach (Renamer * renamer, renamers) {
+			if (renamer->package.compare(packageName) == 0 && renamer->element.compare(elementName) == 0) {
+				return renamer->to;
+			}
+		}
+	}
 
 	QString name = element.attribute("name");
 	if (signal.contains(name, Qt::CaseInsensitive)) return signal;		// superset
@@ -169,7 +179,7 @@ Renamer::Renamer(const QDomElement & element)
 	this->element = element.attribute("element");
 	this->package = element.attribute("package");
 	this->signal = element.attribute("signal");
-    this->name = element.attribute("name");
+	this->name = element.attribute("name");
 	this->to = element.attribute("to");
 }
 
@@ -179,7 +189,7 @@ BrdApplication::BrdApplication(int& argc, char **argv[]) : QApplication(argc, *a
 {
 	m_networkAccessManager = NULL;
 
-	GroundNames << "gnd"<<  "vss" << "vee" << "com"; 
+	GroundNames << "gnd"<<  "vss" << "vee" << "com";
 	PowerNames << "vcc" << "+5v" << "+3v" << "+3.3v" << "5v" << "3v" << "3.3v" << "-" << "+" << "vdd" << "v+" << "v-" << "vin" << "vout" << "+v";
 	ExternalElementNames << "sv" << "j";
 
@@ -187,10 +197,10 @@ BrdApplication::BrdApplication(int& argc, char **argv[]) : QApplication(argc, *a
 }
 
 void BrdApplication::start() {
-    if (!initArguments()) {
-        usage();
-        return;
-    }
+	if (!initArguments()) {
+		usage();
+		return;
+	}
 
 	QDir workingFolder(m_workingPath);
 	QDir fzpFolder, breadboardFolder, schematicFolder, pcbFolder, iconFolder;
@@ -210,9 +220,9 @@ void BrdApplication::start() {
 
 	QDir allPackagesFolder(m_andPath);
 	QString AllPackagesPath = allPackagesFolder.absoluteFilePath("all.packages.txt");
-    qDebug();
-    qDebug() << "looking for all.packages.txt in" << AllPackagesPath;
-    qDebug();
+	qDebug();
+	qDebug() << "looking for all.packages.txt in" << AllPackagesPath;
+	qDebug();
 
 	QDir paramsFolder(workingFolder);
 	paramsFolder.cd("params");
@@ -242,12 +252,12 @@ void BrdApplication::start() {
 		return;	
 	}
 
-    QDir andFolder(m_andPath);
-    bool fontsOK = registerFonts();
-    if (!fontsOK) {
+	QDir andFolder(m_andPath);
+	bool fontsOK = registerFonts();
+	if (!fontsOK) {
 		qDebug() << "unable to register fonts";
 		return;	
-    }
+	}
 
 	QStringList nameFilters;
 	nameFilters << "*.brd";
@@ -260,7 +270,7 @@ void BrdApplication::start() {
 	loadDifParams(workingFolder, difParams);
 
 	QStringList ICs;
-    QHash<QString, QString> SubpartAliases;
+	QHash<QString, QString> SubpartAliases;
 	QFile file(AllPackagesPath);
 	QString errorStr;
 	int errorLine;
@@ -278,10 +288,10 @@ void BrdApplication::start() {
 		QDomElement map = root.firstChildElement("map");
 		while (!map.isNull()) {
 			QString from = map.attribute("package");
-            QString to = map.attribute("to");
-            if (!from.isEmpty() && !to.isEmpty()) {
-                SubpartAliases.insert(to.toLower(), from);
-            }
+			QString to = map.attribute("to");
+			if (!from.isEmpty() && !to.isEmpty()) {
+				SubpartAliases.insert(to.toLower(), from);
+			}
 			map = map.nextSiblingElement("map");
 		}
 	}
@@ -341,7 +351,7 @@ void BrdApplication::start() {
 		if (paramsFile.exists()) {
 			paramsDoc = loadParams(paramsFile, basename);
 		}
-        QDomElement paramsRoot = paramsDoc.documentElement();
+		QDomElement paramsRoot = paramsDoc.documentElement();
 		QDomElement connectors = paramsRoot.firstChildElement("connectors");
 		QDomElement renames = connectors.firstChildElement("renames");
 		QDomElement rename = renames.firstChildElement("rename");
@@ -371,15 +381,15 @@ void BrdApplication::start() {
 
 
 		//qDebug() << "generating schematic";
-        QString schematicsvg = genSchematic(root, paramsRoot, difParam);
+		QString schematicsvg = genSchematic(root, paramsRoot, difParam);
 		SvgFileSplitter splitter;
 		splitter.load(schematicsvg);
-        double factor;
+		double factor;
 		splitter.normalize(72, "", false, factor);
 		saveFile(splitter.toString(), schematicFolder.absoluteFilePath(basename + "_schematic.svg"));
 
 		//qDebug() << "generating pcb";
-        QString pcbsvg = genPCB(root, paramsRoot);
+		QString pcbsvg = genPCB(root, paramsRoot);
 		splitter.load(pcbsvg);
 		splitter.normalize(72, "", false, factor);
 		saveFile(splitter.toString(), pcbFolder.absoluteFilePath(basename + "_pcb.svg"));
@@ -399,7 +409,7 @@ void BrdApplication::start() {
 
 		//qDebug() << "generating fzp";
 		QString gender = paramsRoot.attribute("gender", "female");
-        QString fzp = genFZP(root, paramsRoot, difParam, basename, gender, descriptionsFolder);
+		QString fzp = genFZP(root, paramsRoot, difParam, basename, gender, descriptionsFolder);
 		QString fzpName = basename + ".fzp";
 		if (m_genericSMD) fzpName = "SMD_" + fzpName;
 		saveFile(fzp, fzpFolder.absoluteFilePath(fzpName));
@@ -425,14 +435,14 @@ void BrdApplication::start() {
 
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-        foreach (QString name, names) {
-            packageString += QString("<package name='%1' ic='no' />\n").arg(Qt::escape(name));
-         }
+	foreach (QString name, names) {
+		packageString += QString("<package name='%1' ic='no' />\n").arg(Qt::escape(name));
+	}
 
 #else
-        foreach (QString name, names) {
-          packageString += QString("<package name='%1' ic='no' />\n").arg(name.toHtmlEscaped());
-        }
+	foreach (QString name, names) {
+		packageString += QString("<package name='%1' ic='no' />\n").arg(name.toHtmlEscaped());
+	}
 #endif
 		packageString += "</packages>\n";
 		saveFile(packageString, AllPackagesPath);
@@ -440,7 +450,7 @@ void BrdApplication::start() {
 
 	qDebug() << "generating bin";
 	qDebug() << "";
-    QString binName = workingFolder.dirName();
+	QString binName = workingFolder.dirName();
 	genBin(fileList, binName, binsFolder.absoluteFilePath(binName + ".fzb"));
 
 	qDebug() << "done";
@@ -486,7 +496,7 @@ void BrdApplication::genBin(QStringList & fileList, const QString & titleString,
 	if (!binDoc.setContent(&file, true, &errorStr, &errorLine, &errorColumn)) {
 		QDomElement module = binDoc.createElement("module");
 		binDoc.appendChild(module);
-		module.setAttribute("fritzingVersion", FritzingVersion); 
+		module.setAttribute("fritzingVersion", FritzingVersion);
 		QDomElement title = binDoc.createElement("title");
 		module.appendChild(title);
 		QDomNode text = binDoc.createTextNode(titleString);
@@ -554,7 +564,7 @@ QDomDocument BrdApplication::loadParams(QFile & paramsFile, const QString & base
 	return paramsDoc;
 }
 
-void BrdApplication::saveFile(const QString & content, const QString & path) 
+void BrdApplication::saveFile(const QString & content, const QString & path)
 {
 	QFile file(path);
 	if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -568,22 +578,22 @@ void BrdApplication::saveFile(const QString & content, const QString & path)
 bool BrdApplication::initArguments() {
 	m_workingPath = m_eaglePath = "";
 	m_genericSMD = false;
-    QStringList args = QApplication::arguments();
-    for (int i = 0; i < args.length(); i++) {
-        if ((args[i].compare("-h", Qt::CaseInsensitive) == 0) ||
-            (args[i].compare("-help", Qt::CaseInsensitive) == 0) ||
-            (args[i].compare("--help", Qt::CaseInsensitive) == 0))
-        {
-            return false;
-        }
+	QStringList args = QApplication::arguments();
+	for (int i = 0; i < args.length(); i++) {
+		if ((args[i].compare("-h", Qt::CaseInsensitive) == 0) ||
+		    (args[i].compare("-help", Qt::CaseInsensitive) == 0) ||
+		    (args[i].compare("--help", Qt::CaseInsensitive) == 0))
+		{
+			return false;
+		}
 
 		if ((args[i].compare("-g", Qt::CaseInsensitive) == 0) ||
-            (args[i].compare("-generic", Qt::CaseInsensitive) == 0)||
-            (args[i].compare("--generic", Qt::CaseInsensitive) == 0))
-        {
-             m_genericSMD = true;
-			 continue;
-        }
+		    (args[i].compare("-generic", Qt::CaseInsensitive) == 0)||
+		    (args[i].compare("--generic", Qt::CaseInsensitive) == 0))
+		{
+			m_genericSMD = true;
+			continue;
+		}
 
 		if (i + 1 < args.length()) {
 			if ((args[i].compare("-w", Qt::CaseInsensitive) == 0) ||
@@ -618,43 +628,43 @@ bool BrdApplication::initArguments() {
 			}
 
 		}
-    }
+	}
 
-    if (m_eaglePath.isEmpty()) {
-        message("-e <path to eagle executable> parameter missing");
-        return false;
-    }
+	if (m_eaglePath.isEmpty()) {
+		message("-e <path to eagle executable> parameter missing");
+		return false;
+	}
 
-    if (m_workingPath.isEmpty()) {
-        message("-b <path to brd folder> parameter missing");
-        return false;
-    }
+	if (m_workingPath.isEmpty()) {
+		message("-b <path to brd folder> parameter missing");
+		return false;
+	}
 
-    QDir directory(m_workingPath);
-    if (!directory.exists()) {
-        message(QString("working folder '%1' not found").arg(m_workingPath));
-        return false;
-    }
+	QDir directory(m_workingPath);
+	if (!directory.exists()) {
+		message(QString("working folder '%1' not found").arg(m_workingPath));
+		return false;
+	}
 
-    QFile file(m_eaglePath);
-    if (!file.exists()) {
-        message(QString("eagle executable '%1' not found").arg(m_eaglePath));
-        return false;
-    }
+	QFile file(m_eaglePath);
+	if (!file.exists()) {
+		message(QString("eagle executable '%1' not found").arg(m_eaglePath));
+		return false;
+	}
 
-    return true;
+	return true;
 }
 
 void BrdApplication::usage() {
-    message("\nusage: brd2svg -w <path to working folder (containing brds folder)> "
-                "-e <path to eagle executable> "
-                "-c <core or contrib> "
-                "-g (set only for generic smd ic generation) "
-                "-s <path to subparts folder> "
-                "-p <path to second subparts folder> "
-                "-a <path to 'and' folder> "
-                "\n"
-    );
+	message("\nusage: brd2svg -w <path to working folder (containing brds folder)> "
+	  "-e <path to eagle executable> "
+	  "-c <core or contrib> "
+	  "-g (set only for generic smd ic generation) "
+	  "-s <path to subparts folder> "
+	  "-p <path to second subparts folder> "
+	  "-a <path to 'and' folder> "
+	  "\n"
+	);
 }
 
 void BrdApplication::message(const QString & msg) {
@@ -682,7 +692,7 @@ void BrdApplication::collectLayerElements(QList<QDomElement> & from, QList<QDomE
 	}
 }
 
-QRectF BrdApplication::getDimensions(QDomElement & root, QDomElement & maxElement, const QString & layer, bool deep) 
+QRectF BrdApplication::getDimensions(QDomElement & root, QDomElement & maxElement, const QString & layer, bool deep)
 {
 	qreal left = std::numeric_limits<int>::max();
 	qreal right = std::numeric_limits<int>::min();
@@ -718,9 +728,9 @@ QRectF BrdApplication::getDimensions(QDomElement & root, QDomElement & maxElemen
 	foreach (QDomElement element, to) {
 		if (element.isNull()) continue;
 
-        QString string;
-        QTextStream stream(&string);
-        element.save(stream, 0);
+		QString string;
+		QTextStream stream(&string);
+		element.save(stream, 0);
 
 		QRectF r = getPlainBounds(element, layer);
 		if (!r.isNull()) {
@@ -903,33 +913,33 @@ bool BrdApplication::getArcBounds(QDomElement wire, QDomElement arc, qreal & x1,
 	if (!ok) return false;
 
 	// from http://groups.google.com/group/comp.graphics.algorithms/browse_thread/thread/1adbcc734e44d024/79201c57a09149fe?lnk=gst&q=arc+bounding+box#79201c57a09149fe
-	// Assuming that the arc is the counterclockwise arc from s to e. 
-	// Precondition: 0 <= s < 360  and 0 <= e < 360 
-	if (angle2 < angle1) angle2 = angle2 + 360; 
+	// Assuming that the arc is the counterclockwise arc from s to e.
+	// Precondition: 0 <= s < 360  and 0 <= e < 360
+	if (angle2 < angle1) angle2 = angle2 + 360;
 	x1 = qMin(ax1, ax2);
 	y1 = qMin(ay1, ay2);
 	x2 = qMax(ax1, ax2);
 	y2 = qMax(ay1, ay2);
 
-	if (angle2 > 90) { 
-		if (angle1 < 90) y2 = yc + radius; 
-		if (angle2 > 180) { 
-			if (angle1 < 180) x1 = xc - radius; 
-			if (angle2 > 270) { 
-				if (angle1 < 270) y1 = yc - radius; 
-				if (angle2 > 360) { 
-					x2 = xc + radius; 
-					if (angle2 > 450) { 
-						y2 = yc + radius; 
-						if (angle2 > 540) { 
-							x1 = xc - radius; 
-							if (angle2 > 630) y1 = yc - radius; 
-						} 
-					} 
-				} 
-			} 
-		} 
-	} 
+	if (angle2 > 90) {
+		if (angle1 < 90) y2 = yc + radius;
+		if (angle2 > 180) {
+			if (angle1 < 180) x1 = xc - radius;
+			if (angle2 > 270) {
+				if (angle1 < 270) y1 = yc - radius;
+				if (angle2 > 360) {
+					x2 = xc + radius;
+					if (angle2 > 450) {
+						y2 = yc + radius;
+						if (angle2 > 540) {
+							x1 = xc - radius;
+							if (angle2 > 630) y1 = yc - radius;
+						}
+					}
+				}
+			}
+		}
+	}
 
 	return true;
 }
@@ -948,17 +958,17 @@ void BrdApplication::genXml(QDir & workingFolder, QDir & ulpDir, const QString &
 	if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
 		QTextStream out(&file);
 		// note the single quotes around filenames--this is eagle's non-standard way of dealing with spaces
-        out << QString("EDIT '%1';\nRUN '%3' '%2';\nQUIT;\n")
-                        .arg(brdFolder.absoluteFilePath(brdname))
-                        .arg(targetname)
-                        .arg(ulpDir.absoluteFilePath("brd2xml.ulp"));
+		out << QString("EDIT '%1';\nRUN '%3' '%2';\nQUIT;\n")
+		  .arg(brdFolder.absoluteFilePath(brdname))
+		  .arg(targetname)
+		  .arg(ulpDir.absoluteFilePath("brd2xml.ulp"));
 		file.close();
 		
 		QProcess process;
-        QString thing = brdFolder.absolutePath();
-        process.setWorkingDirectory(thing);
+		QString thing = brdFolder.absolutePath();
+		process.setWorkingDirectory(thing);
 
-        process.start(m_eaglePath, QStringList() << "-C" << QString("SCRIPT %1").arg(workingFolder.absoluteFilePath("brd2xml.scr")) << "doesntexist.brd");
+		process.start(m_eaglePath, QStringList() << "-C" << QString("SCRIPT %1").arg(workingFolder.absoluteFilePath("brd2xml.scr")) << "doesntexist.brd");
 		if (!process.waitForStarted()) {
 			qDebug() << QString("unable to start %1").arg(brdname);
 			file.remove();
@@ -979,7 +989,7 @@ void BrdApplication::genXml(QDir & workingFolder, QDir & ulpDir, const QString &
 	}
 }
 
-QString BrdApplication::genParams(QDomElement & root, const QString & prefix) 
+QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 {
 	QString params = "<?xml version='1.0' encoding='UTF-8'?>\n";
 	params += QString("<board-params board='%1' include-vias='false' shrink-holes-factor='1.0' >\n").arg(prefix);
@@ -989,12 +999,12 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 	params += QString("<title></title>\n");
 	params += QString("<url></url>\n");
 	params += QString("<description></description>\n");
-    params += QString("<tags>\n");    
-	params += QString("<!-- <tag>sample tag</tag> -->\n");   
+	params += QString("<tags>\n");
+	params += QString("<!-- <tag>sample tag</tag> -->\n");
 	params += QString("</tags>\n");
-    params += QString("<properties>\n");
+	params += QString("<properties>\n");
 	params += QString("<!-- <property name='family'>sample family</property> -->\n");
-    params += QString("</properties>\n");
+	params += QString("</properties>\n");
 
 	params += QString("<breadboard breadboard-color='%1'>\n").arg("#1a234d");
 	params += QString("<extra-layers>\n");
@@ -1126,12 +1136,12 @@ QString BrdApplication::genContact(QDomElement & contact) {
 			;
 }
 
-QString BrdApplication::genFZP(QDomElement & root, QDomElement & paramsRoot, DifParam* difParam, const QString & prefix, const QString & connectorType, const QDir & descriptionsFolder) 
+QString BrdApplication::genFZP(QDomElement & root, QDomElement & paramsRoot, DifParam* difParam, const QString & prefix, const QString & connectorType, const QDir & descriptionsFolder)
 {
 	QString fzp = "<?xml version='1.0' encoding='UTF-8'?>\n";
 	fzp += QString("<module fritzingVersion='%2' moduleId='%1'>\n").arg(prefix).arg(FritzingVersion);
 	fzp += QString("<version>4</version>\n");
-    fzp += QString("<date>%1</date>\n").arg(QDate::currentDate().toString(Qt::ISODate));
+	fzp += QString("<date>%1</date>\n").arg(QDate::currentDate().toString(Qt::ISODate));
 
 	QString author = getenvUser();
 	QStringList tags;
@@ -1233,7 +1243,7 @@ QString BrdApplication::genFZP(QDomElement & root, QDomElement & paramsRoot, Dif
 		if (!url.isEmpty()) {
 			fzp += QString("<url>%1</url>\n").arg(TextUtils::escapeAnd(url));
 		}
-		fzp += QString("<tags>\n");    
+		fzp += QString("<tags>\n");
 		foreach (QString tag, tags) {
 			fzp += QString("<tag>%1</tag>\n").arg(TextUtils::escapeAnd(tag));
 		}
@@ -1249,36 +1259,36 @@ QString BrdApplication::genFZP(QDomElement & root, QDomElement & paramsRoot, Dif
 
 	fzp += QString("<views>\n");
 
-    fzp += QString("<breadboardView>\n");
-    fzp += QString("<layers image='breadboard/%1_breadboard.svg'>\n").arg(prefix);
-    fzp += QString("<layer layerId='breadboard'/>\n");
-    fzp += QString("</layers>\n");
-    fzp += QString("</breadboardView>\n");
+	fzp += QString("<breadboardView>\n");
+	fzp += QString("<layers image='breadboard/%1_breadboard.svg'>\n").arg(prefix);
+	fzp += QString("<layer layerId='breadboard'/>\n");
+	fzp += QString("</layers>\n");
+	fzp += QString("</breadboardView>\n");
 
-    fzp += QString("<schematicView>\n");
-    fzp += QString("<layers image='schematic/%1_schematic.svg'>\n").arg(prefix);
-    fzp += QString("<layer layerId='schematic'/>\n");
-    fzp += QString("</layers>\n");
-    fzp += QString("</schematicView>\n");
+	fzp += QString("<schematicView>\n");
+	fzp += QString("<layers image='schematic/%1_schematic.svg'>\n").arg(prefix);
+	fzp += QString("<layer layerId='schematic'/>\n");
+	fzp += QString("</layers>\n");
+	fzp += QString("</schematicView>\n");
 
-    fzp += QString("<pcbView>\n");
-    fzp += QString("<layers image='pcb/%1_pcb.svg'>\n").arg(prefix);
-    fzp += QString("<layer layerId='copper1'/>\n");
-    fzp += QString("<layer layerId='silkscreen'/>\n");
+	fzp += QString("<pcbView>\n");
+	fzp += QString("<layers image='pcb/%1_pcb.svg'>\n").arg(prefix);
+	fzp += QString("<layer layerId='copper1'/>\n");
+	fzp += QString("<layer layerId='silkscreen'/>\n");
 	if (!m_genericSMD) {
 		fzp += QString("<layer layerId='copper0'/>\n");
 	}
-    fzp += QString("</layers>\n");
-    fzp += QString("</pcbView>\n");
+	fzp += QString("</layers>\n");
+	fzp += QString("</pcbView>\n");
 
-    fzp += QString("<iconView>\n");
-    fzp += QString("<layers image='breadboard/%1_breadboard.svg'>\n").arg(prefix);
-    fzp += QString("<layer layerId='icon'/>\n");
-    fzp += QString("</layers>\n");
-    fzp += QString("</iconView>\n");
+	fzp += QString("<iconView>\n");
+	fzp += QString("<layers image='breadboard/%1_breadboard.svg'>\n").arg(prefix);
+	fzp += QString("<layer layerId='icon'/>\n");
+	fzp += QString("</layers>\n");
+	fzp += QString("</iconView>\n");
 
-    fzp += QString("</views>\n");
-    fzp += QString("<connectors>\n");
+	fzp += QString("</views>\n");
+	fzp += QString("<connectors>\n");
 
 	QList<QDomElement> contacts;
 	QStringList busNames;
@@ -1307,27 +1317,27 @@ QString BrdApplication::genFZP(QDomElement & root, QDomElement & paramsRoot, Dif
 		}
 
 		fzp += QString("<connector id='connector%1' type='%3' name='%2'>\n").arg(index).arg(connectorName).arg(ct);
-        fzp += QString("<description>%1</description>").arg(connectorName);
-        fzp += QString("<views>\n");
-        fzp += QString("<breadboardView>\n");
-        fzp += QString("<p layer='breadboard' svgId='connector%1pin'/>").arg(index);
-        fzp += QString("</breadboardView>\n");
-        fzp += QString("<schematicView>\n");
-        fzp += QString("<p layer='schematic' svgId='connector%1pin' terminalId='connector%1terminal'%2/>").arg(index).arg(hybrid ? HybridString : "");
-        fzp += QString("</schematicView>\n");
-        fzp += QString("<pcbView>\n");
+		fzp += QString("<description>%1</description>").arg(connectorName);
+		fzp += QString("<views>\n");
+		fzp += QString("<breadboardView>\n");
+		fzp += QString("<p layer='breadboard' svgId='connector%1pin'/>").arg(index);
+		fzp += QString("</breadboardView>\n");
+		fzp += QString("<schematicView>\n");
+		fzp += QString("<p layer='schematic' svgId='connector%1pin' terminalId='connector%1terminal'%2/>").arg(index).arg(hybrid ? HybridString : "");
+		fzp += QString("</schematicView>\n");
+		fzp += QString("<pcbView>\n");
 		if (!m_genericSMD) {
 			fzp += QString("<p layer='copper0' svgId='connector%1pad'%2/>").arg(index).arg(hybrid ? HybridString : "");
 		}
-        fzp += QString("<p layer='copper1' svgId='connector%1pad'%2/>").arg(index).arg(hybrid ? HybridString : "");
-        fzp += QString("</pcbView>\n");
-        fzp += QString("</views>\n");
-        fzp += QString("</connector>\n");
+		fzp += QString("<p layer='copper1' svgId='connector%1pad'%2/>").arg(index).arg(hybrid ? HybridString : "");
+		fzp += QString("</pcbView>\n");
+		fzp += QString("</views>\n");
+		fzp += QString("</connector>\n");
 	}
 
-    fzp += QString("</connectors>\n");
+	fzp += QString("</connectors>\n");
 
-    fzp += QString("<buses>\n");
+	fzp += QString("<buses>\n");
 
 	QList<int> gotBuses;
 	QDomElement buses = paramsRoot.firstChildElement("buses");
@@ -1416,7 +1426,7 @@ QString BrdApplication::genFZP(QDomElement & root, QDomElement & paramsRoot, Dif
 		busIndex++;
 	}
 
-    fzp += QString("</buses>\n");
+	fzp += QString("</buses>\n");
 
 	fzp += QString("</module>\n");
 
@@ -1436,18 +1446,18 @@ QString BrdApplication::genPCB(QDomElement & root, QDomElement & paramsRoot) {
 	svg += genMaxShape(root, paramsRoot, "none", "white", 8);
 	QDomElement skipParams;
 	qreal minArea = qMin(m_trueBounds.width() * m_trueBounds.height() / 16, MinPCBPackageArea);
-	genLayerElements(root, skipParams, svg, TopPlaceLayer, true, minArea, true, "#ffffff");   
+	genLayerElements(root, skipParams, svg, TopPlaceLayer, true, minArea, true, "#ffffff");
 	QStringList noICs;
-    QHash<QString, QString> noSubparts;
+	QHash<QString, QString> noSubparts;
 	FillStroke fs;
 	fs.fill = "none";
 	fs.fillOpacity = 1.0;
 	fs.stroke = "white";
 	fs.strokeWidth = 8;
-    genOverlaps(root, fs, fs, svg, true, noICs, noSubparts, false);
+	genOverlaps(root, fs, fs, svg, true, noICs, noSubparts, false);
 	svg += "</g>\n";
 	QString c1, c0;
-	genCopperElements(root, paramsRoot, c1, TopLayer, "#F7BD13", "pad", false);   
+	genCopperElements(root, paramsRoot, c1, TopLayer, "#F7BD13", "pad", false);
 	if (!m_genericSMD) {
 		genCopperElements(root, paramsRoot, c0, BottomLayer, "#F7BD13", "pad", false);
 	}
@@ -1493,7 +1503,7 @@ bool viasFirst(QDomElement & contact1, QDomElement & contact2)
 }
 
 
-QString BrdApplication::genGenericBreadboard(QDomElement & root, QDomElement & paramsRoot, DifParam * difParam, QDir & workingFolder) 
+QString BrdApplication::genGenericBreadboard(QDomElement & root, QDomElement & paramsRoot, DifParam * difParam, QDir & workingFolder)
 {
 	QString boardColor = "#1F7A34";
 
@@ -1520,18 +1530,18 @@ QString BrdApplication::genGenericBreadboard(QDomElement & root, QDomElement & p
 	powers.append(grounds);
 
 	QString copper;
-	genCopperElements(root, paramsRoot, copper, TopLayer, "#8c8c8c", "pad", true);   
-    QRectF outerChipRect;
-    getPackagesBounds(root, outerChipRect, TopLayer, true, false);  
+	genCopperElements(root, paramsRoot, copper, TopLayer, "#8c8c8c", "pad", true);
+	QRectF outerChipRect;
+	getPackagesBounds(root, outerChipRect, TopLayer, true, false);
 
 	QRectF innerChipRect;
-	getPackagesBounds(root, innerChipRect, TopPlaceLayer, true, false);  
+	getPackagesBounds(root, innerChipRect, TopPlaceLayer, true, false);
 
-    qSort(powers.begin(), powers.end(), numericByIndex);
+	qSort(powers.begin(), powers.end(), numericByIndex);
 	return MiscUtils::makeGeneric(workingFolder, boardColor, powers, copper, getBoardName(root), innerChipRect.size(), innerChipRect.size(), getConnectorName, getConnectorIndex, false);
 }
 
-QString BrdApplication::genBreadboard(QDomElement & root, QDomElement & paramsRoot, DifParam * difParam, const QStringList & ICs, QHash<QString, QString> & subpartAliases) 
+QString BrdApplication::genBreadboard(QDomElement & root, QDomElement & paramsRoot, DifParam * difParam, const QStringList & ICs, QHash<QString, QString> & subpartAliases)
 {
 	QString svg = TextUtils::makeSVGHeader(1000, 1000, m_trueBounds.width(), m_trueBounds.height());
 	svg += "<desc>Fritzing breadboard generated by brd2svg</desc>\n";
@@ -1561,6 +1571,7 @@ QString BrdApplication::genBreadboard(QDomElement & root, QDomElement & paramsRo
 		QDomElement bb = paramsRoot.firstChildElement("breadboard");
 		QDomElement extraLayers = bb.firstChildElement("extra-layers");
 		QDomElement layer = extraLayers.firstChildElement("layer");
+
 		while (!layer.isNull()) {
 			svg += QString("<g><title>layer %1</title>\n").arg(layer.attribute("number"));
 			QString layerID = layer.attribute("number");
@@ -1607,10 +1618,10 @@ void BrdApplication::addSubparts(QDomElement & root, QDomElement & paramsRoot, Q
 	QList<QDomElement> packages;
 	collectPackages(root, packages);
 	foreach (QDomElement package, packages) {
-        QString name = package.attribute("name", "");
-        QString sname = findSubpart(name, subpartAliases, subpartsFolder);
+		QString name  = package.attribute("name", "");
+		QString sname = findSubpart(name, subpartAliases, subpartsFolder);
 		if (!sname.isEmpty()) {
-            qDebug() << "\tfound subpart (1)" << name << sname;
+			qDebug() << "\tfound subpart (1)" << name << sname;
 			gotPackage = true;
 			break;
 		}
@@ -1631,24 +1642,46 @@ void BrdApplication::addSubparts(QDomElement & root, QDomElement & paramsRoot, Q
 		foreach (QDomElement package, packages) {
 			QString name = package.attribute("name", "").toLower();
 
+#if 1
 			// ADAFRUIT 2016-06-16: MICROBUILDER LIBRARY KLUDGE:
+			// This -could- be done in preprocess.py now, since
+			// it parses the whole DOM tree.  Will probably do that.
 			if(name == "0805-no") {
 				// Rename generic 0805 to resistor or cap as needed,
 				// based on parent element name (starts with 'C' or 'R').
 				QString elementName = package.parentNode().toElement().attribute("name", "").toUpper();
 				if(     elementName[0] == 'C') name = "0805-cap";
 				else if(elementName[0] == 'R') name = "0805-res";
+			} else if(name == "0603-no") {
+				// Rename generic 0603 to resistor or cap as needed,
+				// based on parent element name (starts with 'C' or 'R').
+				QString elementName = package.parentNode().toElement().attribute("name", "").toUpper();
+				if(     elementName[0] == 'C') name = "0603-cap";
+				else if(elementName[0] == 'R') name = "0603-res";
 			} else if(name == "chipled_0805_nooutline") {
 				// Rename generic chip LED to suitable color,
 				// based on parent element value ("RED", "GREEN", etc.).
 				QString elementValue = package.parentNode().toElement().attribute("value", "").toUpper();
+				name="0805-led-white"; // Use white LED default unless otherwise specified
 				if(     elementValue == "RED")    name="0805-led-red";
 				else if(elementValue == "ORANGE") name="0805-led-yellow"; // No orange part; use yellow
 				else if(elementValue == "YELLOW") name="0805-led-yellow";
 				else if(elementValue == "GREEN")  name="0805-led-green";
 				else if(elementValue == "BLUE")   name="0805-led-blue";
 				else if(elementValue == "WHITE")  name="0805-led-white";
+			} else if(name == "chipled_0603_nooutline") {
+				// Rename generic chip LED to suitable color,
+				// based on parent element value ("RED", "GREEN", etc.).
+				QString elementValue = package.parentNode().toElement().attribute("value", "").toUpper();
+				name="0603-led-white"; // Use white LED default unless otherwise specified
+				if(     elementValue == "RED")    name="0603-led-red";
+				else if(elementValue == "ORANGE") name="0603-led-yellow"; // No orange part; use yellow
+				else if(elementValue == "YELLOW") name="0603-led-yellow";
+				else if(elementValue == "GREEN")  name="0603-led-green";
+				else if(elementValue == "BLUE")   name="0603-led-blue";
+				else if(elementValue == "WHITE")  name="0603-led-white";
 			}
+#endif
 
 			qreal offsetX = 0;
 			qreal offsetY = 0;
@@ -1684,16 +1717,16 @@ void BrdApplication::addSubparts(QDomElement & root, QDomElement & paramsRoot, Q
 				continue;
 			}
 
-            qDebug() << "\tfound subpart (2)" << name << sname;
+			qDebug() << "\tfound subpart (2)" << name << sname;
 
 			qreal x1,y1,x2,y2;
 			if (!MiscUtils::x1y1x2y2(package, x1, y1, x2, y2)) continue;
 
 			SvgFileSplitter splitter;
-            QFile file(subpartsFolder.absoluteFilePath(sname + ".svg"));
+			QFile file(subpartsFolder.absoluteFilePath(sname + ".svg"));
 			if (!splitter.load(&file)) continue;
 
-            double factor;
+			double factor;
 			splitter.normalize(1000, "", false, factor);
 
 			qreal sWidth, sHeight, vbWidth, vbHeight;
@@ -1714,7 +1747,7 @@ void BrdApplication::addSubparts(QDomElement & root, QDomElement & paramsRoot, Q
 				QMatrix matrix;
 				matrix.translate(subx, suby);
 				matrix.rotate(angle);
-				matrix.translate(-subx, -suby);  
+				matrix.translate(-subx, -suby);
 				QHash<QString, QString> attributes;
 				attributes.insert("transform", TextUtils::svgMatrix(matrix));
 				splitter.gWrap(attributes);
@@ -1723,8 +1756,8 @@ void BrdApplication::addSubparts(QDomElement & root, QDomElement & paramsRoot, Q
 			QHash<QString, QString> attributes;
 			attributes.insert("id", TextUtils::escapeAnd(name));
 			attributes.insert("transform", QString("translate(%1,%2)")
-				.arg(((x2 + x1) / 2) - m_trueBounds.left() - subx + offsetX)  
-				.arg(flipy((y2 + y1) / 2)  - suby + offsetY) 
+				.arg(((x2 + x1) / 2) - m_trueBounds.left() - subx + offsetX)
+				.arg(flipy((y2 + y1) / 2)  - suby + offsetY)
 				);
 
 			splitter.gWrap(attributes);
@@ -1734,11 +1767,11 @@ void BrdApplication::addSubparts(QDomElement & root, QDomElement & paramsRoot, Q
 
 	while (gotIncludes && !include.isNull()) {
 		QString name = include.attribute("src");
-        QFileInfo info(name);
+		QFileInfo info(name);
 		qreal x = TextUtils::convertToInches(include.attribute("x"));
 		qreal y = TextUtils::convertToInches(include.attribute("y"));
-		includeSvg(doc, name, info.fileName(), 
-			(x * 1000) - m_trueBounds.left() + m_boardBounds.left(), 
+		includeSvg(doc, name, info.fileName(),
+			(x * 1000) - m_trueBounds.left() + m_boardBounds.left(),
 			(y * 1000) - m_trueBounds.top() + m_boardBounds.top());
 		include = include.nextSiblingElement("include");
 	}
@@ -1756,7 +1789,7 @@ void BrdApplication::includeSvg(QDomDocument & doc, const QString & path, const 
 	SvgFileSplitter splitter;
 	if (!splitter.load(&file)) return;
 
-    double factor;
+	double factor;
 	splitter.normalize(1000, "", false, factor);
 	QHash<QString, QString> attributes;
 	attributes.insert("id", TextUtils::escapeAnd(name));
@@ -1765,7 +1798,7 @@ void BrdApplication::includeSvg(QDomDocument & doc, const QString & path, const 
 	TextUtils::mergeSvg(doc, splitter.toString(), "breadboard");
 }
 
-QString BrdApplication::genSchematic(QDomElement & root, QDomElement & paramsRoot, DifParam * difParam) 
+QString BrdApplication::genSchematic(QDomElement & root, QDomElement & paramsRoot, DifParam * difParam)
 {
 	QList<QDomElement> powers;
 	QList<QDomElement> grounds;
@@ -1785,17 +1818,17 @@ QString BrdApplication::genSchematic(QDomElement & root, QDomElement & paramsRoo
 		boardName = difParam->title;
 		usingParam = true;
 	}
-    else {
-        QDomElement titleElement = paramsRoot.firstChildElement("title");
-	    QString name;
-	    TextUtils::findText(titleElement, name);
-        if (!name.isEmpty()) boardName = name;
-    }
+	else {
+		QDomElement titleElement = paramsRoot.firstChildElement("title");
+		QString name;
+		TextUtils::findText(titleElement, name);
+		if (!name.isEmpty()) boardName = name;
+	}
 
-    return SchematicRectConstants::genSchematicDIP(powers, grounds, lefts, rights, vias, busNames, boardName, usingParam, m_genericSMD, getConnectorName);
+	return SchematicRectConstants::genSchematicDIP(powers, grounds, lefts, rights, vias, busNames, boardName, usingParam, m_genericSMD, getConnectorName);
 }
 
-QString BrdApplication::getBoardName(QDomElement & root) 
+QString BrdApplication::getBoardName(QDomElement & root)
 {
 	QDomElement title = root.firstChildElement("title");
 	QString boardName;
@@ -1804,11 +1837,11 @@ QString BrdApplication::getBoardName(QDomElement & root)
 	return fileInfo.completeBaseName();
 }
 
-void BrdApplication::getSides(QDomElement & root, QDomElement & paramsRoot, 
-							QList<QDomElement> & powers, QList<QDomElement> & grounds, 
-							QList<QDomElement> & lefts, QList<QDomElement> & rights, 
-							QList<QDomElement> & unused, QList<QDomElement> & vias, 
-							QStringList & busNames, bool collectSpaces, bool integrateVias) 
+void BrdApplication::getSides(QDomElement & root, QDomElement & paramsRoot,
+  QList<QDomElement> & powers, QList<QDomElement> & grounds,
+  QList<QDomElement> & lefts, QList<QDomElement> & rights,
+  QList<QDomElement> & unused, QList<QDomElement> & vias,
+  QStringList & busNames, bool collectSpaces, bool integrateVias)
 {
 	if (!paramsRoot.isNull()) {
 		QList<QDomElement> connectors;
@@ -1983,7 +2016,7 @@ void BrdApplication::getSides(QDomElement & root, QDomElement & paramsRoot,
 	int mid = lefts.count() / 2;
 	for (int i = lefts.count() - 1; i >= mid; i--) {
 		rights.append(lefts.takeLast());
-	} 
+	}
 }
 
 void BrdApplication::genCopperElements(QDomElement &root, QDomElement & paramsRoot, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString, bool integrateVias) {
@@ -2081,7 +2114,7 @@ void BrdApplication::collectContacts(QDomElement & root, QDomElement & paramsRoo
 					//QString id = connector.attribute("id");
 					//contact.setAttribute("connectorIndex", id);
 					int used = connector.attribute("used").toInt();
-					contact.setAttribute("used", used); 
+					contact.setAttribute("used", used);
 					break;
 				}
 			}
@@ -2170,7 +2203,10 @@ void BrdApplication::collectPackages(QDomElement &root, QList<QDomElement> & pac
 		while (!element.isNull()) {
 			QDomElement package = element.firstChildElement("package");
 			if (!package.isNull()) {
-				//QString name = package.attribute("name");
+				// ADAFRUIT 2016-06-21: if package is "FEATHERWING", disable text clipping.
+				// Ugly kludge, it's explained a bit near the top of this file.
+				QString name = package.attribute("name");
+				if(name == "FEATHERWING") textClipEnabled = 0;
 				//qDebug() << name;
 				if (inBounds(package)) {
 					packages.append(package);
@@ -2215,11 +2251,11 @@ void BrdApplication::collectFakeVias(QDomElement &paramsRoot, QList<QDomElement>
 	}
 }
 
-void BrdApplication::genSmd(QDomElement & contact, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString) 
+void BrdApplication::genSmd(QDomElement & contact, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString)
 {
 	QDomElement smd = contact.firstChildElement("smd");
 	if (smd.isNull()) {
-		return; 
+		return;
 	}
 
 	bool ok = true;
@@ -2247,7 +2283,7 @@ void BrdApplication::genSmd(QDomElement & contact, QString & svg, const QString 
 		QMatrix matrix;
 		matrix.translate(subx, suby);
 		matrix.rotate(angle);
-		matrix.translate(-subx, -suby); 
+		matrix.translate(-subx, -suby);
 		svg += QString("<g transform='%1' >\n").arg(TextUtils::svgMatrix(matrix));
 	}
 
@@ -2270,7 +2306,7 @@ void BrdApplication::genSmd(QDomElement & contact, QString & svg, const QString 
 	}
 }
 
-void BrdApplication::genPad(QDomElement & contact, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString, bool integrateVias) 
+void BrdApplication::genPad(QDomElement & contact, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString, bool integrateVias)
 {
 
 	QDomElement pad = contact.firstChildElement("pad");
@@ -2287,7 +2323,7 @@ void BrdApplication::genPad(QDomElement & contact, QString & svg, const QString 
 	genSmd(contact, svg, layerID, copperColor, padString);
 }
 
-void BrdApplication::genPadAux(QDomElement & contact, QDomElement & pad, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString, bool integrateVias) 
+void BrdApplication::genPadAux(QDomElement & contact, QDomElement & pad, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString, bool integrateVias)
 {
 	QDomElement layer = pad.firstChildElement("layer");
 	while (!layer.isNull()) {
@@ -2413,6 +2449,7 @@ void BrdApplication::genPadAux(QDomElement & contact, QDomElement & pad, QString
 
 void BrdApplication::genLayerElements(QDomElement &root, QDomElement &paramsRoot, QString & svg, const QString & layerID, bool skipText, qreal minArea, bool doFillings, const QString & textColor) {
 	QList<QDomElement> from;
+
 	from.append(root.firstChildElement("wires"));
 	from.append(root.firstChildElement("circles"));
 	from.append(root.firstChildElement("polygons"));
@@ -2452,22 +2489,25 @@ void BrdApplication::addElements(QDomElement & root, QList<QDomElement> & to, qr
 }
 
 
-void BrdApplication::genText(QDomElement & element, const QString & text, QString & svg, QDomElement & paramsRoot, const QString & textColor) 
+void BrdApplication::genText(QDomElement & element, const QString & text, QString & svg, QDomElement & paramsRoot, const QString & textColor)
 {
 	bool checkedWires = false;
 	QDomElement wires = element.firstChildElement("wires");
 	QDomElement wire = wires.firstChildElement("wire");
-	while (!wire.isNull()) {
-		// ensure text is on board
-		qreal x1, y1, x2, y2;
-		MiscUtils::x1y1x2y2(wire, x1, y1, x2, y2);
-		if (x1 < m_boardBounds.left() || x1 > m_boardBounds.right()) return;
-		if (y1 < m_boardBounds.top() || y1 > m_boardBounds.bottom()) return;
-		if (x2 < m_boardBounds.left() || x2 > m_boardBounds.right()) return;
-		if (y2 < m_boardBounds.top() || y2 > m_boardBounds.bottom()) return;
 
-		checkedWires = true;
-		wire = wire.nextSiblingElement("wire");
+	if(textClipEnabled) { // ADAFRUIT 2016-06-21: see notes near top of file
+		while (!wire.isNull()) {
+			// ensure text is on board
+			qreal x1, y1, x2, y2;
+			MiscUtils::x1y1x2y2(wire, x1, y1, x2, y2);
+			if (x1 < m_boardBounds.left() || x1 > m_boardBounds.right()) return;
+			if (y1 < m_boardBounds.top() || y1 > m_boardBounds.bottom()) return;
+			if (x2 < m_boardBounds.left() || x2 > m_boardBounds.right()) return;
+			if (y2 < m_boardBounds.top() || y2 > m_boardBounds.bottom()) return;
+
+			checkedWires = true;
+			wire = wire.nextSiblingElement("wire");
+		}
 	}
 
 	bool ok = true;
@@ -2514,7 +2554,7 @@ void BrdApplication::genText(QDomElement & element, const QString & text, QStrin
 			// ADAFRUIT 2016-06-17: 'nudge' KLUDGE:
 			// If 'element' attribute is missing, use 'package' only for comparison
 			if (nudge.attribute("element").isNull() ||
-			    nudge.attribute("element").compare(elementName) == 0) { 
+			    nudge.attribute("element").compare(elementName) == 0) {
 				bool doNudge = true;
 				QDomElement match = nudge.firstChildElement("match");
 				if (!match.isNull()) {
@@ -2557,7 +2597,7 @@ void BrdApplication::genText(QDomElement & element, const QString & text, QStrin
 
 	bool anchorAtStart;
 	MiscUtils::calcTextAngle(angle, mirror, spin, size, x, y, anchorAtStart);
-   
+
 	if (!checkedWires) {
 		QRectF r(x, y, width, size);
 		if (!m_boardBounds.contains(r)) {
@@ -2575,21 +2615,21 @@ void BrdApplication::genText(QDomElement & element, const QString & text, QStrin
 		y = m_trueBounds.bottom();
 	}
 	svg += QString("<text font-family='OCRA' stroke='none' stroke-width='%6' fill='%7' font-size='%1' x='%2' y='%3' text-anchor='%4'>%5</text>\n")
-						.arg(size)
-						.arg(x - m_trueBounds.left())
-						.arg(flipy(y))
-						.arg(anchorAtStart ? "start" : "end")
-						.arg(TextUtils::escapeAnd(text))
-						.arg(0)  // SW(width)
-						.arg(textColor)
-					;
+	  .arg(size)
+	  .arg(x - m_trueBounds.left())
+	  .arg(flipy(y))
+	  .arg(anchorAtStart ? "start" : "end")
+	  .arg(TextUtils::escapeAnd(text))
+	  .arg(0)  // SW(width)
+	  .arg(textColor)
+	  ;
 	if (angle != 0) {
 		svg += "</g></g>\n";
 	}
 }
 
 
-void BrdApplication::genLayerElement(QDomElement & paramsRoot, QDomElement & element, QString & svg, const QString & layerID, bool skipText, qreal minArea, bool doFillings, const QString & textColor) 
+void BrdApplication::genLayerElement(QDomElement & paramsRoot, QDomElement & element, QString & svg, const QString & layerID, bool skipText, qreal minArea, bool doFillings, const QString & textColor)
 {
 	QString tagName = element.tagName();
 
@@ -2687,7 +2727,7 @@ void BrdApplication::genLayerElement(QDomElement & paramsRoot, QDomElement & ele
 	qDebug() << "unknown layer element" << tagName;
 }
 
-void BrdApplication::genCircle(QDomElement & element, QString & svg, bool forDimension, const QString & fill, const QString & stroke, qreal strokeWidth) 
+void BrdApplication::genCircle(QDomElement & element, QString & svg, bool forDimension, const QString & fill, const QString & stroke, qreal strokeWidth)
 {
 	qreal cx, cy, radius, width;
 	if (!cxcyrw(element, cx, cy, radius, width)) return;
@@ -2707,7 +2747,7 @@ void BrdApplication::genCircle(QDomElement & element, QString & svg, bool forDim
 				.arg(stroke);
 }
 
-void BrdApplication::genRect(QDomElement & element, QString & svg, bool forDimension) 
+void BrdApplication::genRect(QDomElement & element, QString & svg, bool forDimension)
 {
 	// TODO: handle rotation
 	qreal x1, y1, x2, y2;
@@ -2740,7 +2780,7 @@ void BrdApplication::genRect(QDomElement & element, QString & svg, bool forDimen
 				.arg(stroke);
 }
 
-void BrdApplication::genLine(QDomElement & element, QString & svg) 
+void BrdApplication::genLine(QDomElement & element, QString & svg)
 {
 	qreal x1, y1, x2, y2;
 	if (!MiscUtils::x1y1x2y2(element, x1, y1, x2, y2)) return;
@@ -2759,11 +2799,11 @@ void BrdApplication::genLine(QDomElement & element, QString & svg)
 				.arg(x2 - m_trueBounds.left())
 				.arg(flipy(y2))
 				.arg(SW(width))
-				.arg((cap == 0) ? "butt" : "round");  
+				.arg((cap == 0) ? "butt" : "round");
 }
 
 
-void BrdApplication::genArc(QDomElement & element, QString & svg) 
+void BrdApplication::genArc(QDomElement & element, QString & svg)
 {
 	qreal x1, y1, x2, y2;
 	if (!MiscUtils::x1y1x2y2(element, x1, y1, x2, y2)) return;
@@ -2860,7 +2900,7 @@ void BrdApplication::genPath(QDomElement & element, QString & svg, const QString
 	svg += QString("</g>\n");
 }
 
-QString BrdApplication::genPolyString(QList<WireTree *> & wireTrees, QDomElement & element, qreal & width) 
+QString BrdApplication::genPolyString(QList<WireTree *> & wireTrees, QDomElement & element, qreal & width)
 {
 	bool ok;
 	width = MiscUtils::strToMil(element.attribute("width", ""), ok);
@@ -2904,7 +2944,7 @@ QString BrdApplication::genPolyString(QList<WireTree *> & wireTrees, QDomElement
 	return path;
 }
 
-QString BrdApplication::addPathUnit(WireTree * wireTree, QPointF p, qreal rDelta) 
+QString BrdApplication::addPathUnit(WireTree * wireTree, QPointF p, qreal rDelta)
 {
 	if (wireTree->curve == 0) {
 		return QString("L%1,%2\n").arg(p.x() - m_trueBounds.left()).arg(flipy(p.y()));
@@ -2919,7 +2959,7 @@ QString BrdApplication::addPathUnit(WireTree * wireTree, QPointF p, qreal rDelta
 					);
 }
 
-QString BrdApplication::genPolyString(QList<QDomElement> & wires, QDomElement & element, qreal & width) 
+QString BrdApplication::genPolyString(QList<QDomElement> & wires, QDomElement & element, qreal & width)
 {
 	bool ok;
 	width = MiscUtils::strToMil(element.attribute("width", ""), ok);
@@ -3109,7 +3149,7 @@ bool BrdApplication::polyFromWires(QDomElement & root, const QString & boardColo
 	return true;
 }
 
-QString BrdApplication::genMaxShape(QDomElement & root, QDomElement & paramsRoot, const QString & boardColor, const QString & stroke, qreal strokeWidth) 
+QString BrdApplication::genMaxShape(QDomElement & root, QDomElement & paramsRoot, const QString & boardColor, const QString & stroke, qreal strokeWidth)
 {
 	QString path;
 	bool noStroke = stroke.compare("none") == 0;
@@ -3201,21 +3241,22 @@ QString BrdApplication::genMaxShape(QDomElement & root, QDomElement & paramsRoot
 	return path;
 }
 
-void BrdApplication::genOverlaps(QDomElement & root, const FillStroke & fsNormal, const FillStroke & fsIC, 
-									QString & svg, bool offBoardOnly, const QStringList & ICs, QHash<QString, QString> & subpartAliases, bool includeSubparts) 
+void BrdApplication::genOverlaps(QDomElement & root, const FillStroke & fsNormal, const FillStroke & fsIC,
+									QString & svg, bool offBoardOnly, const QStringList & ICs, QHash<QString, QString> & subpartAliases, bool includeSubparts)
 {
 	QDir subpartsFolder(m_fritzingSubpartsPath);
 
 	QList<QDomElement> padSmdPackages;
+
 	collectPadSmdPackages(root, padSmdPackages);
 	foreach (QDomElement package, padSmdPackages) {
 		QString packageName = package.attribute("name", "").toLower();
 		if (!offBoardOnly && includeSubparts) {
-            QString sname = findSubpart(packageName, subpartAliases, subpartsFolder);
+			QString sname = findSubpart(packageName, subpartAliases, subpartsFolder);
 			if (!sname.isEmpty()) {
-                qDebug() << "\tfound subpart (3)" << packageName << sname;
-                continue;									// package will be drawn as a subpart
-            }
+				qDebug() << "\tfound subpart (3)" << packageName << sname;
+				continue;									// package will be drawn as a subpart
+			}
 		}
 
 		qreal x1, y1, x2, y2;
@@ -3329,9 +3370,14 @@ void BrdApplication::genOverlaps(QDomElement & root, const FillStroke & fsNormal
 			//qDebug() << "using IC" << packageName << r.width() << r.height();
 		}
 
-		// ADAFRUIT 2016-06-20 -- don't draw transparent elements --
-		// typically part bounds, not desirable on breadboard image:
-		if(fs->fillOpacity < 1.0) continue;
+		// ADAFRUIT 2016-06-20 -- don't draw transparent elements
+		// larger than 0.1" -- typically part bounds, not desirable
+		// on breadboard image:
+		qreal w, h;
+		w = fabs(r.right() - r.left());
+		h = fabs(r.bottom() - r.top());
+		if((fs->fillOpacity < 1.0) && ((w > 2.54) || (h > 2.54)))
+			continue;
 
 		double angle = package.parentNode().toElement().attribute("angle", "0").toDouble();
 		if ((qRound(angle) / 45) % 2 == 1) {
@@ -3607,7 +3653,7 @@ void BrdApplication::loadDifParams(QDir & workingFolder, QHash<QString, DifParam
 }
 
 
-QString BrdApplication::loadDescription(const QString & prefix, const QString & url, const QDir & descriptionsFolder) 
+QString BrdApplication::loadDescription(const QString & prefix, const QString & url, const QDir & descriptionsFolder)
 {
 	QFile file(descriptionsFolder.absoluteFilePath(prefix + ".txt"));
 	if (file.open(QIODevice::ReadOnly)) {
@@ -3633,12 +3679,12 @@ QString BrdApplication::loadDescription(const QString & prefix, const QString & 
 
 	if (data.isEmpty()) return "";
 
-    /*
-    QScriptEngine scriptEngine;
-    QScriptValue scriptValue = scriptEngine.evaluate("(" + QString(data) + ")");   // In new versions it may need to look like engine.evaluate("(" + QString(result) + ")");
+	/*
+	QScriptEngine scriptEngine;
+	QScriptValue scriptValue = scriptEngine.evaluate("(" + QString(data) + ")");   // In new versions it may need to look like engine.evaluate("(" + QString(result) + ")");
 	QString descr = scriptValue.property("description").toString();
-    */
-    QString descr;
+	*/
+	QString descr;
 	if (descr.isEmpty()) return "";
 
 	QString textString;
@@ -3723,31 +3769,31 @@ bool BrdApplication::matchAnd(QDomElement & contact, QDomElement & connector) {
 QString BrdApplication::findSubpart(const QString & name, QHash<QString, QString> & subpartAliases, QDir & subpartsFolder) {
 	QFile file(subpartsFolder.absoluteFilePath(name + ".svg"));
 	if (file.exists()) {
-        return name;
+		return name;
 	}
 
-    QString aname = subpartAliases.value(name.toLower(), "");
-    if (aname.isEmpty()) return "";
+	QString aname = subpartAliases.value(name.toLower(), "");
+	if (aname.isEmpty()) return "";
 
-    QFile file2(subpartsFolder.absoluteFilePath(aname + ".svg"));
+	QFile file2(subpartsFolder.absoluteFilePath(aname + ".svg"));
 	if (file2.exists()) {
-        return aname;
+		return aname;
 	}
 
-    return "";
+	return "";
 }
 
 bool BrdApplication::registerFonts() {
 
 	int ix = QFontDatabase::addApplicationFont(":/resources/fonts/DroidSans.ttf");
-    if (ix < 0) return false;
+	if (ix < 0) return false;
 
 	ix = QFontDatabase::addApplicationFont(":/resources/fonts/DroidSans-Bold.ttf");
-    if (ix < 0) return false;
+	if (ix < 0) return false;
 
 	ix = QFontDatabase::addApplicationFont(":/resources/fonts/DroidSansMono.ttf");
-    if (ix < 0) return false;
+	if (ix < 0) return false;
 
 	ix = QFontDatabase::addApplicationFont(":/resources/fonts/OCRA.ttf");
-    return ix >= 0;
+	return ix >= 0;
 }
