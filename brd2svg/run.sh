@@ -40,4 +40,15 @@ done
 
 ./brd2svg -c contrib -w $WORKPATH -e $EXEC -s $PARTPATH -a $ANDPATH
 
-# TO DO: postprocess .param and .xml files if needed
+# Postprocess each .svg file
+BRDPATH=$WORKPATH/parts/svg/contrib/breadboard
+for FILENAME in $BRDPATH/*.svg; do
+  python postprocess.py "$FILENAME" "$FILENAME.tmp"
+  OLDSIZE=$(wc -c <"$FILENAME")
+  NEWSIZE=$(wc -c <"$FILENAME.tmp")
+  if [ $NEWSIZE -ne $OLDSIZE ]; then
+    mv "$FILENAME.tmp" "$FILENAME"
+  else
+    rm -f "$FILENAME.tmp"
+  fi
+done

@@ -7,35 +7,35 @@
 import sys
 from xml.dom.minidom import parse
 
-# This function recursively walks through the whole DOM tree and
-# deletes certain nodes that throw off the brd2svg program:
+# Recursively walk through the whole DOM tree and adjusts certain
+# nodes that throw off the brd2svg program:
 # - Deletes all <text> lines where layer!=21 (tplace) --
 #   these throw off the part boundary calculation in EAGLE...
-#   this must be preprocessed, trying to do the same in the .ulp
+#   this MUST be preprocessed, trying to do the same in the .ulp
 #   script is too late.
 # - Deletes <attribute> lines whose name is "NAME" or "VALUE"
 #   for similar reasons.
-
-def removeProblemNodes(root):
+def adjustNodes(root):
 	for node in root.childNodes:
 		if node.nodeType == node.ELEMENT_NODE:
-			removeProblemNodes(node)
-			if node.tagName == "text":
-				if(node.getAttribute("layer") != "21"):
+			adjustNodes(node)
+			tag = node.tagName.lower()
+			if tag == "text":
+				if node.getAttribute("layer") != "21":
 					root.removeChild(node)
-			elif node.tagName == "attribute":
-				n = node.getAttribute("name")
-				if((n == "NAME") or (n == "VALUE")):
+			elif tag == "attribute":
+				name = node.getAttribute("name").lower()
+				if (name == "name") or (name == "value"):
 					root.removeChild(node)
 
 # --------------------------------------------------------------------------
 
-if(len(sys.argv) < 3):
+if len(sys.argv) < 3 :
 	print "syntax: " + sys.argv[0] + " infile outfile"
 	exit(1)
 
-dom = parse(sys.argv[1]);   # infile
-removeProblemNodes(dom)
+dom = parse(sys.argv[1])    # infile
+adjustNodes(dom)
 
 f = open(sys.argv[2], "wb") # outfile
 f.write(dom.toxml(encoding="utf-8"))
