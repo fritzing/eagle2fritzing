@@ -38,7 +38,14 @@ for FILENAME in $BRDPATH/*.brd; do
   fi
 done
 
-./brd2svg -c contrib -w $WORKPATH -e $EXEC -s $PARTPATH -a $ANDPATH
+# If brd2svg returns an exit code of 42, this indicates that the
+# EAGLE ULP script was run and new XML was generated, in which case
+# brd2svg can be run a second time to produce more 'finished'
+# results.  If it returns 0 (or anything else), don't re-run.
+(exit 42) # Force first invocation
+while [ $? -eq 42 ]; do
+  ./brd2svg -c contrib -w $WORKPATH -e $EXEC -s $PARTPATH -a $ANDPATH
+done
 
 # Postprocess each .svg file
 BRDPATH=$WORKPATH/parts/svg/contrib/breadboard

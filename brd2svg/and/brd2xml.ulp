@@ -192,6 +192,9 @@ void xmlWritePad(UL_PAD P) {
 // write UL smd
 //------------------------------------------------------
 void xmlWriteSmd(UL_SMD S) {
+	// ADAFRUIT 2016-06-24 disregard SMD elements not in top layer
+	if(S.layer != LAYER_TOP) return;
+
 	printf("<smd angle='%f' flags='%d' name='%s' signal='%s' x='%fmil' y='%fmil' layer='%d' roundness='%d' dx='%fmil' dy='%fmil' >\n",
 	  S.angle, S.flags, S.name, S.signal, u2mil(S.x), u2mil(S.y), S.layer, S.roundness, u2mil(S.dx), u2mil(S.dy));
 	int layers[];

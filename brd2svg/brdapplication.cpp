@@ -968,6 +968,10 @@ void BrdApplication::genXml(QDir & workingFolder, QDir & ulpDir, const QString &
 		QString thing = brdFolder.absolutePath();
 		process.setWorkingDirectory(thing);
 
+		// ADAFRUIT 2016-06-24: set exitCode to 42 to indicate ULP was run;
+		// calling process can then run brd2svg a second time.
+		extern int exitCode;
+		exitCode = 42;
 		process.start(m_eaglePath, QStringList() << "-C" << QString("SCRIPT %1").arg(workingFolder.absoluteFilePath("brd2xml.scr")) << "doesntexist.brd");
 		if (!process.waitForStarted()) {
 			qDebug() << QString("unable to start %1").arg(brdname);
@@ -1642,6 +1646,7 @@ void BrdApplication::addSubparts(QDomElement & root, QDomElement & paramsRoot, Q
 		foreach (QDomElement package, packages) {
 			QString name = package.attribute("name", "").toLower();
 
+
 			// ADAFRUIT 2016-06-16: MICROBUILDER LIBRARY KLUDGE:
 			if(name == "0805-no") {
 				// Rename generic 0805 to resistor or cap as needed,
@@ -2197,15 +2202,20 @@ void BrdApplication::collectPackages(QDomElement &root, QList<QDomElement> & pac
 	if (!elements.isNull()) {
 		QDomElement element = elements.firstChildElement("element");
 		while (!element.isNull()) {
-			QDomElement package = element.firstChildElement("package");
-			if (!package.isNull()) {
-				// ADAFRUIT 2016-06-21: if package is "FEATHERWING", disable text clipping.
-				// Ugly kludge, it's explained a bit near the top of this file.
-				QString name = package.attribute("name");
-				if(name == "FEATHERWING") textClipEnabled = false;
-				//qDebug() << name;
-				if (inBounds(package)) {
-					packages.append(package);
+			// ADAFRUIT 2016-06-24: discard mirrored elements,
+			// these are typically things on the bPlace layer
+			// but whose layerID is tPlace for whatev reason.
+			if(element.attribute("mirror", "") != "1") {
+				QDomElement package = element.firstChildElement("package");
+				if (!package.isNull()) {
+					// ADAFRUIT 2016-06-21: if package is "FEATHERWING", disable text clipping.
+					// Ugly kludge, it's explained a bit near the top of this file.
+					QString name = package.attribute("name");
+					if(name == "FEATHERWING") textClipEnabled = false;
+					//qDebug() << name;
+					if (inBounds(package)) {
+						packages.append(package);
+					}
 				}
 			}
 			element = element.nextSiblingElement("element");
@@ -2304,7 +2314,6 @@ void BrdApplication::genSmd(QDomElement & contact, QString & svg, const QString 
 
 void BrdApplication::genPad(QDomElement & contact, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString, bool integrateVias)
 {
-
 	QDomElement pad = contact.firstChildElement("pad");
 	if (!pad.isNull()) {
 		genPadAux(contact, pad, svg, layerID, copperColor, padString, true);
@@ -2619,7 +2628,6 @@ void BrdApplication::genText(QDomElement & element, const QString & text, QStrin
 		y = m_trueBounds.bottom();
 	}
 
-	// ADAFRUIT 2016-06-22: starting to handle text alignment
 	const char *anchorString[] = { "start", "middle", "end" };
 	int         i, numLines    = 1 + text.count('\n');
 	qreal       lineOffset     = 0.0;
@@ -3393,10 +3401,11 @@ void BrdApplication::genOverlaps(QDomElement & root, const FillStroke & fsNormal
 		// larger than 0.1" -- typically part bounds, not desirable
 		// on breadboard image:
 		qreal w, h;
-		w = fabs(r.right() - r.left());
+		w = fabs(r.right() - r.left()); // Size in mills
 		h = fabs(r.bottom() - r.top());
-		if((fs->fillOpacity < 1.0) && ((w > 2.54) || (h > 2.54)))
-			continue;
+//		if((fs->fillOpacity < 1.0) && ((w > 100) || (h > 100)))
+
+		if(fs->fillOpacity < 1.0) continue; // Don't draw ANY transparent elements!
 
 		double angle = package.parentNode().toElement().attribute("angle", "0").toDouble();
 		if ((qRound(angle) / 45) % 2 == 1) {
