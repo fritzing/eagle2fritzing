@@ -136,9 +136,9 @@ bool MiscUtils::makePartsDirectories(const QDir & workingFolder, const QString &
 	return true;
 }
 
-// SLARTIBARTFAST
-
-// MIRRORING IS CURRENTLY NOT SUPPORTED because brain hurts already
+// ADAFRUIT 2016-06-23: support for Eagle's eight text alignment modes,
+// rotation, plus multi-line text.  Mirroring is not supported because
+// brain hurts already..
 void MiscUtils::calcTextAngle(qreal & angle, int mirror, int spin, qreal size, qreal & x, qreal & y, int & anchor)
 {
 	// Normal 2D rotation:

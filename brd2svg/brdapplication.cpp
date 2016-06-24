@@ -1642,10 +1642,7 @@ void BrdApplication::addSubparts(QDomElement & root, QDomElement & paramsRoot, Q
 		foreach (QDomElement package, packages) {
 			QString name = package.attribute("name", "").toLower();
 
-#if 1
 			// ADAFRUIT 2016-06-16: MICROBUILDER LIBRARY KLUDGE:
-			// This -could- be done in preprocess.py now, since
-			// it parses the whole DOM tree.  Will probably do that.
 			if(name == "0805-no") {
 				// Rename generic 0805 to resistor or cap as needed,
 				// based on parent element name (starts with 'C' or 'R').
@@ -1681,7 +1678,6 @@ void BrdApplication::addSubparts(QDomElement & root, QDomElement & paramsRoot, Q
 				else if(elementValue == "BLUE")   name="0603-led-blue";
 				else if(elementValue == "WHITE")  name="0603-led-white";
 			}
-#endif
 
 			qreal offsetX = 0;
 			qreal offsetY = 0;
@@ -2530,8 +2526,6 @@ void BrdApplication::genText(QDomElement & element, const QString & text, QStrin
 
 	qreal angle = element.attribute("angle", "").toDouble(&ok);
 	if (!ok) return;
-message(text);
-printf("%d %f\n", anchor, angle);
 
 	int mirror = element.attribute("mirror", "").toInt(&ok);
 	if (!ok) return;
@@ -2602,12 +2596,11 @@ printf("%d %f\n", anchor, angle);
 	size *= 1.16; // this is a hack, but it seems to help
 	width *= ((width <= 7) ? 0.75 : 0.60);
 
-	// ADAFRUIT 2016-06-22: starting to handle text alignment
-// SLARTIBARTFAST
-int numLines = 1;
-numLines = text.count('\n') + 1;
-qreal s2 = size * numLines;
-	MiscUtils::calcTextAngle(angle, mirror, spin, s2, x, y, anchor);
+	// ADAFRUIT 2016-06-23: support for Eagle's eight text alignment
+	// modes, rotation, plus multi-line text.
+	// Mirroring is not supported.
+
+	MiscUtils::calcTextAngle(angle, mirror, spin, size, x, y, anchor);
 
 	if (!checkedWires) {
 		QRectF r(x, y, width, size);
@@ -2617,7 +2610,7 @@ qreal s2 = size * numLines;
 		}
 	}
 
-	if (angle != 0) {
+	if(angle != 0) {
 		svg += QString("<g transform='translate(%1,%2)'><g transform='rotate(%3)'>\n")
 			.arg(x - m_trueBounds.left())
 			.arg(flipy(y))
@@ -2625,28 +2618,33 @@ qreal s2 = size * numLines;
 		x = m_trueBounds.left();
 		y = m_trueBounds.bottom();
 	}
-const QString replfrom("\n");
-const QString replto("</tspan><tspan>");
-QString t2 = TextUtils::escapeAnd(text);
-if (numLines > 1) {
-	t2.replace(replfrom, replto);
-	t2 = QString("<tspan>") + t2 + QString("</tspan>");
-}
+
 	// ADAFRUIT 2016-06-22: starting to handle text alignment
 	const char *anchorString[] = { "start", "middle", "end" };
-	svg += QString("<text font-family='OCRA' stroke='none' stroke-width='%6' fill='%7' font-size='%1' x='%2' y='%3' text-anchor='%4'>%5</text>\n")
-	  .arg(size)
-	  .arg(x - m_trueBounds.left())
-	  .arg(flipy(y))
-	  .arg(anchorString[anchor % 3])
-//	  .arg(TextUtils::escapeAnd(text))
-	  .arg(t2)
-	  .arg(0)  // SW(width)
-	  .arg(textColor)
-	  ;
-	if (angle != 0) {
-		svg += "</g></g>\n";
+	int         i, numLines    = 1 + text.count('\n');
+	qreal       lineOffset     = 0.0;
+	if(numLines > 1) {
+		if(anchor < 3)      lineOffset = size * (1 - numLines);
+		else if(anchor < 6) lineOffset = size * (1 - numLines) * 0.5;
 	}
+	QStringList sl = text.split("\n");
+	for(i=0; i<numLines; i++) {
+		if(numLines > 1) {
+			svg += QString("<g transform='translate(0,%1)'>").
+				 arg(lineOffset);
+		}
+		svg += QString("<text font-family='OCRA' stroke='none' stroke-width='%6' fill='%7' font-size='%1' x='%2' y='%3' text-anchor='%4'>%5</text>\n")
+		  .arg(size)
+		  .arg(x - m_trueBounds.left())
+		  .arg(flipy(y))
+		  .arg(anchorString[anchor % 3])
+		  .arg(TextUtils::escapeAnd(sl.value(i)))
+		  .arg(0)  // SW(width)
+		  .arg(textColor);
+		if(numLines > 1) svg += "</g>";
+		lineOffset += size;
+	}
+	if(angle != 0) svg += "</g></g>\n";
 }
 
 
