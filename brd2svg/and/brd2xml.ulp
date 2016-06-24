@@ -195,8 +195,9 @@ void xmlWriteSmd(UL_SMD S) {
 	// ADAFRUIT 2016-06-24 disregard SMD elements not in top layer
 	if(S.layer != LAYER_TOP) return;
 
+	// ADAFRUIT 2016-06-24 encode S.name (may contain apostrophe, etc.)
 	printf("<smd angle='%f' flags='%d' name='%s' signal='%s' x='%fmil' y='%fmil' layer='%d' roundness='%d' dx='%fmil' dy='%fmil' >\n",
-	  S.angle, S.flags, S.name, S.signal, u2mil(S.x), u2mil(S.y), S.layer, S.roundness, u2mil(S.dx), u2mil(S.dy));
+	  S.angle, S.flags, encodeText(S.name), S.signal, u2mil(S.x), u2mil(S.y), S.layer, S.roundness, u2mil(S.dx), u2mil(S.dy));
 	int layers[];
 	if (S.layer==LAYER_TOP) {
 		layers[0] = LAYER_TOP;
@@ -377,7 +378,8 @@ void xmlWriteElement(UL_ELEMENT E) {
 //write UL contactref
 //------------------------------------------------------
 void xmlWriteContactref(UL_CONTACTREF C) {
-	printf("<contactref elementname='%s' contactname='%s'/>\n", C.element.name, C.contact.name);
+	// ADAFRUIT 2016-06-24 encode C.contact.name (for apostrophes, etc.)
+	printf("<contactref elementname='%s' contactname='%s'/>\n", C.element.name, encodeText(C.contact.name));
 }
 
 //------------------------------------------------------

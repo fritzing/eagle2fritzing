@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 19.2.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!-- Generator: Adobe Illustrator 20.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.2" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-	 x="0px" y="0px" width="4.535px" height="2.268px" viewBox="0 0 4.535 2.268" xml:space="preserve">
-<path fill="#DCDCDC" d="M4.245,2.268H0.29C0.13,2.268,0,2.138,0,1.977V0.29C0,0.13,0.13,0,0.29,0h3.955c0.16,0,0.29,0.13,0.29,0.29
-	v1.687C4.535,2.138,4.405,2.268,4.245,2.268z"/>
-<rect x="1.134" y="0" fill="#FFFF00" width="2.268" height="2.268"/>
-<circle fill="#B4B400" cx="2.268" cy="1.134" r="0.354"/>
+	 x="0px" y="0px" width="2.268px" height="4.535px" viewBox="0 0 2.268 4.535" xml:space="preserve">
+<path fill="#DCDCDC" d="M2.268,0.29v3.955c0,0.16-0.13,0.29-0.29,0.29H0.29C0.13,4.535,0,4.405,0,4.245L0,0.29C0,0.13,0.13,0,0.29,0
+	l1.687,0C2.138,0,2.268,0.13,2.268,0.29z"/>
+<rect x="0" y="1.134" transform="matrix(4.491880e-11 -1 1 4.491880e-11 -1.1339 3.4016)" fill="#FFFF00" width="2.268" height="2.268"/>
+<circle fill="#B4B400" cx="1.134" cy="2.268" r="0.354"/>
 </svg>

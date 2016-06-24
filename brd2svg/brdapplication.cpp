@@ -1747,7 +1747,8 @@ void BrdApplication::addSubparts(QDomElement & root, QDomElement & paramsRoot, Q
 			if (angle != 0 && ok) {
 				QMatrix matrix;
 				matrix.translate(subx, suby);
-				matrix.rotate(angle);
+				// ADAFRUIT 2016-06-24: Correct rotation
+				matrix.rotate(360 - angle);
 				matrix.translate(-subx, -suby);
 				QHash<QString, QString> attributes;
 				attributes.insert("transform", TextUtils::svgMatrix(matrix));
@@ -2288,7 +2289,8 @@ void BrdApplication::genSmd(QDomElement & contact, QString & svg, const QString 
 	if (angle != 0) {
 		QMatrix matrix;
 		matrix.translate(subx, suby);
-		matrix.rotate(angle);
+		// ADAFRUIT 2016-06-24: Fix rotation (360-angle because coordsys)
+		matrix.rotate(360 - angle);
 		matrix.translate(-subx, -suby);
 		svg += QString("<g transform='%1' >\n").arg(TextUtils::svgMatrix(matrix));
 	}
@@ -2774,9 +2776,9 @@ void BrdApplication::genCircle(QDomElement & element, QString & svg, bool forDim
 				.arg(stroke);
 }
 
+// ADAFRUIT 2016-06-24: Handling rotation now, kinda, I think, maybe?
 void BrdApplication::genRect(QDomElement & element, QString & svg, bool forDimension)
 {
-	// TODO: handle rotation
 	qreal x1, y1, x2, y2;
 	if (!MiscUtils::x1y1x2y2(element, x1, y1, x2, y2)) return;
 
@@ -2789,22 +2791,42 @@ void BrdApplication::genRect(QDomElement & element, QString & svg, bool forDimen
 	qreal temp = MiscUtils::strToMil(element.attribute("width", ""), ok);
 	if (ok) width = temp;
 
-	qreal dr = (forDimension) ? width / 2 : 0;
 	QString stroke = "white";
-	QString fill = "none";
+	QString fill   = "none";
 	if (width == 0) {
 		stroke = "none";
-		fill = "white";
+		fill   = "white";
 	}
 
-	svg += QString("<rect x='%1' y='%2' width='%3' height='%4' stroke-width='%5' fill='%6' stroke='%7' />\n")
-				.arg(x1 + dr - m_trueBounds.left())
-				.arg(flipy(y1 + dr))
-				.arg(x2 - x1 - dr - dr)
-				.arg(y2 - y1 - dr - dr)
-				.arg(SW(width))
-				.arg(fill)
-				.arg(stroke);
+	qreal w     =  x2 - x1,
+	      h     =  y2 - y1,
+	      angle = element.attribute("angle", "0").toDouble();
+	if(angle != 0) {
+		qreal cx = (x2 + x1) * 0.5,
+		      cy = (y2 + y1) * 0.5;
+		QMatrix matrix;
+		matrix.translate(cx - m_trueBounds.left(), flipy(cy));
+		matrix.rotate(360 - angle);
+		svg += QString("<g transform='%1' >\n").arg(TextUtils::svgMatrix(matrix));
+		svg += QString("<rect x='%1' y='%2' width='%3' height='%4' stroke-width='%5' fill='%6' stroke='%7' />\n")
+		  .arg(w * -0.5)
+		  .arg(h * -0.5)
+		  .arg(w)
+		  .arg(h)
+		  .arg(SW(width))
+		  .arg(fill)
+		  .arg(stroke);
+		svg += QString("</g>\n");
+	} else {
+		svg += QString("<rect x='%1' y='%2' width='%3' height='%4' stroke-width='%5' fill='%6' stroke='%7' />\n")
+		  .arg(x1 - m_trueBounds.left())
+		  .arg(flipy(y1))
+		  .arg(w)
+		  .arg(h)
+		  .arg(SW(width))
+		  .arg(fill)
+		  .arg(stroke);
+	}
 }
 
 void BrdApplication::genLine(QDomElement & element, QString & svg)
