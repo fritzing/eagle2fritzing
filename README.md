@@ -47,8 +47,6 @@ After editing .params to your liking, running run.sh a second time then converts
 
 brd2svg has been tweaked to modify the output of some components in the Microbuilder library: 0805 resistors and capacitors normally use a generic footprint, but the code distinguishes between the two so they appear different in the resulting .svg. Similarly, 0805 LEDs were generic, some decisions are made in the code to substitute specific colors.
 
-The .svg files will usually require a little cleanup in Illustrator or similar:
-
-* Any text that wasn't bottom-left-aligned in EAGLE will be positioned wrong (centering and other alignments weren't added until later EAGLE releases). Usually just a few (if any) - easy to move any such text items manually.
+The .svg files will usually require a little cleanup in Illustrator or similar.
 
 Note about \<nudge\> elements in the .params file: I'm trying to avoid some/most of these by strategically sizing the artboard of the component .svgs -- it's typical to have the artboard exactly match the component bounds, but these dimensions may vary from EAGLE's concept of the same component. brd2svg centers component SVGs within their EAGLE bounds (but does not crop) -- so, for example, if all USB host ports need to scoot 0.3mm toward the opening, add 0.6mm to the opposite bounding edge.
