@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Location of EAGLE executable
-EXEC=/Applications/EAGLE-7.6.0/EAGLE.app/Contents/MacOS/EAGLE
+EXEC=/Applications/EAGLE-7.3.0/EAGLE.app/Contents/MacOS/EAGLE
 # Default brd2svg working path (override by passing argument to this script)
 WORKPATH=/Users/pburgess/Desktop/FritzingTest
 # Other paths used by brd2svg:

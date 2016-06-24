@@ -24,7 +24,6 @@ class MiscUtils {
 
 public:
 	static bool makePartsDirectories(const QDir & workingFolder, const QString & core, QDir & fzpFolder, QDir & breadboardFolder, QDir & schematicFolder, QDir & pcbFolder, QDir & iconFolder);
-//	static void calcTextAngle(qreal & angle, int mirror, int spin, qreal size, qreal & x, qreal & y, bool & anchorAtStart);
 	static void calcTextAngle(qreal & angle, int mirror, int spin, qreal size, qreal & x, qreal & y, int & anchor);
 	static QString makeGeneric(const QDir & workingFolder, const QString & boardColor, QList<QDomElement> & powers,
 	  const QString & copper, const QString & boardName, QSizeF outerChipSize, QSizeF innerChipSize,

@@ -136,108 +136,48 @@ bool MiscUtils::makePartsDirectories(const QDir & workingFolder, const QString &
 	return true;
 }
 
+// SLARTIBARTFAST
+
+// MIRRORING IS CURRENTLY NOT SUPPORTED because brain hurts already
 void MiscUtils::calcTextAngle(qreal & angle, int mirror, int spin, qreal size, qreal & x, qreal & y, int & anchor)
 {
-//	bool anchorAtTop;
+	// Normal 2D rotation:
+	// x' = x * cos(r) - y * sin(r)
+	// y' = y * cos(r) + x * sin(r)
+	// BUT, because we're only shifting line height, x=0, thus:
+	// x' = -y * sin(r)
+	// y' =  y * cos(r)
 
-	if ( mirror > 0 ) {
-		if (angle >= 0 && angle < 90) {
-//			anchorAtStart=false; anchorAtTop=false;
-			anchor = 2; // Bottom-right
-		}
-		else if (angle >= 90 && angle < 180) {
-//			anchorAtStart=true; anchorAtTop=true;
-			anchor = 6; // Top-left
-		}
-		else if (angle >= 180 && angle < 270) {
-//			anchorAtStart=true; anchorAtTop=true;
-			anchor = 6; // Top-left
-		}
-		else if (angle >= 270 && angle < 360) {
-//			anchorAtStart=false; anchorAtTop=false;
-			anchor = 2; // Bottom-right
-		}
-		else {
-			qDebug() << "bad angle in gen text" << angle;
-			return;
-		}
-	}
-	else
-	{
-		if (angle >= 0 && angle <= 90) {
-//			anchorAtStart=true; anchorAtTop=false;
-			anchor = 0; // Bottom-left
-		}
-		else if (angle > 90 && angle < 360) {
-//			anchorAtStart=false; anchorAtTop=true;
-			anchor = 8; // Top-right
-		}
-		else {
-			qDebug() << "bad angle in gen text" << angle;
-			return;
-		}
+	double xOffset = -size * sin(M_PI * angle / 180.0),
+	       yOffset =  size * cos(M_PI * angle / 180.0);
+
+	if((spin) || (angle <= 90.0) || (angle > 270.0)) {
+		// If 'spin' is set, things rotate as expected.
+		// e.g. 180 degree text is upside-down and
+		// positioned the same relative to its anchor.
+		// Same applies for unspun text at certain angles
+		// (per checks above).
+		if(anchor >= 6) {           // Top anchor:
+			x -= xOffset;       // Move text down
+			y -= yOffset;       // one line
+		} else if(anchor >= 3) {    // Mid anchor:
+			x -= xOffset * 0.5; // Move text down
+			y -= yOffset * 0.5; // one half file
+		} // Else bottom (baseline) anchor
+	} else {
+		// Spin unset -- text rotates weird in EAGLE
+		angle += (angle < 180) ? 180 : -180;
+		anchor = 8 - anchor;
+		if(anchor >= 6) {           // Top anchor:
+			x += xOffset;       // Move text down
+			y += yOffset;       // one line
+		} else if(anchor >= 3) {    // Mid anchor:
+			x += xOffset * 0.5; // Move text down
+			y += yOffset * 0.5; // one half file
+		} // Else bottom (baseline) anchor
 	}
 
-	if (angle == 0) {
-	}
-	else if (angle > 0 && angle <= 90) {   // angle >= 0 && angle < 90
-		angle = 360 - angle;
-	}
-	else if (angle > 90 && angle <= 180) {
-//		if (anchorAtTop)  {
-		if(anchor >= 6) {
-			y -= size;
-		}
-		angle = 180 - angle;
-	}
-	else if (angle > 180 && angle < 270) {
-//		if (anchorAtTop)  {
-		if(anchor >= 6) {
-			y -= size;
-		}
-		angle = 180 - angle;
-	}
-	else
-	{
-//		if (anchorAtTop) {
-		if(anchor >= 6) {
-			x += size;
-		}
-
-		angle = angle - 360;
-	}
-
-	if (spin == 1) {
-		if (angle == 0) {
-		}
-		else if (angle > 0 && angle < 90) {
-//			anchorAtStart = !anchorAtStart;
-			anchor = anchor + 2 - (anchor % 3); // Reverse X anchor
-			angle += 180;
-//			if (anchorAtTop)  {
-			if(anchor >= 6) {
-				y += size;
-			}		
-		}
-		else {
-			if (angle >= 180 && angle < 270) {
-//				if (anchorAtTop)  {
-				if(anchor >= 6) {
-					y += size;
-				}
-			}
-			else {
-//				if (anchorAtTop) {
-				if(anchor >= 6) {
-					x -= size;
-				}
-			}
-
-//			anchorAtStart = !anchorAtStart;
-			anchor = anchor + 2 - (anchor % 3); // Reverse X anchor
-			angle += 180;
-		}
-	}
+	if(angle) angle = 360 - angle;
 }
 
 
