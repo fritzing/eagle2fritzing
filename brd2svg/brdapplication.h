@@ -19,13 +19,13 @@ struct FillStroke {
 class BrdApplication : public QApplication
 {
 public:
-    BrdApplication(int &argc, char **argv[]);
-    void start();
+	BrdApplication(int &argc, char **argv[]);
+	void start();
 
 protected:
-    void usage();
-    void message(const QString &);
-    bool initArguments();
+	void usage();
+	void message(const QString &);
+	bool initArguments();
 	QRectF getDimensions(QDomElement & root, QDomElement & maxElement, const QString & layer, bool deep);
 	QRectF getPlainBounds(QDomElement & root, const QString & layer);
 	QString genPCB(QDomElement & root, QDomElement & paramsRoot);
@@ -33,7 +33,7 @@ protected:
 	QString genBreadboard(QDomElement & root, QDomElement & paramsRoot, class DifParam *, const QStringList & ICs, QHash<QString, QString> & subpartAliases);
 	QString genGenericBreadboard(QDomElement & root, QDomElement & paramsRoot, class DifParam *, QDir & brdFolder);
 	QString genFZP(QDomElement & root, QDomElement & paramsRoot, class DifParam *, const QString & prefix, const QString & connectorType, const QDir & descrsFolder);
-	QString genParams(QDomElement & root, const QString & prefix); 
+	QString genParams(QDomElement & root, const QString & prefix);
 	void genBin(QStringList & fileList, const QString & title, const QString & binPath);
 	void genXml(QDir & brdFolder, QDir & ulpFolder, const QString & brdname, QDir & xmlFolder);
 	void collectLayerElements(QList<QDomElement> & from, QList<QDomElement> & to, const QString & layerID);
@@ -55,19 +55,19 @@ protected:
 	void saveFile(const QString & content, const QString & suffix);
 	void collectContacts(QDomElement &root, QDomElement & paramsRoot, QList<QDomElement> & contacts, QStringList & busNames);
 	void collectPackages(QDomElement &root, QList<QDomElement> & packages);
-	void getSides(QDomElement & root, QDomElement & paramsRoot, 
-				QList<QDomElement> & powers, QList<QDomElement> & grounds, QList<QDomElement> & lefts, QList<QDomElement> & rights, QList<QDomElement> & unused, QList<QDomElement> & vias,
-				QStringList & busNames, bool collectSpaces, bool integrateVias); 
+	void getSides(QDomElement & root, QDomElement & paramsRoot,
+	  QList<QDomElement> & powers, QList<QDomElement> & grounds, QList<QDomElement> & lefts, QList<QDomElement> & rights, QList<QDomElement> & unused, QList<QDomElement> & vias,
+	  QStringList & busNames, bool collectSpaces, bool integrateVias);
 	void collectWires(QDomElement & element, QList<QDomElement> & wires, bool useFillings);
 	QString genContact(QDomElement & contact);
 	void collectConnectors(QDomElement &paramsRoot, QList<QDomElement> & connectorList, bool collectSpaces);
 	void collectFakeVias(QDomElement &paramsRoot, QList<QDomElement> & connectorList);
 	QDomDocument loadParams(QFile & paramsFile, const QString & basename);
 	void collectPadSmdPackages(QDomElement & root, QList<QDomElement> & padSmdPackages);
-	bool polyFromWires(QDomElement & root, const QString & boardColor, const QString & stroke, qreal strokeWidth, QString & svg, bool & clockwise);
-	QString genMaxShape(QDomElement & root, QDomElement & paramsRoot, const QString & boardColor, const QString & stroke, qreal strokeWidth); 
-	void genOverlaps(QDomElement & root, const FillStroke & normal, const FillStroke & IC, 
-						QString & svg, bool offBoardOnly, const QStringList & ICs, QHash<QString, QString> & subpartAliases, bool includeSubparts); 
+	bool polyFromWires(QDomElement & root, const QString & boardColor, const QString & stroke, qreal strokeWidth, QString & svg, bool clockwise);
+	QString genMaxShape(QDomElement & root, QDomElement & paramsRoot, const QString & boardColor, const QString & stroke, qreal strokeWidth);
+	void genOverlaps(QDomElement & root, const FillStroke & normal, const FillStroke & IC,
+	  QString & svg, bool offBoardOnly, const QStringList & ICs, QHash<QString, QString> & subpartAliases, bool includeSubparts);
 	bool isUsed(QDomElement & contact);
 	bool isBus(QDomElement & contact);
 	QString genHole(QDomElement hole, qreal inset, bool clockwise);
@@ -88,14 +88,14 @@ protected:
 	QString translateBoardColor(const QString & color);
 	bool match(QDomElement & contact, QDomElement & connector, bool doDebug);
 	bool matchAnd(QDomElement & contact, QDomElement & connector);
-    QString findSubpart(const QString & name, QHash<QString, QString> & subpartAliases, QDir & subpartsFolder);
-    bool registerFonts();
+	QString findSubpart(const QString & name, QHash<QString, QString> & subpartAliases, QDir & subpartsFolder);
+	bool registerFonts();
 
 protected:
-    QString m_workingPath;
-    QString m_andPath;
-    QString m_eaglePath;
-    QString m_fritzingSubpartsPath;
+	QString m_workingPath;
+	QString m_andPath;
+	QString m_eaglePath;
+	QString m_fritzingSubpartsPath;
 	QDomDocument m_boardDoc;
 	QRectF m_trueBounds;
 	QRectF m_boardBounds;
@@ -132,9 +132,9 @@ public:
 public:
 	QString element;
 	QString package;
-    QString signal;
-    QString name;
-    QString to;
+	QString signal;
+	QString name;
+	QString to;
 };
 
 

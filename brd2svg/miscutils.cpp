@@ -23,48 +23,34 @@ WireTree::WireTree(QDomElement & w)
 		QDomElement piece = w.firstChildElement("piece");
 		if (!piece.isNull()) {
 			QDomElement arc = piece.firstChildElement("arc");
-
 			if (!arc.isNull()) {
 				MiscUtils::x1y1x2y2(arc, ax1, ay1, ax2, ay2);
 				qreal width;
 				MiscUtils::rwaa(arc, radius, width, angle1, angle2);
-				oa1 = angle1;
-				oa2 = angle2;
-				if (ax1 != x1 || ay1 != y1) {
-					// qDebug() << "eagle exchanged the arc";
-					sweep = 1;
-					angle2 = oa1;
-					angle1 = oa2;
+				// Ensure 'angle1' refers to (x1,y1)
+				// and 'angle2' to (x2,y2)
+				if((ax1 != x1) || (ay1 != y1)) {
+					qreal tmp = angle1;
+					angle1 = angle2;
+					angle2 = tmp;
+//curve = -curve;
 				}
 			}
 		}
 	}
 	left = right = NULL;
+	connected = false;
 }
 
 void WireTree::turn() {
-	qreal temp = x1;
-	x1 = x2;
-	x2 = temp;
-	temp = y1;
-	y1 = y2;
-	y2 = temp;
-	if (curve) {
-		resetArc();
-		// qDebug() << "flipping arc";
-	}
-}
+	qreal     tmp;
+	WireTree *tptr;
 
-void WireTree::resetArc() {
-	angle1 = oa1;
-	angle2 = oa2;
-	sweep = 0;
-	if (ax1 != x1 || ay1 != y1) {
-		// qDebug() << "eagle exchanged the arc";
-		sweep = 1;
-		angle2 = oa1;
-		angle1 = oa2;
-	}
+	tmp  = x1;     x1     = x2;     x2     = tmp;
+	tmp  = y1;     y1     = y2;     y2     = tmp;
+	tmp  = angle1; angle1 = angle2; angle2 = tmp;
+	tptr = right;  right  = left;   left   = tptr;
+//	curve = -curve;
 }
 
 ////////////////////////////////////////////
@@ -416,71 +402,81 @@ void MiscUtils::includeSvg2(QDomDocument & doc, const QString & path, const QStr
 bool MiscUtils::makeWireTrees(QList<QDomElement> & wireList, QList<WireTree *> & wireTrees)
 {
 	foreach (QDomElement wire, wireList) {
-		WireTree * wireTree = new WireTree(wire);
-		wireTrees.append(wireTree);
+		wireTrees.append(new WireTree(wire));
 	}
+	WireTree *first = wireTrees.first();
 
-	QList<WireTree *> failed;
+	WireTree *firstInPoly, *w1 = NULL;
+	bool      perimeter = true;
 
-	foreach (WireTree * wireTree, wireTrees) {
-		if (!wireTree->left) {
-			foreach (WireTree * wt, wireTrees) {
-				if (wt == wireTree) continue;
+	for(;;) {
+		// Find first unconnected wire in wireTrees
+		foreach(firstInPoly, wireTrees) if(!firstInPoly->connected) break;
 
-				if (wireTree->x1 == wt->x1 && wireTree->y1 == wt->y1) {
-					if (wt->left == NULL) {
-						wireTree->left = wt;
-						wt->left = wireTree;
-						break;
-					}
-				}
-				if (wireTree->x1 == wt->x2 && wireTree->y1 == wt->y2) {
-					if (wt->right == NULL) {
-						wireTree->left = wt;
-						wt->right = wireTree;
-						break;
-					}
+		if((firstInPoly == NULL) || (firstInPoly->connected)) break; // All polys processed
+
+		if(w1) w1->left->right = firstInPoly; // Prior poly, move 'next' to here
+
+		w1 = firstInPoly; // Start at first unconnected wire in this poly
+		w1->connected = true;
+		do {
+			foreach(WireTree *w2, wireTrees) { // Compare against other wires...
+				if(w1 == w2) continue;     // Don't compare against self
+				if((w1->x2 == w2->x1) && (w1->y2 == w2->y1)) {
+					// End (x2,y2) of wire 1 is start (x1,y1) of wire 2
+					w1->right = w2;
+					w2->left  = w1;
+					break;
+				} else if((w1->x2 == w2->x2) && (w1->y2 == w2->y2)) {
+					// End (x2,y2) of wire 1 is end (x2,y2) of wire 2 --
+					// flip wire 2 so x2/y2 of w1 is x1/y1 of w2
+					w2->turn();
+					w1->right = w2;
+					w2->left  = w1;
+					break;
 				}
 			}
-		}
-		if (!wireTree->right) {
-			foreach (WireTree * wt, wireTrees) {
-				if (wt == wireTree) continue;
+			w1 = w1->right;
+			if(w1) w1->connected = true;
+		} while(w1 && (w1 != firstInPoly));
 
-				if (wireTree->x2 == wt->x1 && wireTree->y2 == wt->y1) {
-					if (wt->left == NULL) {
-						wireTree->right = wt;
-						wt->left = wireTree;
-						break;
-					}
-				}
-				if (wireTree->x2 == wt->x2 && wireTree->y2 == wt->y2) {
-					if (wt->right == NULL) {
-						wireTree->right = wt;
-						wt->right = wireTree;
-						break;
-					}
-				}
-			}
-		}
+		if(!w1) break; // Broken poly, don't try fixing
 
-		if (wireTree->left == NULL || wireTree->right == NULL)  {
-			failed << wireTree;
+		// Determine whether traversing poly in the '->right'
+		// direction is clockwise or counterclockwise...
+		WireTree *next;
+		qreal     angleSum = 0,
+		          xA, yA, xB, yB, xC, yC, angle, c, s;
+		do {
+			next      = w1->right;
+			xA        = w1->x2   - w1->x1;    // Vector A
+			yA        = w1->y2   - w1->y1;
+			xB        = next->x2 - next->x1; // Vector B
+			yB        = next->y2 - next->y1;
+			angle     = -atan2(yA, xA);      // Cartesian -angle of vector A
+			c         = cos(angle);
+			s         = sin(angle);
+			xC        = xB * c - yB * s;     // Vector C is a rotated vector B
+			yC        = yB * c + xB * s;
+			angleSum += atan2(yC, xC);       // Angle B-A (-Pi to +Pi)
+			w1        = next;
+		} while(w1 != firstInPoly);
+
+		if((perimeter && (angleSum > 0)) || (!perimeter && (angleSum <= 0))) {
+			// Inverse direction of path if necessary...
+			// If perimeter, ->right should lead clockwise,
+			// subsequent pathd, ->right leads counterclockwise.
+			do {
+				w1->turn(); // Flip endpoints, angles
+				w1 = w1->right;
+			} while(w1 != firstInPoly);
 		}
+		perimeter = false;
 	}
 
-	if (failed.count() > 0) {
-		foreach (WireTree * wt, failed) {
+	if(w1) w1->left->right = NULL; // Close off last poly
 
-			QString info = QString("x1:%1 y1:%2 x2:%3 y2:%4 c:%5").arg(wt->x1).arg(wt->y1).arg(wt->x2).arg(wt->y2).arg(wt->curve);
-			//qreal radius, angle1, angle2;
-			//qDebug() << "wiretree failure" << wt << wt->left << wt->right << info;
-			wt->failed = true;
-		}
-		return false;
-	}
-
-	return true;
+	return (w1 != NULL);
 }
 
 

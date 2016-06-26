@@ -49,9 +49,10 @@ struct WireTree {
 	bool failed;
 	QDomElement element;
 
+	bool connected;
+
 	WireTree(QDomElement & w);
 	void turn();
-	void resetArc();
 };
 
 #endif

@@ -75,6 +75,9 @@ QDomElement Spacer;
 // FeatherWing is detected among the components used.  Ugh.
 bool textClipEnabled = true;
 
+// SLARTIBARTFAST
+bool cw = true;
+
 
 bool cxcyrw(QDomElement & element, qreal & cx, qreal & cy, qreal & radius, qreal & width);
 
@@ -2930,8 +2933,7 @@ void BrdApplication::genPath(QDomElement & element, QString & svg, const QString
 	QString fill = fillArg;
 	if (allConnected) {
 		path = genPolyString(wireTrees, element, width);
-	}
-	else {
+	} else {
 		path = genPolyString(wires, element, width);
 	}
 	foreach (WireTree * wireTree, wireTrees) delete wireTree;
@@ -2941,9 +2943,9 @@ void BrdApplication::genPath(QDomElement & element, QString & svg, const QString
 	}
 
 	svg += QString("<path stroke-linecap='round' stroke-width='%1' fill='%2' stroke='%3' d='")
-		.arg(SW(width))
-		.arg(fill)
-		.arg(stroke);
+	         .arg(SW(width))
+	         .arg(fill)
+	         .arg(stroke);
 	svg += path;
 	svg += "'/>\n";
 	svg += QString("</g>\n");
@@ -2975,17 +2977,8 @@ QString BrdApplication::genPolyString(QList<WireTree *> & wireTrees, QDomElement
 		QPointF p(current->x2, current->y2);
 		path += addPathUnit(current, p, dr);
 
-
 		WireTree * next = current->right;
 		if (next == first) break;
-
-		if (next->right == current) {
-			// TODO: not sure you can flip an arc this way
-			next->turn();
-			WireTree * t = next->right;
-			next->right = next->left;
-			next->left = t;
-		}
 
 		current = next;
 	}
@@ -3000,12 +2993,16 @@ QString BrdApplication::addPathUnit(WireTree * wireTree, QPointF p, qreal rDelta
 	}
 
 	return QString("A%1,%1 0 %2 %3 %4,%5\n")
-						.arg(wireTree->radius - rDelta)
-						.arg((qAbs(wireTree->angle2 - wireTree->angle1) < 180.0) ? 0 : 1)
-						.arg(wireTree->sweep)
-						.arg(p.x() - m_trueBounds.left())
-						.arg(flipy(p.y())
-					);
+// Args are rx,ry (radii), x axis rot (0), 'large arc flag', sweep flag, x,y (endpoint)
+	  .arg(wireTree->radius - rDelta)
+	  .arg((qAbs(wireTree->angle2 - wireTree->angle1) < 180.0) ? 0 : 1)
+	  .arg(cw) // clockwise flag
+//	  .arg(wireTree->sweep)
+	  .arg(p.x() - m_trueBounds.left())
+	  .arg(flipy(p.y()));
+//	  .arg(wireTree->x2 - m_trueBounds.left())
+//	  .arg(flipy(wireTree->y2));
+
 }
 
 QString BrdApplication::genPolyString(QList<QDomElement> & wires, QDomElement & element, qreal & width)
@@ -3127,8 +3124,7 @@ void BrdApplication::collectPadSmdPackages(QDomElement & root, QList<QDomElement
 	}
 }
 
-
-bool BrdApplication::polyFromWires(QDomElement & root, const QString & boardColor, const QString & stroke, qreal strokeWidth, QString & svg, bool & clockwise) {
+bool BrdApplication::polyFromWires(QDomElement & root, const QString & boardColor, const QString & stroke, qreal strokeWidth, QString & svg, bool clockwise) {
 	// note path is not closed here
 	
 	bool noStroke = stroke.compare("none") == 0;
@@ -3144,15 +3140,15 @@ bool BrdApplication::polyFromWires(QDomElement & root, const QString & boardColo
 	if (wireList.count() < 2) return false;
 
 	QList<WireTree *> wireTrees;
-	bool allConnected = MiscUtils::makeWireTrees(wireList, wireTrees);
-	if (!allConnected) {
+	if(!MiscUtils::makeWireTrees(wireList, wireTrees)) {
 		foreach (WireTree * wireTree, wireTrees) delete wireTree;
 		return false;
 	}
 
-	QString path = QString("<path fill='%1' stroke='%2' stroke-width='%3' d='").arg(boardColor).arg(stroke).arg(SW(strokeWidth));
-	WireTree * first = wireTrees.first();
-	WireTree * current = first;
+	QString path = QString("<path fill='%1' stroke='%2' stroke-width='%3' d='")
+	  .arg(boardColor)
+	  .arg(stroke)
+	  .arg(SW(strokeWidth));
 	QMatrix matrix;
 	qreal dr = 0;
 	if (!noStroke) {
@@ -3161,36 +3157,28 @@ bool BrdApplication::polyFromWires(QDomElement & root, const QString & boardColo
 		matrix.translate(-m_trueBounds.center().x(), -m_trueBounds.center().y());
 		dr = strokeWidth / 2;
 	}
-	QPointF p(current->x1, current->y1);
-	QPointF q = matrix.map(p);
-	path += QString("M%1,%2").arg(q.x() - m_trueBounds.left()).arg(flipy(q.y()));
-	bool firstTime = true;
-	while (true) {
-		QPointF p(current->x2, current->y2);
+
+	qreal     px=99999999, py=99999999;
+	WireTree *w = wireTrees.first(), *next;
+
+	while(w) {
+		if((w->x1 != px) || (w->y1 != py)) {
+			// Move to (x1,y1)
+			QPointF p(w->x1, w->y1);
+			QPointF q = matrix.map(p);
+			path += QString("M%1,%2")
+			  .arg(q.x() - m_trueBounds.left())
+			  .arg(flipy(q.y()));
+		}
+		// Draw to (x2,y2)
+		QPointF p(w->x2, w->y2);
 		QPointF q = matrix.map(p);
-		path += addPathUnit(current, q, dr);
-
-		WireTree * next = current->right;
-		if (next == first) break;
-
-		if (next->right == current) {
-			next->turn();
-			WireTree * t = next->right;
-			next->right = next->left;
-			next->left = t;
-		}
-
-		if (firstTime) {
-			firstTime = false;
-			// http://stackoverflow.com/questions/4437986/how-to-find-direction-of-a-vector-path
-			// (b1-a1)(c2-b2) - (b2-a2)(c1-b1)
-			// If this coordinate is positive then your path is counterclockwise, if it is negative then it is clockwise.
-			qreal calc = ((current->x2 - current->x1) * (next->y2 - current->y2)) - ((current->y2 - current->y1) * (next->x2 - current->x2));
-			clockwise = (calc < 0);
-		}
-
-		current = next;
+		path += addPathUnit(w, q, dr);
+		px = w->x2;
+		py = w->y2;
+		w  = w->right;
 	}
+
 	path += "\n";    // do not close the path with a single-quote here, there is potentially more to be added
 	svg += path;
 
@@ -3200,14 +3188,14 @@ bool BrdApplication::polyFromWires(QDomElement & root, const QString & boardColo
 
 QString BrdApplication::genMaxShape(QDomElement & root, QDomElement & paramsRoot, const QString & boardColor, const QString & stroke, qreal strokeWidth)
 {
+bool clockwise = true; // Not actually used anymore, but to make compiler happy
+cw = true; // Drawing board outline is CW, holes are CCW
 	QString path;
 	bool noStroke = stroke.compare("none") == 0;
 	QString tagName = m_maxElement.tagName();
 	bool gotMaxShape = false;
-	bool clockwise = true;
 	// eventually could do this with a vector-to-raster flood fill trick
 	if (tagName.compare("circle") == 0) {
-		clockwise = false;
 		qreal cx, cy, radius, width;
 		if (cxcyrw(m_maxElement, cx, cy, radius, width)) {
 			if (strokeWidth <= 0) strokeWidth = width;
@@ -3217,8 +3205,7 @@ QString BrdApplication::genMaxShape(QDomElement & root, QDomElement & paramsRoot
 				radius -= (strokeWidth / 2);
 			}
 
-			// counterclockwise
-			path = QString("<path fill='%1' stroke='%2' stroke-width='%3' d='M%4,%5a%6,%6 0 1 0 %7,0 %6,%6 0 1 0 -%7,0z\n")
+			path = QString("<path fill='%1' stroke='%2' stroke-width='%3' d='M%4,%5a%6,%6 0 1 1 %7,0 %6,%6 0 1 1 -%7,0z\n")
 				.arg(boardColor)
 				.arg(stroke)
 				.arg(SW(strokeWidth))
@@ -3237,10 +3224,9 @@ QString BrdApplication::genMaxShape(QDomElement & root, QDomElement & paramsRoot
 	}
 	else if (tagName.compare("wire") == 0) {
 		//qDebug() << "max shape is wires";
-		gotMaxShape = polyFromWires(root, boardColor, stroke, strokeWidth, path, clockwise);
+		gotMaxShape = polyFromWires(root, boardColor, stroke, strokeWidth, path, false); // counterclockwise
 	}
 	if (!gotMaxShape && !m_genericSMD) {
-		clockwise = true;
 		//qDebug() << "max shape is rect";
 		qreal dr = noStroke ? 0 : strokeWidth / 2;
 		path = QString("<path fill='%1' stroke='%2' stroke-width='%3' d='M%4,%5l%6,0 0,%7 -%6,0 0,-%7z\n")
@@ -3253,11 +3239,13 @@ QString BrdApplication::genMaxShape(QDomElement & root, QDomElement & paramsRoot
 				.arg(m_boardBounds.height() -dr - dr);
 	}
 
+// SLARTIBARTFAST
+cw = !cw;
+	// These holes won't show up on FeatherWings because it's a component
 	QDomNodeList nodeList = root.elementsByTagName("hole");
 	for (int i = 0; i < nodeList.count(); i++) {
 		QDomElement hole = nodeList.item(i).toElement();
 		if (hole.isNull()) continue;
-
 		path += genHole(hole, noStroke ? 0 : strokeWidth / 2, !clockwise);
 	}
 
@@ -3473,11 +3461,11 @@ bool BrdApplication::isBus(QDomElement & contact) {
 QString BrdApplication::genHole2(qreal cx, qreal cy, qreal r, int sweepFlag)
 {
 	return QString("M%1,%2a%3,%3 0 1 %5 %4,0 %3,%3 0 1 %5 -%4,0z\n")
-				.arg(cx - m_trueBounds.left() - r)
-				.arg(flipy(cy))
-				.arg(r)
-				.arg(2 * r)
-				.arg(sweepFlag);
+	  .arg(cx - m_trueBounds.left() - r)
+	  .arg(flipy(cy))
+	  .arg(r)
+	  .arg(2 * r)
+	  .arg(sweepFlag);
 }
 
 QString BrdApplication::genHole(QDomElement hole, qreal inset, bool clockwise) {
@@ -3495,9 +3483,9 @@ QString BrdApplication::genHole(QDomElement hole, qreal inset, bool clockwise) {
 
 	qreal radius = (drill / 2.0) - inset;
 
-	int sweepflag = clockwise ? 1 : 0;
-
-	return genHole2(x, y, radius, sweepflag);
+// SLARTIBARTFAST
+	return genHole2(x, y, radius, 0); // Holes are always CCW
+//	return genHole2(x, y, radius, clockwise);
 }
 
 void BrdApplication::loadDifParams(QDir & workingFolder, QHash<QString, DifParam *> & difParams)
