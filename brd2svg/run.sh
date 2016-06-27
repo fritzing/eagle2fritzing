@@ -10,6 +10,10 @@ WORKPATH=/Users/pburgess/Desktop/FritzingTest
 PARTPATH=../subparts
 ANDPATH=./and
 BACKUPPATH=bak
+# Set to 0 to skip pre/post processing steps
+PREPROCESS=1
+POSTPROCESS=0
+# POSTPROCESSING IS NOT CURRENTLY NEEDED -- fixed FeatherWing issue in code
 
 # If argument is passed to script, this overrides WORKPATH
 if [ -n "$1" ]
@@ -17,26 +21,28 @@ then
   WORKPATH=$1
 fi
 
-# Preprocess each .brd file
-BRDPATH=$WORKPATH/brds
-for FILENAME in $BRDPATH/*.brd; do
-  python preprocess.py "$FILENAME" "$FILENAME.tmp"
-  OLDSIZE=$(wc -c <"$FILENAME")
-  NEWSIZE=$(wc -c <"$FILENAME.tmp")
-  if [ $NEWSIZE -ne $OLDSIZE ]; then
-    # File size changed; copy original to BACKUPPATH
-    mkdir -p "$BRDPATH/$BACKUPPATH"
-    cp "$FILENAME" "$BRDPATH/$BACKUPPATH"
-    # Then overwrite original with new (smaller) file.
-    mv "$FILENAME.tmp" "$FILENAME"
-    # It's done this way because getting the brd2svg application
-    # and .ulp script to process the .brd.tmp files isn't working;
-    # need to use the original .brd filename.
-  else
-    # No change in file size; delete temp file.
-    rm -f "$FILENAME.tmp"
-  fi
-done
+if [ -n "$PREPROCESS" ] && [ "$PREPROCESS" -gt 0 ]; then
+  # Preprocess each .brd file
+  BRDPATH=$WORKPATH/brds
+  for FILENAME in $BRDPATH/*.brd; do
+    python preprocess.py "$FILENAME" "$FILENAME.tmp"
+    OLDSIZE=$(wc -c <"$FILENAME")
+    NEWSIZE=$(wc -c <"$FILENAME.tmp")
+    if [ $NEWSIZE -ne $OLDSIZE ]; then
+      # File size changed; copy original to BACKUPPATH
+      mkdir -p "$BRDPATH/$BACKUPPATH"
+      cp "$FILENAME" "$BRDPATH/$BACKUPPATH"
+      # Then overwrite original with new (smaller) file.
+      mv "$FILENAME.tmp" "$FILENAME"
+      # It's done this way because getting the brd2svg application
+      # and .ulp script to process the .brd.tmp files isn't working;
+      # need to use the original .brd filename.
+    else
+      # No change in file size; delete temp file.
+      rm -f "$FILENAME.tmp"
+    fi
+  done
+fi
 
 # If brd2svg returns an exit code of 42, this indicates that the
 # EAGLE ULP script was run and new XML was generated, in which case
@@ -47,15 +53,19 @@ while [ $? -eq 42 ]; do
   ./brd2svg -c contrib -w $WORKPATH -e $EXEC -s $PARTPATH -a $ANDPATH
 done
 
+exit 0
+
 # Postprocess each .svg file
-BRDPATH=$WORKPATH/parts/svg/contrib/breadboard
-for FILENAME in $BRDPATH/*.svg; do
-  python postprocess.py "$FILENAME" "$FILENAME.tmp"
-  OLDSIZE=$(wc -c <"$FILENAME")
-  NEWSIZE=$(wc -c <"$FILENAME.tmp")
-  if [ $NEWSIZE -ne $OLDSIZE ]; then
-    mv "$FILENAME.tmp" "$FILENAME"
-  else
-    rm -f "$FILENAME.tmp"
-  fi
-done
+if [ -n "$POSTPROCESS" ] && [ "$POSTPROCESS" -gt 0 ]; then
+  BRDPATH=$WORKPATH/parts/svg/contrib/breadboard
+  for FILENAME in $BRDPATH/*.svg; do
+    python postprocess.py "$FILENAME" "$FILENAME.tmp"
+    OLDSIZE=$(wc -c <"$FILENAME")
+    NEWSIZE=$(wc -c <"$FILENAME.tmp")
+    if [ $NEWSIZE -ne $OLDSIZE ]; then
+      mv "$FILENAME.tmp" "$FILENAME"
+    else
+      rm -f "$FILENAME.tmp"
+    fi
+  done
+fi

@@ -6,40 +6,39 @@
 
 ///////////////////////////////////////////////////////
 
-
+WireTree::WireTree() { }
 
 WireTree::WireTree(QDomElement & w)
 {
-	element = w;
-	sweep = 0;
-	failed = false;
 	MiscUtils::x1y1x2y2(w, x1, y1, x2, y2);
-	curve = w.attribute("curve", "0").toDouble();
+	element = w;
+	curve   = w.attribute("curve", "0").toDouble();
+	width   = w.attribute("width", "");
 	//qDebug() << "wiretree" << this << x1 << y1 << x2 << y2 << curve;
 
-	width = w.attribute("width", "");
 
 	if (curve != 0) {
 		QDomElement piece = w.firstChildElement("piece");
 		if (!piece.isNull()) {
 			QDomElement arc = piece.firstChildElement("arc");
 			if (!arc.isNull()) {
+				qreal ax1, ay1, ax2, ay2;
 				MiscUtils::x1y1x2y2(arc, ax1, ay1, ax2, ay2);
 				qreal width;
 				MiscUtils::rwaa(arc, radius, width, angle1, angle2);
 				// Ensure 'angle1' refers to (x1,y1)
 				// and 'angle2' to (x2,y2)
 				if((ax1 != x1) || (ay1 != y1)) {
+#if 1
 					qreal tmp = angle1;
 					angle1 = angle2;
 					angle2 = tmp;
 //curve = -curve;
+#endif
 				}
 			}
 		}
 	}
-	left = right = NULL;
-	connected = false;
 }
 
 void WireTree::turn() {
@@ -49,8 +48,7 @@ void WireTree::turn() {
 	tmp  = x1;     x1     = x2;     x2     = tmp;
 	tmp  = y1;     y1     = y2;     y2     = tmp;
 	tmp  = angle1; angle1 = angle2; angle2 = tmp;
-	tptr = right;  right  = left;   left   = tptr;
-//	curve = -curve;
+	curve = -curve;
 }
 
 ////////////////////////////////////////////
@@ -399,84 +397,145 @@ void MiscUtils::includeSvg2(QDomDocument & doc, const QString & path, const QStr
 	TextUtils::mergeSvg(doc, splitter.toString(), "breadboard");
 }
 
-bool MiscUtils::makeWireTrees(QList<QDomElement> & wireList, QList<WireTree *> & wireTrees)
+bool MiscUtils::makeWirePolygons(QList<QDomElement> & wireList, QList<QList<struct WireTree *> > & polygons)
 {
+	QList<WireTree *> unsortedWires;
+
+	// Add all wires from wireList to unsortedWires.
 	foreach (QDomElement wire, wireList) {
-		wireTrees.append(new WireTree(wire));
+		unsortedWires.append(new WireTree(wire));
 	}
-	WireTree *first = wireTrees.first();
+	// Then pick them off one by one as they're added to polygons...
 
-	WireTree *firstInPoly, *w1 = NULL;
-	bool      perimeter = true;
+	qreal maxPolyWidth=0, maxPolyHeight=0; // For finding perimeter polygon
 
-	for(;;) {
-		// Find first unconnected wire in wireTrees
-		foreach(firstInPoly, wireTrees) if(!firstInPoly->connected) break;
+	while(unsortedWires.count() >= 2) {
+		QList<WireTree *> polygon;
+		WireTree         *head, *tail;
+		int               add;
+		qreal             minX, minY, maxX, maxY;
 
-		if((firstInPoly == NULL) || (firstInPoly->connected)) break; // All polys processed
+		head = tail = unsortedWires.first(); // Take first wire thing in unsorted list
+		polygon.append(tail);                // Add to current polygon
+		unsortedWires.removeOne(tail);       // And remove from unsorted list
+		minX = maxX = tail->x1;              // Note first point for
+		minY = maxY = tail->y1;              // poly bounds calculation
+		while(unsortedWires.count()) {
+			add = 0;
+			foreach(WireTree *w, unsortedWires) { // Compare tail against remaining wires
+				if((tail->x2 == w->x1) && (tail->y2 == w->y1)) {
+					// End (x2,y2) of tail is start (x1,y1) of wire w
+					add = 1; // Append to tail
+				} else if((tail->x2 == w->x2) && (tail->y2 == w->y2)) {
+					// End (x2,y2) of tail is end (x2,y2) of wire w --
+					// flip wire w so x2/y2 of tail is x1/y1 of w
+					w->turn();
+					add = 1; // Append to tail
+				} else if((head->x1 == w->x2) && (head->y1 == w->y2)) {
+					// End (x2,y2) of wire w is start (x1,y1) of head
+					add = 2; // Prepend to head
+				} else if((head->x1 == w->x1) && (head->y1 == w->y1)) {
+					// Start (x1,y1) of wire w is start (x1,y1) of head --
+					// flip wire w so x2/y2 of w is x1/y1 of head
+					w->turn();
+					add = 2; // Prepend to head
+				}
 
-		if(w1) w1->left->right = firstInPoly; // Prior poly, move 'next' to here
-
-		w1 = firstInPoly; // Start at first unconnected wire in this poly
-		w1->connected = true;
-		do {
-			foreach(WireTree *w2, wireTrees) { // Compare against other wires...
-				if(w1 == w2) continue;     // Don't compare against self
-				if((w1->x2 == w2->x1) && (w1->y2 == w2->y1)) {
-					// End (x2,y2) of wire 1 is start (x1,y1) of wire 2
-					w1->right = w2;
-					w2->left  = w1;
-					break;
-				} else if((w1->x2 == w2->x2) && (w1->y2 == w2->y2)) {
-					// End (x2,y2) of wire 1 is end (x2,y2) of wire 2 --
-					// flip wire 2 so x2/y2 of w1 is x1/y1 of w2
-					w2->turn();
-					w1->right = w2;
-					w2->left  = w1;
-					break;
+				if(add) {
+					if(w->x1 > maxX) maxX = w->x1; // Poly bounds calc
+					if(w->y1 > maxY) maxY = w->y1;
+					if(w->x1 < minX) minX = w->x1;
+					if(w->y1 < minY) minY = w->y1;
+					if(add == 1) {
+						polygon.append(w);     // Add wire to current polygon
+						tail = w;              // w is new tail of polygon
+					} else {
+						polygon.prepend(w);    // Prepend wire to current polygon
+						head = w;              // w is new head of polygon
+					}
+					unsortedWires.removeOne(w);    // Remove from unsorted list
+					break; // removeOne() throws off foreach(), so restart loop
 				}
 			}
-			w1 = w1->right;
-			if(w1) w1->connected = true;
-		} while(w1 && (w1 != firstInPoly));
-
-		if(!w1) break; // Broken poly, don't try fixing
-
-		// Determine whether traversing poly in the '->right'
-		// direction is clockwise or counterclockwise...
-		WireTree *next;
-		qreal     angleSum = 0,
-		          xA, yA, xB, yB, xC, yC, angle, c, s;
-		do {
-			next      = w1->right;
-			xA        = w1->x2   - w1->x1;    // Vector A
-			yA        = w1->y2   - w1->y1;
-			xB        = next->x2 - next->x1; // Vector B
-			yB        = next->y2 - next->y1;
-			angle     = -atan2(yA, xA);      // Cartesian -angle of vector A
-			c         = cos(angle);
-			s         = sin(angle);
-			xC        = xB * c - yB * s;     // Vector C is a rotated vector B
-			yC        = yB * c + xB * s;
-			angleSum += atan2(yC, xC);       // Angle B-A (-Pi to +Pi)
-			w1        = next;
-		} while(w1 != firstInPoly);
-
-		if((perimeter && (angleSum > 0)) || (!perimeter && (angleSum <= 0))) {
-			// Inverse direction of path if necessary...
-			// If perimeter, ->right should lead clockwise,
-			// subsequent pathd, ->right leads counterclockwise.
-			do {
-				w1->turn(); // Flip endpoints, angles
-				w1 = w1->right;
-			} while(w1 != firstInPoly);
+			if(!add) break; // Couldn't find a wire to link up; is broken poly
 		}
-		perimeter = false;
+
+		if((polygon.last()->x2 != polygon.first()->x1) ||
+		   (polygon.last()->y2 != polygon.first()->y1)) {
+			printf("Not a closed polygon -- fudging it\n");
+			WireTree *w = new WireTree();
+			w->x1 = polygon.last()->x2;
+			w->y1 = polygon.last()->y2;
+			w->x2 = polygon.first()->x1;
+			w->y2 = polygon.first()->y1;
+			w->curve = 0;
+			w->width = "";
+			polygon.append(w);
+		}
+
+//printf("Adding polygon with %d points\n", polygon.count());
+		qreal polyWidth  = maxX - minX,
+		      polyHeight = maxY - minY;
+		if((polyWidth  > maxPolyWidth) ||
+		   (polyHeight > maxPolyHeight)) {
+			maxPolyWidth  = polyWidth;
+			maxPolyHeight = polyHeight;
+			// Largest poly?  Add at head of list.
+//printf("At head of list\n");
+			polygons.prepend(polygon);
+		} else {
+			// Else end of list.
+//printf("At tail of list\n");
+			polygons.append(polygon);
+		}
+	}
+//printf("%d polygons\n", polygons.count());
+
+	// First item in polygons is known perimeter now, and should be clockwise.
+	// All other polys should be counterclockwise (these are presumed holes).
+
+	foreach(QList<WireTree *> polygon, polygons) {
+		WireTree *w1 = polygon.last();
+		qreal     sum = 0, xA, yA, xB, yB, xC, yC, angle, c, s;
+		foreach(WireTree *w2, polygon) {
+			xA    = w1->x2 - w1->x1; // Vector A
+			yA    = w1->y2 - w1->y1;
+			xB    = w2->x2 - w2->x1; // Vector B
+			yB    = w2->y2 - w2->y1;
+			angle = -atan2(yA, xA);  // Cartesian -angle of vector A
+			c     = cos(angle);
+			s     = sin(angle);
+			xC    = xB * c - yB * s; // Vector C is a rotated vector B
+			yC    = yB * c + xB * s;
+			sum  += atan2(yC, xC);   // Angle B-A (-Pi to +Pi)
+			w1    = w2; // Next wire segment
+		}
+
+//if(sum > 0) printf("Counterclockwise\n");
+//else        printf("Clockwise\n");
+		if((polygon == polygons.first()) == (sum > 0)) {
+//printf("Reversing\n");
+			int polyIndex = polygons.indexOf(polygon);
+			foreach(WireTree *w, polygon) {
+				w->turn(); // Exchange x1/y1/x2/y2 etc.
+			}
+			int last = polygon.size() - 1,
+			    mid  = polygon.size() / 2;
+			for(int i=0; i<mid; i++) {
+				polygon.swap(i, last-i);
+			}
+			// Reordering polygon's wire list messes with
+			// the list entry point...replace element in
+			// polygons list with new entry.
+			polygons.replace(polyIndex, polygon);
+		}
+
+		foreach(WireTree *w, polygon) {
+			printf("(%f,%f) (%f,%f)\n", w->x1, w->y1, w->x2, w->y2);
+		}
 	}
 
-	if(w1) w1->left->right = NULL; // Close off last poly
-
-	return (w1 != NULL);
+	return (polygons.count() > 0);
 }
 
 

@@ -67,16 +67,30 @@ QString HybridString(" hybrid='yes' ");
 QDomElement Spacer;
 
 
-// ADAFRUIT 2016-06-21 MEGA KLUDGE: normally text elements outside the
-// board bounds are discarded...however, in the case of FeatherWings,
-// these use a library component as the board itself, and the bounds
-// do not register, creating problems for the text clipping.  Super
-// hacky kludge just completely turns off this text clipping if a
-// FeatherWing is detected among the components used.  Ugh.
+// ADAFRUIT 2016-06-26 TEXT KLUDGE: normally text elements outside the
+// board bounds are discarded...however, in the case of certain parts
+// like FeatherWings and Pi HATs, these use a library component as the
+// board itself, and the bounds do not register, creating problems for
+// the text clipping.  Super hacky kludge just completely turns off
+// this text clipping if one of these parts is detected.  Better might
+// be to modify the bounds-calculating code to handle deeper elements.
 bool textClipEnabled = true;
 
-// SLARTIBARTFAST
-bool cw = true;
+// ADAFRUIT 2016-06-26 HOLE KLUDGE: the code attempts to arrange the
+// board perimeter to be clockwise and holes to be CCW...it makes the
+// assumption that the first polygon is the perimeter, but this isn't
+// always the case.  It's easy enough to spot the largest polygon,
+// but reordering the poly list to put the perimeter first was
+// looking burdensome.  So, an ugly hack: SVG doesn't really care
+// if the first path in a compound path is the perimeter, or the
+// largest, or even if it's clockwise vs counterclockwise...the
+// distinction between fill and hole is entirely a matter of relative
+// direction.
+// Wait - no - this approach still assumes that the first poly is
+// clockwise and all subsequent are CCW.  That won't work if there's
+// multiple holes.  The largest MUST go one way, all others the
+// opposite.  Don't do the holeDirection hack.
+
 
 
 bool cxcyrw(QDomElement & element, qreal & cx, qreal & cy, qreal & radius, qreal & width);
@@ -1085,26 +1099,12 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 	foreach(QDomElement contact, rights) {
 		params += genContact(contact);
 	}
-#if 1
 	params += QString("</right>\n");
 	params += QString("<unused>\n");
 	foreach(QDomElement contact, unused) {
 		params += genContact(contact);
 	}
 	params += QString("</unused>\n");
-#else
-	// Kludge: put 'unused' elements into 'right' group instead
-	// (many pads not showing up otherwise) ???
-	// EDIT: this causes other problems when part's loaded into
-	// Fritzing -- whole board lights up like a tree when connections
-	// are made, since SMD pads are connected to those.  So instead,
-	// default behavior ('unused' group) has been restored (#if 1
-	// above) and problem is addressed elsewhere.
-	foreach(QDomElement contact, unused) {
-		params += genContact(contact);
-	}
-	params += QString("</right>\n");
-#endif
 
 	params += QString("</connectors>\n");
 
@@ -2212,10 +2212,7 @@ void BrdApplication::collectPackages(QDomElement &root, QList<QDomElement> & pac
 			if(element.attribute("mirror", "") != "1") {
 				QDomElement package = element.firstChildElement("package");
 				if (!package.isNull()) {
-					// ADAFRUIT 2016-06-21: if package is "FEATHERWING", disable text clipping.
-					// Ugly kludge, it's explained a bit near the top of this file.
 					QString name = package.attribute("name");
-					if(name == "FEATHERWING") textClipEnabled = false;
 					//qDebug() << name;
 					if (inBounds(package)) {
 						packages.append(package);
@@ -2406,7 +2403,7 @@ void BrdApplication::genPadAux(QDomElement & contact, QDomElement & pad, QString
 					rx = dr;
 					ry = dr * 2.3;
 				}
-				QString hole = genHole2(cx, cy, dr, 0);
+				QString hole = genHole2(cx, cy, dr);
 
 				svg += QString("<path stroke='none' stroke-width='0' d='m%1,%2 %3,0 0,%4 -%3,0 0,-%4%6' fill='%5' />\n")
 							.arg(cx - rx - m_trueBounds.left())
@@ -2440,7 +2437,7 @@ void BrdApplication::genPadAux(QDomElement & contact, QDomElement & pad, QString
 					return;
 				}
 				
-				QString hole = genHole2(cx, cy, dr, 0);
+				QString hole = genHole2(cx, cy, dr);
 				svg += QString("<path stroke='none' stroke-width='0' d='m%1,%2 %3,0 0,%4 -%3,0 0,-%4%6z' fill='%5' />\n")
 							.arg(rect.left() - m_trueBounds.left())
 							.arg(flipy(rect.top()))			// note "+ dr" rather than "- dr" because we flip all the y values
@@ -2926,17 +2923,21 @@ void BrdApplication::genPath(QDomElement & element, QString & svg, const QString
 	QList<QDomElement> wires;
 	collectWires(element, wires, doFillings);
 
-	QList<WireTree *> wireTrees;
-	bool allConnected = MiscUtils::makeWireTrees(wires, wireTrees);
+	QList<QList<WireTree *> > polygons;
+	bool allConnected = MiscUtils::makeWirePolygons(wires, polygons);
 	QString path;
-	qreal width;
+	qreal   width;
 	QString fill = fillArg;
 	if (allConnected) {
-		path = genPolyString(wireTrees, element, width);
+		path = genPolyString(polygons, element, width);
 	} else {
 		path = genPolyString(wires, element, width);
 	}
-	foreach (WireTree * wireTree, wireTrees) delete wireTree;
+	foreach (QList<WireTree *> polygon, polygons) {
+		foreach (WireTree *wire, polygon) {
+			delete wire;
+		}
+	}
 
 	if (stroke.compare("none") == 0) {
 		width = 0;
@@ -2951,36 +2952,31 @@ void BrdApplication::genPath(QDomElement & element, QString & svg, const QString
 	svg += QString("</g>\n");
 }
 
-QString BrdApplication::genPolyString(QList<WireTree *> & wireTrees, QDomElement & element, qreal & width)
+QString BrdApplication::genPolyString(QList<QList <WireTree *> > & polygons, QDomElement & element, qreal & width)
 {
 	bool ok;
 	width = MiscUtils::strToMil(element.attribute("width", ""), ok);
 	bool needsWidth = !ok;
 	QString path;
 
-	WireTree * current = NULL;
-	WireTree * first = NULL;
-	while (wireTrees.count() > 0) {
-		if (current == NULL) {
-			first = current = wireTrees.first();
-			QPointF p(current->x1, current->y1);
-			path += QString("M%1,%2").arg(p.x() - m_trueBounds.left()).arg(flipy(p.y()));
+	foreach(QList<WireTree *> polygon, polygons) {
+		// Move to first point of poly
+		WireTree *wire = polygon.first();
+		QPointF p(wire->x1, wire->y1);
+		path += QString("M%1,%2")
+		  .arg(p.x() - m_trueBounds.left())
+		  .arg(flipy(p.y()));
+		foreach(wire, polygon) {
+			if(needsWidth) {
+				width = MiscUtils::strToMil(wire->width, ok);
+				needsWidth = !ok;
+			}
+			qreal dr = width / 2;
+
+			// Draw to (x2,y2)
+			QPointF p(wire->x2, wire->y2);
+			path += addPathUnit(wire, p, dr);
 		}
-
-		if (needsWidth) {
-			width = MiscUtils::strToMil(current->width, ok);
-			needsWidth = !ok;
-		}
-
-		qreal dr = width / 2;
-
-		QPointF p(current->x2, current->y2);
-		path += addPathUnit(current, p, dr);
-
-		WireTree * next = current->right;
-		if (next == first) break;
-
-		current = next;
 	}
 
 	return path;
@@ -2992,12 +2988,11 @@ QString BrdApplication::addPathUnit(WireTree * wireTree, QPointF p, qreal rDelta
 		return QString("L%1,%2\n").arg(p.x() - m_trueBounds.left()).arg(flipy(p.y()));
 	}
 
-	return QString("A%1,%1 0 %2 %3 %4,%5\n")
 // Args are rx,ry (radii), x axis rot (0), 'large arc flag', sweep flag, x,y (endpoint)
+	return QString("A%1,%1 0 %2 %3 %4,%5\n")
 	  .arg(wireTree->radius - rDelta)
 	  .arg((qAbs(wireTree->angle2 - wireTree->angle1) < 180.0) ? 0 : 1)
-	  .arg(cw) // clockwise flag
-//	  .arg(wireTree->sweep)
+	  .arg(wireTree->angle2 < wireTree->angle1) // sweep flag
 	  .arg(p.x() - m_trueBounds.left())
 	  .arg(flipy(p.y()));
 //	  .arg(wireTree->x2 - m_trueBounds.left())
@@ -3124,24 +3119,57 @@ void BrdApplication::collectPadSmdPackages(QDomElement & root, QList<QDomElement
 	}
 }
 
-bool BrdApplication::polyFromWires(QDomElement & root, const QString & boardColor, const QString & stroke, qreal strokeWidth, QString & svg, bool clockwise) {
+bool BrdApplication::polyFromWires(QDomElement & root, const QString & boardColor, const QString & stroke, qreal strokeWidth, QString & svg) {
 	// note path is not closed here
-	
+
 	bool noStroke = stroke.compare("none") == 0;
 	QList<QDomElement> wireList;
+	// Normally board bounds can be found in <board><wires><wire>...
 	QDomElement wires = root.firstChildElement("wires");
 	QDomElement wire = wires.firstChildElement("wire");
-	while (!wire.isNull()) {
-		if (wire.attribute("layer").compare(DimensionsLayer) == 0) {
-			wireList.append(wire);
+	if(!wire.isNull()) {
+		while (!wire.isNull()) {
+			if (wire.attribute("layer").compare(DimensionsLayer) == 0) {
+				wireList.append(wire);
+			}
+			wire = wire.nextSiblingElement("wire");
 		}
-		wire = wire.nextSiblingElement("wire");
+	} else {
+		// But a few boards use a library component for the bounds,
+		// in which case it's necessary to drill a few layers deeper,
+		// <board><elements><element><package><wires><wire>
+		// and test each element/package/wire if in Dimensionslayer
+		QDomElement elements = root.firstChildElement("elements");
+		QDomElement element  = elements.firstChildElement("element");
+		while(!element.isNull() && !wireList.count()) {
+			QDomElement package = element.firstChildElement("package");
+			while(!package.isNull() && !wireList.count()) {
+				wires = package.firstChildElement("wires");
+				wire  = wires.firstChildElement("wire");
+				while(!wire.isNull()) {
+					if(wire.attribute("layer").compare(DimensionsLayer) == 0) {
+						wireList.append(wire);
+					}
+					wire = wire.nextSiblingElement("wire");
+				}
+				package = package.nextSiblingElement("package");
+			}
+			element = element.nextSiblingElement("element");
+		}
+		// ADAFRUIT 2016-06-26: if board bounds were found this way, disable text clipping.
+		// Ugly kludge, it's explained a bit near the top of this file.
+		textClipEnabled = false;
 	}
+
 	if (wireList.count() < 2) return false;
 
-	QList<WireTree *> wireTrees;
-	if(!MiscUtils::makeWireTrees(wireList, wireTrees)) {
-		foreach (WireTree * wireTree, wireTrees) delete wireTree;
+	QList<QList <WireTree *> > polygons;
+	if(!MiscUtils::makeWirePolygons(wireList, polygons)) {
+		foreach(QList<WireTree *> polygon, polygons) {
+			foreach(WireTree *wire, polygon) {
+				delete wire;
+			}
+		}
 		return false;
 	}
 
@@ -3158,38 +3186,35 @@ bool BrdApplication::polyFromWires(QDomElement & root, const QString & boardColo
 		dr = strokeWidth / 2;
 	}
 
-	qreal     px=99999999, py=99999999;
-	WireTree *w = wireTrees.first(), *next;
-
-	while(w) {
-		if((w->x1 != px) || (w->y1 != py)) {
-			// Move to (x1,y1)
-			QPointF p(w->x1, w->y1);
-			QPointF q = matrix.map(p);
-			path += QString("M%1,%2")
-			  .arg(q.x() - m_trueBounds.left())
-			  .arg(flipy(q.y()));
-		}
-		// Draw to (x2,y2)
-		QPointF p(w->x2, w->y2);
+	foreach(QList<WireTree *> polygon, polygons) {
+		WireTree *wire = polygon.first();
+		// Move to first point of poly
+		QPointF p(wire->x1, wire->y1);
 		QPointF q = matrix.map(p);
-		path += addPathUnit(w, q, dr);
-		px = w->x2;
-		py = w->y2;
-		w  = w->right;
+		path += QString("M%1,%2")
+		  .arg(q.x() - m_trueBounds.left())
+		  .arg(flipy(q.y()));
+		foreach(wire, polygon) {
+			// Draw to (x2,y2)
+			QPointF p(wire->x2, wire->y2);
+			QPointF q = matrix.map(p);
+			path += addPathUnit(wire, q, dr);
+		}
 	}
 
 	path += "\n";    // do not close the path with a single-quote here, there is potentially more to be added
 	svg += path;
 
-	foreach (WireTree * wireTree, wireTrees) delete wireTree;
+	foreach(QList<WireTree *> polygon, polygons) {
+		foreach(WireTree *wire, polygon) {
+			delete wire;
+		}
+	}
 	return true;
 }
 
 QString BrdApplication::genMaxShape(QDomElement & root, QDomElement & paramsRoot, const QString & boardColor, const QString & stroke, qreal strokeWidth)
 {
-bool clockwise = true; // Not actually used anymore, but to make compiler happy
-cw = true; // Drawing board outline is CW, holes are CCW
 	QString path;
 	bool noStroke = stroke.compare("none") == 0;
 	QString tagName = m_maxElement.tagName();
@@ -3224,7 +3249,7 @@ cw = true; // Drawing board outline is CW, holes are CCW
 	}
 	else if (tagName.compare("wire") == 0) {
 		//qDebug() << "max shape is wires";
-		gotMaxShape = polyFromWires(root, boardColor, stroke, strokeWidth, path, false); // counterclockwise
+		gotMaxShape = polyFromWires(root, boardColor, stroke, strokeWidth, path);
 	}
 	if (!gotMaxShape && !m_genericSMD) {
 		//qDebug() << "max shape is rect";
@@ -3239,14 +3264,11 @@ cw = true; // Drawing board outline is CW, holes are CCW
 				.arg(m_boardBounds.height() -dr - dr);
 	}
 
-// SLARTIBARTFAST
-cw = !cw;
-	// These holes won't show up on FeatherWings because it's a component
 	QDomNodeList nodeList = root.elementsByTagName("hole");
 	for (int i = 0; i < nodeList.count(); i++) {
 		QDomElement hole = nodeList.item(i).toElement();
 		if (hole.isNull()) continue;
-		path += genHole(hole, noStroke ? 0 : strokeWidth / 2, !clockwise);
+		path += genHole(hole, noStroke ? 0 : strokeWidth / 2);
 	}
 
 	if (noStroke) {
@@ -3260,12 +3282,12 @@ cw = !cw;
 
 			QDomElement pad = contact.firstChildElement("pad");
 			if (!pad.isNull()) {
-				path += genHole(pad, 0, !clockwise);
+				path += genHole(pad, 0);
 				continue;
 			}
 
 			if (contact.tagName().compare("via") == 0) {
-				path += genHole(contact, 0, !clockwise);
+				path += genHole(contact, 0);
 				continue;
 			}
 		}
@@ -3458,17 +3480,19 @@ bool BrdApplication::isBus(QDomElement & contact) {
 	return (contact.attribute("bus", "0").compare("1") == 0);
 }
 
-QString BrdApplication::genHole2(qreal cx, qreal cy, qreal r, int sweepFlag)
+// Need to reset this for each board
+QString BrdApplication::genHole2(qreal cx, qreal cy, qreal r)
 {
-	return QString("M%1,%2a%3,%3 0 1 %5 %4,0 %3,%3 0 1 %5 -%4,0z\n")
+	// Holes are always CCW
+//printf("Hole: (%f,%f) %f\n", cx, cy, r);
+	return QString("M%1,%2a%3,%3 0 1 0 %4,0 %3,%3 0 1 0 -%4,0z\n")
 	  .arg(cx - m_trueBounds.left() - r)
 	  .arg(flipy(cy))
 	  .arg(r)
-	  .arg(2 * r)
-	  .arg(sweepFlag);
+	  .arg(2 * r);
 }
 
-QString BrdApplication::genHole(QDomElement hole, qreal inset, bool clockwise) {
+QString BrdApplication::genHole(QDomElement hole, qreal inset) {
 	bool ok;
 	qreal x = MiscUtils::strToMil(hole.attribute("x", ""), ok);
 	if (!ok) return "";
@@ -3483,9 +3507,7 @@ QString BrdApplication::genHole(QDomElement hole, qreal inset, bool clockwise) {
 
 	qreal radius = (drill / 2.0) - inset;
 
-// SLARTIBARTFAST
-	return genHole2(x, y, radius, 0); // Holes are always CCW
-//	return genHole2(x, y, radius, clockwise);
+	return genHole2(x, y, radius);
 }
 
 void BrdApplication::loadDifParams(QDir & workingFolder, QHash<QString, DifParam *> & difParams)

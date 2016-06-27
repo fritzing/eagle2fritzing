@@ -64,14 +64,14 @@ protected:
 	void collectFakeVias(QDomElement &paramsRoot, QList<QDomElement> & connectorList);
 	QDomDocument loadParams(QFile & paramsFile, const QString & basename);
 	void collectPadSmdPackages(QDomElement & root, QList<QDomElement> & padSmdPackages);
-	bool polyFromWires(QDomElement & root, const QString & boardColor, const QString & stroke, qreal strokeWidth, QString & svg, bool clockwise);
+	bool polyFromWires(QDomElement & root, const QString & boardColor, const QString & stroke, qreal strokeWidth, QString & svg);
 	QString genMaxShape(QDomElement & root, QDomElement & paramsRoot, const QString & boardColor, const QString & stroke, qreal strokeWidth);
 	void genOverlaps(QDomElement & root, const FillStroke & normal, const FillStroke & IC,
 	  QString & svg, bool offBoardOnly, const QStringList & ICs, QHash<QString, QString> & subpartAliases, bool includeSubparts);
 	bool isUsed(QDomElement & contact);
 	bool isBus(QDomElement & contact);
-	QString genHole(QDomElement hole, qreal inset, bool clockwise);
-	QString genHole2(qreal cx, qreal cy, qreal r, int sweepFlag);
+	QString genHole(QDomElement hole, qreal inset);
+	QString genHole2(qreal cx, qreal cy, qreal r);
 	void addSubparts(QDomElement & root, QDomElement & paramsRoot, QString & svg, QHash<QString, QString> & subpartAliases);
 	bool bigEnough(QDomElement & package, qreal minArea);
 	void loadDifParams(QDir & workingFolder, QHash<QString, class DifParam *> & csvParams);
@@ -82,7 +82,7 @@ protected:
 	QString getBoardName(QDomElement & root);
 	QString loadDescription(const QString & prefix, const QString & url, const QDir & descrsFolder);
 	QString genPolyString(QList<QDomElement> &, QDomElement & element, qreal & width);
-	QString genPolyString(QList<struct WireTree *> &, QDomElement & element, qreal & width);
+	QString genPolyString(QList<QList<struct WireTree *> > & polygons, QDomElement & element, qreal & width);
 	QString addPathUnit(WireTree * wireTree, QPointF p, qreal rDelta);
 	void replaceXY(QString & string);
 	QString translateBoardColor(const QString & color);
