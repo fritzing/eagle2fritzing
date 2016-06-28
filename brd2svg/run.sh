@@ -11,7 +11,7 @@ PARTPATH=../subparts
 ANDPATH=./and
 BACKUPPATH=bak
 # Set to 0 to skip pre/post processing steps
-PREPROCESS=1
+PREPROCESS=0
 POSTPROCESS=0
 # POSTPROCESSING IS NOT CURRENTLY NEEDED -- fixed FeatherWing issue in code
 

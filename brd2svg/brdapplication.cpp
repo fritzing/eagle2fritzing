@@ -76,22 +76,6 @@ QDomElement Spacer;
 // be to modify the bounds-calculating code to handle deeper elements.
 bool textClipEnabled = true;
 
-// ADAFRUIT 2016-06-26 HOLE KLUDGE: the code attempts to arrange the
-// board perimeter to be clockwise and holes to be CCW...it makes the
-// assumption that the first polygon is the perimeter, but this isn't
-// always the case.  It's easy enough to spot the largest polygon,
-// but reordering the poly list to put the perimeter first was
-// looking burdensome.  So, an ugly hack: SVG doesn't really care
-// if the first path in a compound path is the perimeter, or the
-// largest, or even if it's clockwise vs counterclockwise...the
-// distinction between fill and hole is entirely a matter of relative
-// direction.
-// Wait - no - this approach still assumes that the first poly is
-// clockwise and all subsequent are CCW.  That won't work if there's
-// multiple holes.  The largest MUST go one way, all others the
-// opposite.  Don't do the holeDirection hack.
-
-
 
 bool cxcyrw(QDomElement & element, qreal & cx, qreal & cy, qreal & radius, qreal & width);
 
@@ -213,6 +197,12 @@ BrdApplication::BrdApplication(int& argc, char **argv[]) : QApplication(argc, *a
 	m_core = "core";
 }
 
+// ADAFRUIT 2016-06-27: this was previously declared in start(),
+// but I needed to get it to a function several layers down whose
+// parent functions didn't pass down the value...so, nasty kludge,
+// just make it global for now.
+QHash<QString, QString> SubpartAliases;
+
 void BrdApplication::start() {
 	if (!initArguments()) {
 		usage();
@@ -287,7 +277,6 @@ void BrdApplication::start() {
 	loadDifParams(workingFolder, difParams);
 
 	QStringList ICs;
-	QHash<QString, QString> SubpartAliases;
 	QFile file(AllPackagesPath);
 	QString errorStr;
 	int errorLine;
@@ -314,7 +303,6 @@ void BrdApplication::start() {
 	}
 
 	//QString txt = TextUtils::escapeAnd(this->loadDescription("ThermalPrinter", "http://www.sparkfun.com/products/10438", descriptionsFolder));
-
 
 	QSet<QString> packageNames;
 	foreach (QString filename, fileList) {
@@ -1649,15 +1637,14 @@ void BrdApplication::addSubparts(QDomElement & root, QDomElement & paramsRoot, Q
 		foreach (QDomElement package, packages) {
 			QString name = package.attribute("name", "").toLower();
 
-
 			// ADAFRUIT 2016-06-16: MICROBUILDER LIBRARY KLUDGE:
-			if(name == "0805-no") {
+			if((name == "0805-no") || (name == "0805") || (name == "_0805mp") || (name == "c0805") || (name == "r0805")) {
 				// Rename generic 0805 to resistor or cap as needed,
 				// based on parent element name (starts with 'C' or 'R').
 				QString elementName = package.parentNode().toElement().attribute("name", "").toUpper();
 				if(     elementName[0] == 'C') name = "0805-cap";
 				else if(elementName[0] == 'R') name = "0805-res";
-			} else if(name == "0603-no") {
+			} else if((name == "0603-no") || (name == "0603") || (name == "_0603mp") || (name == "c0603") || (name == "r0603")) {
 				// Rename generic 0603 to resistor or cap as needed,
 				// based on parent element name (starts with 'C' or 'R').
 				QString elementName = package.parentNode().toElement().attribute("name", "").toUpper();
@@ -2200,19 +2187,33 @@ void BrdApplication::collectContacts(QDomElement & root, QDomElement & paramsRoo
 	}
 }
 
+
 void BrdApplication::collectPackages(QDomElement &root, QList<QDomElement> & packages)
 {
+	QDir subpartsFolder(m_fritzingSubpartsPath);
+	subpartsFolder.cd("breadboard");
+
 	QDomElement elements = root.firstChildElement("elements");
 	if (!elements.isNull()) {
 		QDomElement element = elements.firstChildElement("element");
 		while (!element.isNull()) {
-			// ADAFRUIT 2016-06-24: discard mirrored elements,
-			// these are typically things on the bPlace layer
-			// but whose layerID is tPlace for whatev reason.
-			if(element.attribute("mirror", "") != "1") {
-				QDomElement package = element.firstChildElement("package");
-				if (!package.isNull()) {
-					QString name = package.attribute("name");
+			// ADAFRUIT 2016-06-24: certain subparts, if they exist in
+			// the 'subparts' folder and are mirrored (because they
+			// appear on the bPlace layer) would get drawn anyway (with
+			// a substituted subpart graphic), because the element
+			// itself isn't on that layer, only its constituent
+			// rectangles (which are correctly ignored and not drawn,
+			// but the replacement subpart would get drawn regardless).
+			// Example: ADAFRUIT_2.5MM on the back of the VEML6070 board.
+			// SO...if the 'mirror' flag is set and a package is found
+			// in the subparts/breadboard folder, it'll be ignored.
+			// THIS MAY CAUSE TROUBLE if a part on the top layer is
+			// mirrored for some reason.
+			QDomElement package = element.firstChildElement("package");
+			if (!package.isNull()) {
+				QString name = package.attribute("name");
+				if((element.attribute("mirror", "") != "1") ||
+				   findSubpart(name, SubpartAliases, subpartsFolder).isEmpty()) {
 					//qDebug() << name;
 					if (inBounds(package)) {
 						packages.append(package);
@@ -2456,13 +2457,16 @@ void BrdApplication::genPadAux(QDomElement & contact, QDomElement & pad, QString
 
 void BrdApplication::genLayerElements(QDomElement &root, QDomElement &paramsRoot, QString & svg, const QString & layerID, bool skipText, qreal minArea, bool doFillings, const QString & textColor) {
 	QList<QDomElement> from;
+	QDir subpartsFolder(m_fritzingSubpartsPath);
+	subpartsFolder.cd("breadboard");
 
 	from.append(root.firstChildElement("wires"));
 	from.append(root.firstChildElement("circles"));
 	from.append(root.firstChildElement("polygons"));
 	// ADAFRUIT 2016-06-16: LOGO KLUDGE:
-	// Don't output rects for Adafruit logo -- an optimized .svg is substituted for this part
-	if(root.attribute("name", "") != "ADAFRUIT_2.5MM")
+	// If a substitute part is available, don't output rects --
+	// it's probably a big raster logo; will be substituted later.
+	if(findSubpart(root.attribute("name", ""), SubpartAliases, subpartsFolder).isEmpty())
 		from.append(root.firstChildElement("rects"));
 	from.append(root.firstChildElement("texts"));
 
@@ -2660,6 +2664,9 @@ void BrdApplication::genText(QDomElement & element, const QString & text, QStrin
 
 void BrdApplication::genLayerElement(QDomElement & paramsRoot, QDomElement & element, QString & svg, const QString & layerID, bool skipText, qreal minArea, bool doFillings, const QString & textColor)
 {
+	// ADAFRUIT 2016-06-27: Kludgey McKludgeface
+	if((layerID == BottomLayer) || (layerID == BottomPlaceLayer)) return;
+
 	QString tagName = element.tagName();
 
 	if (tagName.compare("circle") == 0) {
@@ -3827,6 +3834,7 @@ bool BrdApplication::matchAnd(QDomElement & contact, QDomElement & connector) {
 }
 
 QString BrdApplication::findSubpart(const QString & name, QHash<QString, QString> & subpartAliases, QDir & subpartsFolder) {
+
 	QFile file(subpartsFolder.absoluteFilePath(name + ".svg"));
 	if (file.exists()) {
 		return name;

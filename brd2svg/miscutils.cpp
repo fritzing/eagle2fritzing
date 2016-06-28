@@ -462,7 +462,7 @@ bool MiscUtils::makeWirePolygons(QList<QDomElement> & wireList, QList<QList<stru
 
 		if((polygon.last()->x2 != polygon.first()->x1) ||
 		   (polygon.last()->y2 != polygon.first()->y1)) {
-			printf("Not a closed polygon -- fudging it\n");
+//printf("Not a closed polygon -- fudging it\n");
 			WireTree *w = new WireTree();
 			w->x1 = polygon.last()->x2;
 			w->y1 = polygon.last()->y2;
@@ -530,9 +530,9 @@ bool MiscUtils::makeWirePolygons(QList<QDomElement> & wireList, QList<QList<stru
 			polygons.replace(polyIndex, polygon);
 		}
 
-		foreach(WireTree *w, polygon) {
-			printf("(%f,%f) (%f,%f)\n", w->x1, w->y1, w->x2, w->y2);
-		}
+//		foreach(WireTree *w, polygon) {
+//			printf("(%f,%f) (%f,%f)\n", w->x1, w->y1, w->x2, w->y2);
+//		}
 	}
 
 	return (polygons.count() > 0);
