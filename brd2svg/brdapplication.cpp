@@ -1015,7 +1015,7 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 	params += QString("<!-- <property name='family'>sample family</property> -->\n");
 	params += QString("</properties>\n");
 
-	params += QString("<breadboard breadboard-color='%1'>\n").arg("#1a234d");
+	params += QString("<breadboard breadboard-color='%1'>\n").arg("#014cb1");
 	params += QString("<extra-layers>\n");
 	params += ("<!-- to add extra layers to the breadboard,\n"
 					"uncomment the following <layer> elements,\n"
@@ -1500,7 +1500,8 @@ bool viasFirst(QDomElement & contact1, QDomElement & contact2)
 
 QString BrdApplication::genGenericBreadboard(QDomElement & root, QDomElement & paramsRoot, DifParam * difParam, QDir & workingFolder)
 {
-	QString boardColor = "#1F7A34";
+	// ADAFRUIT 2016-07-01: default board color
+	QString boardColor = "#014CB1";
 
 	if (!paramsRoot.isNull()) {
 		QDomElement bb = paramsRoot.firstChildElement("breadboard");
@@ -1543,7 +1544,8 @@ QString BrdApplication::genBreadboard(QDomElement & root, QDomElement & paramsRo
 	svg += "<g id='breadboard'>\n";
 	svg += "<g id='icon'>\n";						// make sure we can use this image for icon view
 
-	QString boardColor = "#1F7A34";
+	// ADAFRUIT 2016-07-01: default board color
+	QString boardColor = "#014CB1";
 
 	if (!paramsRoot.isNull()) {
 		QDomElement bb = paramsRoot.firstChildElement("breadboard");
@@ -1638,6 +1640,8 @@ void BrdApplication::addSubparts(QDomElement & root, QDomElement & paramsRoot, Q
 			QString name = package.attribute("name", "").toLower();
 
 			// ADAFRUIT 2016-06-16: MICROBUILDER LIBRARY KLUDGE:
+			// I think all these different names could just be
+			// done in and/all.packages.txt file (using 'map')
 			if((name == "0805-no") || (name == "0805") || (name == "_0805mp") || (name == "c0805") || (name == "r0805")) {
 				// Rename generic 0805 to resistor or cap as needed,
 				// based on parent element name (starts with 'C' or 'R').
@@ -3774,7 +3778,7 @@ QString BrdApplication::loadDescription(const QString & prefix, const QString & 
 QString BrdApplication::translateBoardColor(const QString & color)
 {
 	QHash<QString,QString> colors;
-	colors.insert("blue", "#147390");
+	colors.insert("blue", "#014CB1");
 	colors.insert("red", "#C62717");
 	colors.insert("green", "#1F7A34");
 	colors.insert("purple", "#672E58");
