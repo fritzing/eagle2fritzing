@@ -292,5 +292,8 @@
 <map package='0805-res' to='0805-NO' />
 <map package='0805-led-red' to='CHIPLED_0805_NOOUTLINE' />
 <map package='eia3528' to='eia3528-21/b-r' />
+<map package='4uconn_20329' to='4uconn_20329_v2' />
+<map package='respack_4x0603' to='respack_4x0603_no' />
+<map package='0402-res' to='_0402' />
 
 </packages>

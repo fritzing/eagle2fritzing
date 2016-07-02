@@ -47,7 +47,7 @@ protected:
 	void genPad(QDomElement & contact, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString, bool integrateVias);
 	void genPadAux(QDomElement & contact, QDomElement & pad, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString, bool integrateVias);
 	void genSmd(QDomElement & contact, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString);
-	void genCopperElements(QDomElement &root, QDomElement & paramsRoot, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString, bool integrateVias);
+	void genCopperElements(QDomElement &root, QDomElement & paramsRoot, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString, bool integrateVias, bool isBreadboard);
 	void genText(QDomElement & element, const QString & text, QString & svg, QDomElement & paramsRoot, const QString & textColor);
 	qreal flipy(qreal y);
 	bool inBounds(QDomElement & package);

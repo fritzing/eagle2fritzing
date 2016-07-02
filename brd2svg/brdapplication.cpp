@@ -1452,9 +1452,9 @@ QString BrdApplication::genPCB(QDomElement & root, QDomElement & paramsRoot) {
 	genOverlaps(root, fs, fs, svg, true, noICs, noSubparts, false);
 	svg += "</g>\n";
 	QString c1, c0;
-	genCopperElements(root, paramsRoot, c1, TopLayer, "#F7BD13", "pad", false);
+	genCopperElements(root, paramsRoot, c1, TopLayer, "#F7BD13", "pad", false, false);
 	if (!m_genericSMD) {
-		genCopperElements(root, paramsRoot, c0, BottomLayer, "#F7BD13", "pad", false);
+		genCopperElements(root, paramsRoot, c0, BottomLayer, "#F7BD13", "pad", false, false);
 	}
 	if (!c1.isEmpty() && !c0.isEmpty()) {
 		svg += "<g id='copper1'>\n";
@@ -1526,7 +1526,7 @@ QString BrdApplication::genGenericBreadboard(QDomElement & root, QDomElement & p
 	powers.append(grounds);
 
 	QString copper;
-	genCopperElements(root, paramsRoot, copper, TopLayer, "#8c8c8c", "pad", true);
+	genCopperElements(root, paramsRoot, copper, TopLayer, "#8c8c8c", "pad", true, true);
 	QRectF outerChipRect;
 	getPackagesBounds(root, outerChipRect, TopLayer, true, false);
 
@@ -1591,7 +1591,7 @@ QString BrdApplication::genBreadboard(QDomElement & root, QDomElement & paramsRo
 	fs2.strokeWidth = 0;
 
 	genOverlaps(root, fs1, fs2, svg, false, ICs, subpartAliases, true);
-	genCopperElements(root, paramsRoot, svg, TopLayer, "#9A916C", "pin", true);
+	genCopperElements(root, paramsRoot, svg, TopLayer, "#9A916C", "pin", true, true);
 
 	svg += "</g>\n";
 	svg += "</g>\n";
@@ -2015,7 +2015,7 @@ void BrdApplication::getSides(QDomElement & root, QDomElement & paramsRoot,
 	}
 }
 
-void BrdApplication::genCopperElements(QDomElement &root, QDomElement & paramsRoot, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString, bool integrateVias) {
+void BrdApplication::genCopperElements(QDomElement &root, QDomElement & paramsRoot, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString, bool integrateVias, bool isBreadboard) {
 	QList<QDomElement> contacts;
 	QStringList busNames;
 	collectContacts(root, paramsRoot, contacts, busNames);
@@ -2026,8 +2026,8 @@ void BrdApplication::genCopperElements(QDomElement &root, QDomElement & paramsRo
 	}
 
 	foreach (QDomElement contact, contacts) {
-		// ADAFRUIT 2016-06-20 - line disabled so pads are generated for SMD parts:
-		// if (!isUsed(contact)) continue;
+		// ADAFRUIT 2016-07-01 - generate SMD pads in breadboard view, looks cool:
+		if(!isBreadboard && !isUsed(contact)) continue;
 
 		genPad(contact, svg, layerID, copperColor, padString, integrateVias);
 	}
