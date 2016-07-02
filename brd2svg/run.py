@@ -7,7 +7,7 @@ import shutil
 
 # Location of EAGLE executable
 #EXEC = "/Applications/EAGLE-7.3.0/EAGLE.app/Contents/MacOS/EAGLE"
-EXEC = "C:/Program Files (x86)/EAGLE-6.4.0/bin"
+EXEC = "C:\\Program Files (x86)\\EAGLE-6.4.0\\bin\\eagle.exe"
 # Default brd2svg working path (override by passing argument to this script)
 WORKPATH = "./FritzingTest"
 # Other paths used by brd2svg:
@@ -44,7 +44,7 @@ if __name__ == '__main__':
             OLDSIZE = os.stat(FILENAME)[6]
             NEWSIZE = os.stat(FILENAME+".tmp")[6]
             if (NEWSIZE != OLDSIZE):
-                print("File modified: "+OLDSIZE+" vs "+NEWSIZE)
+                print("File modified: "+str(OLDSIZE)+" vs "+str(NEWSIZE))
                 if (not os.path.isdir(BRDPATH+"/"+BACKUPPATH)):
                     os.mkdir(BRDPATH+"/"+BACKUPPATH)
                 shutil.copy(FILENAME, BRDPATH+"/"+BACKUPPATH)
