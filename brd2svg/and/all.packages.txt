@@ -290,6 +290,7 @@
 
 <!-- Adafruit additions/changes -->
 <map package='0805-res' to='0805-NO' />
+<map package='0805-res' to='0805-thm' />
 <map package='0805-led-red' to='CHIPLED_0805_NOOUTLINE' />
 <map package='eia3528' to='eia3528-21/b-r' />
 <map package='4uconn_20329' to='4uconn_20329_v2' />
@@ -305,4 +306,6 @@
 <map package='SOT23-5' to='SOT23-5l' />
 <map package='resonator-smd' to='resonator' />
 <map package='mlf_5mm' to='mlf32-th' />
+<map package='soic8' to='hsop8' />
+<map package='qfn_7mm' to='tqfn48_7mm' />
 </packages>
