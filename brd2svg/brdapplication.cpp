@@ -1874,7 +1874,6 @@ void BrdApplication::getSides(QDomElement & root, QDomElement & paramsRoot,
 			for (int ix = 0; ix < contacts.count(); ix++) {
 				QDomElement contact = contacts.at(ix);
 
-
 				if (match(contact, connector, false)) {
 					contacts.removeAt(ix--);
 					QString parentName = connector.parentNode().toElement().tagName();
