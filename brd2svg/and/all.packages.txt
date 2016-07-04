@@ -295,5 +295,14 @@
 <map package='4uconn_20329' to='4uconn_20329_v2' />
 <map package='respack_4x0603' to='respack_4x0603_no' />
 <map package='0402-res' to='_0402' />
-
+<map package='bmp18x_extended' to='bmp183_extended' />
+<map package='bmp18x_extended' to='bmp180_extended' />
+<map package='btn_kmr2_4.6x2.8' to='kmr2' />
+<map package='qfn_4mm' to='qfn28_4mm_0.4mm' />
+<map package='qfn_4mm' to='mlf20_4x4mm_0.5mm_atmel' />
+<map package='qfn_4mm' to='qfn20_4mm' />
+<map package='sod-123' to='sod-123fl' />
+<map package='SOT23-5' to='SOT23-5l' />
+<map package='resonator-smd' to='resonator' />
+<map package='mlf_5mm' to='mlf32-th' />
 </packages>
