@@ -688,7 +688,6 @@ void BrdApplication::collectLayerElements(QList<QDomElement> & from, QList<QDomE
 		QDomElement child = element.firstChildElement();
 		while (!child.isNull()) {
 			QString layer = child.attribute("layer", "");
-			
 			if (layer.compare(layerID) == 0 || layerID.isEmpty()) {
 				to.append(child);
 			}
@@ -709,8 +708,29 @@ QRectF BrdApplication::getDimensions(QDomElement & root, QDomElement & maxElemen
 	from.append(root.firstChildElement("circles"));
 	from.append(root.firstChildElement("polygons"));
 	from.append(root.firstChildElement("rects"));
+
 	QList<QDomElement> to;
 	collectLayerElements(from, to, layer);
+
+	// ADAFRUIT 2016-07-05: some parts require drilling into 'elements' to get dimensions
+	// (specifically from 'wires' elements in dimensions layer).
+	QDomElement elements = root.firstChildElement("elements");
+	QDomElement element  = elements.firstChildElement("element");
+	while(!element.isNull()) {
+		QDomElement package = element.firstChildElement("package");
+		while(!package.isNull()) {
+			QDomElement wires = package.firstChildElement("wires");
+			QDomElement wire  = wires.firstChildElement("wire");
+			while(!wire.isNull()) {
+				if(wire.attribute("layer").compare(DimensionsLayer) == 0) {
+					to.append(wire);
+				}
+				wire = wire.nextSiblingElement("wire");
+			}
+			package = package.nextSiblingElement("package");
+		}
+		element = element.nextSiblingElement("element");
+	}
 
 	if (deep) {
 		addElements(root, to, 0);
