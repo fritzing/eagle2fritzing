@@ -1,0 +1,4 @@
+brd2svg
+moc_svgfilesplitter.cpp
+moc_svgpathrunner.cpp
+qrc_phoenixresources.cpp
