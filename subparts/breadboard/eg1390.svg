@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 20.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.2" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-	 x="0px" y="0px" width="19.843px" height="17.008px" viewBox="0 0 19.843 17.008" xml:space="preserve">
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="19.8px" height="17px" viewBox="0 0 19.8 17" style="enable-background:new 0 0 19.8 17;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#DCDCDC;}
+	.st1{fill:#B4B4B4;}
+	.st2{fill:#333333;}
+</style>
 <g>
-	<rect x="1.701" fill="#DCDCDC" width="2.268" height="17.008"/>
-	<rect x="8.788" fill="#DCDCDC" width="2.268" height="17.008"/>
-	<rect x="15.874" fill="#DCDCDC" width="2.268" height="17.008"/>
-	<rect x="1.701" y="2.835" fill="#B4B4B4" width="2.268" height="11.339"/>
-	<rect x="8.788" y="2.834" fill="#B4B4B4" width="2.268" height="11.339"/>
-	<rect x="15.874" y="2.835" fill="#B4B4B4" width="2.268" height="11.339"/>
-	<rect y="3.543" width="19.843" height="9.921"/>
-	<polygon fill="#DCDCDC" points="18.425,6.377 18.425,3.543 1.417,3.543 1.417,6.377 0,6.377 0,10.629 1.417,10.629 1.417,13.464 
-		5.67,13.464 5.67,10.629 14.174,10.629 14.174,13.464 18.425,13.464 18.425,10.629 19.843,10.629 19.843,6.377 	"/>
-	<rect x="5.67" y="10.629" fill="#333333" width="4.252" height="2.835"/>
-	<circle fill="#B4B4B4" cx="12.047" cy="8.503" r="1.417"/>
-	<circle fill="#B4B4B4" cx="7.795" cy="8.503" r="1.417"/>
+	<rect x="15.9" y="0" class="st0" width="2.3" height="17"/>
+	<rect x="8.8" y="0" class="st0" width="2.3" height="17"/>
+	<rect x="1.7" y="0" class="st0" width="2.3" height="17"/>
+	<rect x="15.9" y="2.8" class="st1" width="2.3" height="11.3"/>
+	<rect x="8.8" y="2.8" class="st1" width="2.3" height="11.3"/>
+	<rect x="1.7" y="2.8" class="st1" width="2.3" height="11.3"/>
+	<rect x="0" y="3.5" width="19.8" height="9.9"/>
+	<polygon class="st0" points="1.4,10.6 1.4,13.5 18.4,13.5 18.4,10.6 19.8,10.6 19.8,6.4 18.4,6.4 18.4,3.5 14.2,3.5 14.2,6.4 
+		5.7,6.4 5.7,3.5 1.4,3.5 1.4,6.4 0,6.4 0,10.6 	"/>
+	<rect x="9.9" y="3.5" class="st2" width="4.3" height="2.8"/>
+	<circle class="st1" cx="7.8" cy="8.5" r="1.4"/>
+	<circle class="st1" cx="12" cy="8.5" r="1.4"/>
 </g>
 </svg>
