@@ -4,11 +4,12 @@ import argparse
 import glob
 import os
 import shutil
+from sys import platform as _platform
 
 # Location of EAGLE executable
-#EXEC = "/Applications/EAGLE-7.3.0/EAGLE.app/Contents/MacOS/EAGLE"
-EXEC = "C:\\Program Files (x86)\\EAGLE-6.4.0\\bin\\eagle.exe"
-#EXEC = "C:\\Program Files (x86)\\EAGLE-6.6.0\\bin\\eagle.exe"
+EXEC = "/Applications/EAGLE-6.6.0/EAGLE.app/Contents/MacOS/EAGLE"
+# EXEC = "C:\\Program Files (x86)\\EAGLE-6.4.0\\bin\\eagle.exe"
+# EXEC = "C:\\Program Files (x86)\\EAGLE-6.6.0\\bin\\eagle.exe"
 # Default brd2svg working path (override by passing argument to this script)
 WORKPATH = "FritzingTest"
 # Other paths used by brd2svg:
@@ -40,8 +41,9 @@ if __name__ == '__main__':
         #print BRDPATH+"/*.brd"
         files = glob.glob(BRDPATH+"/*.brd")
         print files
+        print _platform
         for FILENAME in files:
-            os.system("python preprocess.py "+FILENAME+" "+FILENAME+".tmp")
+            os.system("python preprocess.py \'"+FILENAME+"\' \'"+FILENAME+".tmp\'")
             OLDSIZE = os.stat(FILENAME)[6]
             NEWSIZE = os.stat(FILENAME+".tmp")[6]
             if (NEWSIZE != OLDSIZE):
@@ -53,7 +55,13 @@ if __name__ == '__main__':
             else:
                 os.remove(FILENAME+".tmp")
 
-            cmd = 'brd2svg -c contrib -w "'+WORKPATH+'" -e "'+EXEC+'" -s "'+PARTPATH+'" -a "'+ANDPATH+'"'
+            if _platform == "darwin":
+               # MAC OS X
+               cmd = './brd2svg -c contrib -w "'+WORKPATH+'" -e "'+EXEC+'" -s "'+PARTPATH+'" -a "'+ANDPATH+'"'
+            else:
+               # Windows
+               cmd = 'brd2svg -c contrib -w "'+WORKPATH+'" -e "'+EXEC+'" -s "'+PARTPATH+'" -a "'+ANDPATH+'"'
+
             print cmd
             # run twice!
             os.system(cmd)
