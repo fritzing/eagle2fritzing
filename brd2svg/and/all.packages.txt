@@ -311,7 +311,6 @@
 <map package='mlf_5mm' to='mlf32-th' />
 <map package='soic8' to='hsop8' />
 <map package='qfn_7mm' to='tqfn48_7mm' />
-<map package='msop10' to='psop10' />
 <map package='msop08' to='msop8_0.65mm' />
 <map package='lga14_3x5mm' to='lga14' />
 <map package='sod-323' to='sod-323f' />

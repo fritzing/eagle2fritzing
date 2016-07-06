@@ -7,8 +7,8 @@ import shutil
 
 # Location of EAGLE executable
 #EXEC = "/Applications/EAGLE-7.3.0/EAGLE.app/Contents/MacOS/EAGLE"
-#EXEC = "C:\\Program Files (x86)\\EAGLE-6.4.0\\bin\\eagle.exe"
-EXEC = "C:\\Program Files (x86)\\EAGLE-6.6.0\\bin\\eagle.exe"
+EXEC = "C:\\Program Files (x86)\\EAGLE-6.4.0\\bin\\eagle.exe"
+#EXEC = "C:\\Program Files (x86)\\EAGLE-6.6.0\\bin\\eagle.exe"
 # Default brd2svg working path (override by passing argument to this script)
 WORKPATH = "FritzingTest"
 # Other paths used by brd2svg:
