@@ -50,3 +50,8 @@ brd2svg has been tweaked to modify the output of some components in the Microbui
 The .svg files will usually require a little cleanup in Illustrator or similar.
 
 Note about \<nudge\> elements in the .params file: I'm trying to avoid some/most of these by strategically sizing the artboard of the component .svgs -- it's typical to have the artboard exactly match the component bounds, but these dimensions may vary from EAGLE's concept of the same component. brd2svg centers component SVGs within their EAGLE bounds (but does not crop) -- so, for example, if all USB host ports need to scoot 0.3mm toward the opening, add 0.6mm to the opposite bounding edge.
+
+Subparts Art Attribution
+============================================
+MicroSD Card holder, ESP-12E module, and Bluefruit LE (MDBT40) art is from PigHixx's lovely diagrams!
+http://www.pighixxx.com/
