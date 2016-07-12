@@ -305,6 +305,7 @@
 <map package='qfn_4mm' to='qfn20_4mm' />
 <map package='qfn_4mm' to='16lcsp' />
 <map package='qfn_3mm' to='lfcsp16_lq' />
+<map package='qfn_3mm' to='qfn16_3mm' />
 <map package='sod-123' to='sod-123fl' />
 <map package='SOT23-5' to='SOT23-5l' />
 <map package='SOT23-wide' to='sot23-r' />
@@ -326,5 +327,5 @@
 <map package='tqfn44_7mm' to='tqfn48_7mm' />
 <map package='tqfp48' to='lqfp48' />
 <map package='soic8wide' to='soic8_208mil' />
-
+<map package='trimpot-3mm' to='trimpot_bourns_3303w' />
 </packages>

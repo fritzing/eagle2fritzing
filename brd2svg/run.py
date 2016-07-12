@@ -7,9 +7,9 @@ import shutil
 from sys import platform as _platform
 
 # Location of EAGLE executable
-EXEC = "/Applications/EAGLE-6.6.0/EAGLE.app/Contents/MacOS/EAGLE"
-# EXEC = "C:\\Program Files (x86)\\EAGLE-6.4.0\\bin\\eagle.exe"
-# EXEC = "C:\\Program Files (x86)\\EAGLE-6.6.0\\bin\\eagle.exe"
+#EXEC = "/Applications/EAGLE-6.6.0/EAGLE.app/Contents/MacOS/EAGLE"
+EXEC = "C:\\Program Files (x86)\\EAGLE-6.4.0\\bin\\eagle.exe"
+#EXEC = "C:\\Program Files (x86)\\EAGLE-6.6.0\\bin\\eagle.exe"
 # Default brd2svg working path (override by passing argument to this script)
 WORKPATH = "FritzingTest"
 # Other paths used by brd2svg:
@@ -43,7 +43,7 @@ if __name__ == '__main__':
         print files
         print _platform
         for FILENAME in files:
-            os.system("python preprocess.py \'"+FILENAME+"\' \'"+FILENAME+".tmp\'")
+            os.system("python preprocess.py \""+FILENAME+"\" \""+FILENAME+".tmp\"")
             OLDSIZE = os.stat(FILENAME)[6]
             NEWSIZE = os.stat(FILENAME+".tmp")[6]
             if (NEWSIZE != OLDSIZE):
