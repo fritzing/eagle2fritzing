@@ -326,5 +326,6 @@
 <map package='tqfn44_7mm' to='tqfn48_7mm' />
 <map package='tqfp48' to='lqfp48' />
 <map package='soic8wide' to='soic8_208mil' />
+<map package='soic8' to='soic8_150mil' />
 
 </packages>
