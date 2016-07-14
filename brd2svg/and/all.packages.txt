@@ -177,7 +177,6 @@
 <package name='sot23-5' ic='no' />
 <package name='sot563' ic='yes' />
 <package name='sparkfun_idg500' ic='yes' />
-<package name='ssop24' ic='yes' />
 <package name='ssop24_narrow' ic='yes' />
 <package name='ssop28db' ic='yes' />
 <package name='stand-off' ic='no' />
@@ -329,5 +328,8 @@
 <map package='soic8wide' to='soic8_208mil' />
 <map package='soic8' to='soic8_150mil' />
 <map package='trimpot-3mm' to='trimpot_bourns_3303w' />
-
+<map package='termblock_1x2-3.5mm' to='1x2-3.5mm' />
+<map package='termblock_1x5-3.5mm' to='1x05-3.5mm' />
+<map package='to252' to='d-pak_to252aa' />
+<map package='1x02M' to='jp1' />
 </packages>
