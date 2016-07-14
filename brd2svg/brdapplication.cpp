@@ -1,3 +1,7 @@
+// PAD_FLAG_STOP: 1
+// PAD_FLAG_THERMALS: 4
+// PAD_FLAG_FIRST: 8
+
 #include "brdapplication.h"
 #include "miscutils.h"
 
@@ -810,7 +814,7 @@ QRectF BrdApplication::getPlainBounds(QDomElement & element, const QString & lay
 			else {
 				QDomElement arc = piece.firstChildElement("arc");
 				if (!arc.isNull()) {
-					ok = getArcBounds(element, arc, x1, y1, x2, y2);
+					ok = getArcBounds(arc, x1, y1, x2, y2);
 				}
 			}
 
@@ -922,7 +926,7 @@ QRectF BrdApplication::getPlainBounds(QDomElement & element, const QString & lay
 	return bounds;
 }
 
-bool BrdApplication::getArcBounds(QDomElement wire, QDomElement arc, qreal & x1, qreal & y1, qreal & x2, qreal & y2)
+bool BrdApplication::getArcBounds(QDomElement arc, qreal & x1, qreal & y1, qreal & x2, qreal & y2)
 {
 	qreal ax1, ay1, ax2, ay2;
 	if (!MiscUtils::x1y1x2y2(arc, ax1, ay1, ax2, ay2)) return false;
@@ -1021,7 +1025,8 @@ void BrdApplication::genXml(QDir & workingFolder, QDir & ulpDir, const QString &
 QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 {
 	QString params = "<?xml version='1.0' encoding='UTF-8'?>\n";
-	params += QString("<board-params board='%1' include-vias='false' shrink-holes-factor='1.0' >\n").arg(prefix);
+	// ADAFRUIT 2016-07-14: set include-vias 'true' by default
+	params += QString("<board-params board='%1' include-vias='true' shrink-holes-factor='1.0' >\n").arg(prefix);
 
 	params += ("<!-- please fill in the author, title, description, tags, and properties elements-->\n");
 	params += QString("<author>%1</author>\n").arg(getenvUser());
@@ -1860,6 +1865,9 @@ void BrdApplication::getSides(QDomElement & root, QDomElement & paramsRoot,
   QStringList & busNames, bool collectSpaces, bool integrateVias)
 {
 	if (!paramsRoot.isNull()) {
+
+		// PARSE EXISTING PARAMS FILE --------------------------
+
 		QList<QDomElement> connectors;
 		collectConnectors(paramsRoot, connectors, collectSpaces);
 		QList<QDomElement> contacts;
@@ -1932,105 +1940,106 @@ void BrdApplication::getSides(QDomElement & root, QDomElement & paramsRoot,
 			}
 		}
 
-		return;
-	}
+	} else {
 
-	QList<QDomElement> contacts;
-	collectContacts(root, paramsRoot, contacts, busNames);
+		// GENERATING NEW PARAMS FILE --------------------------
 
-	if (m_genericSMD) {
+		QList<QDomElement> contacts;
+		collectContacts(root, paramsRoot, contacts, busNames);
+
+		if (m_genericSMD) {
+			foreach (QDomElement contact, contacts) {
+				if (contact.attribute("signal", "").isEmpty()) {
+					contact.setAttribute("signal", contact.attribute("connectorIndex").toInt() + 1);
+				}
+			}
+		}
+
 		foreach (QDomElement contact, contacts) {
-			if (contact.attribute("signal", "").isEmpty()) {
-				contact.setAttribute("signal", contact.attribute("connectorIndex").toInt() + 1);
-			}
-		}
-	}
-
-	foreach (QDomElement contact, contacts) {
-		if (!isUsed(contact)) {
-			unused.append(contact);
-			continue;
-		}
-
-		QDomElement pad = contact.firstChildElement("pad");
-		if (pad.isNull()) {
-			if (contact.tagName().compare("via") == 0) {
-			}
-			else {
-				QDomElement smd = contact.firstChildElement("smd");
-				if (smd.isNull()) continue;
-
-				// TODO: check layer?
+			if (!isUsed(contact)) {
+				unused.append(contact);
+				continue;
 			}
 
-		}
-		else {
-			QDomElement layer = pad.firstChildElement("layer");
-			while (!layer.isNull()) {
-				QString lid = layer.attribute("layer", "");
-				if (lid.compare(PadsLayer) == 0) break;
+			QDomElement pad = contact.firstChildElement("pad");
+			if (pad.isNull()) {
+				if (contact.tagName().compare("via") == 0) {
+				}
+				else {
+					QDomElement smd = contact.firstChildElement("smd");
+					if (smd.isNull()) continue;
 
-				layer = layer.nextSiblingElement("layer");
+					// TODO: check layer?
+				}
+
+			} else {
+				QDomElement layer = pad.firstChildElement("layer");
+				while (!layer.isNull()) {
+					QString lid = layer.attribute("layer", "");
+					if (lid.compare(PadsLayer) == 0) break;
+
+					layer = layer.nextSiblingElement("layer");
+				}
+				if (layer.isNull()) continue;
 			}
-			if (layer.isNull()) continue;
-		}
 
-		QString signal = contact.attribute("signal", "");
+			QString signal = contact.attribute("signal", "");
 
-		bool gotOne = false;
-		foreach (QString groundName, GroundNames) {
-			if (signal.compare(groundName, Qt::CaseInsensitive) == 0) {
-				grounds.append(contact);
-				gotOne = true;
-				break;
+			bool gotOne = false;
+			foreach (QString groundName, GroundNames) {
+				if (signal.compare(groundName, Qt::CaseInsensitive) == 0) {
+					grounds.append(contact);
+					gotOne = true;
+					break;
+				}
 			}
-		}
 
-		if (gotOne) continue;
+			if (gotOne) continue;
 
-		foreach (QString powerName, PowerNames) {
-			if (signal.compare(powerName, Qt::CaseInsensitive) == 0) {
+			foreach (QString powerName, PowerNames) {
+				if (signal.compare(powerName, Qt::CaseInsensitive) == 0) {
+					powers.append(contact);
+					gotOne = true;
+					break;
+				}
+			}
+
+			if (gotOne) continue;
+
+			foreach (QString powerName, PowerNames) {
+				if (signal.startsWith(powerName, Qt::CaseInsensitive)) {
+					powers.append(contact);
+					gotOne = true;
+					break;
+				}
+			}
+
+			if (gotOne) continue;
+
+			if (signal.startsWith("v", Qt::CaseInsensitive)) {
 				powers.append(contact);
-				gotOne = true;
-				break;
+				continue;
 			}
-		}
 
-		if (gotOne) continue;
-
-		foreach (QString powerName, PowerNames) {
-			if (signal.startsWith(powerName, Qt::CaseInsensitive)) {
+			if (signal.startsWith("+", Qt::CaseInsensitive)) {
 				powers.append(contact);
-				gotOne = true;
-				break;
+				continue;
 			}
+
+			if (signal.startsWith("-", Qt::CaseInsensitive)) {
+				powers.append(contact);
+				continue;
+			}
+
+			lefts.append(contact);
 		}
 
-		if (gotOne) continue;
+		qSort(lefts.begin(), lefts.end(), alphaBySignal);
 
-		if (signal.startsWith("v", Qt::CaseInsensitive)) {
-			powers.append(contact);
-			continue;
+		int mid = lefts.count() / 2;
+		for (int i = lefts.count() - 1; i >= mid; i--) {
+			rights.append(lefts.takeLast());
 		}
-
-		if (signal.startsWith("+", Qt::CaseInsensitive)) {
-			powers.append(contact);
-			continue;
-		}
-
-		if (signal.startsWith("-", Qt::CaseInsensitive)) {
-			powers.append(contact);
-			continue;
-		}
-
-		lefts.append(contact);
-	}
-
-	qSort(lefts.begin(), lefts.end(), alphaBySignal);
-
-	int mid = lefts.count() / 2;
-	for (int i = lefts.count() - 1; i >= mid; i--) {
-		rights.append(lefts.takeLast());
 	}
 }
 
@@ -2083,6 +2092,9 @@ void BrdApplication::collectContacts(QDomElement & root, QDomElement & paramsRoo
 				}
 			}
 			else {
+// ADAFRUIT 2016-07-14 TEMPORARY TEST HACKYNESS:
+// Use ALL contacts regardless of ExternalElementNames invite list
+used = 1;
 				append = true;
 				QString elementName = package.parentNode().toElement().attribute("name");
 				foreach (QString externalElementName, ExternalElementNames) {
@@ -2282,7 +2294,7 @@ void BrdApplication::collectFakeVias(QDomElement &paramsRoot, QList<QDomElement>
 	}
 }
 
-void BrdApplication::genSmd(QDomElement & contact, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString)
+void BrdApplication::genSmd(QDomElement & contact, QString & svg, const QString & copperColor, const QString & padString)
 {
 	QDomElement smd = contact.firstChildElement("smd");
 	if (smd.isNull()) {
@@ -2351,7 +2363,7 @@ void BrdApplication::genPad(QDomElement & contact, QString & svg, const QString 
 		return;
 	}
 
-	genSmd(contact, svg, layerID, copperColor, padString);
+	genSmd(contact, svg, copperColor, padString);
 }
 
 void BrdApplication::genPadAux(QDomElement & contact, QDomElement & pad, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString, bool integrateVias)
@@ -2373,7 +2385,7 @@ void BrdApplication::genPadAux(QDomElement & contact, QDomElement & pad, QString
 			qreal diameter = MiscUtils::strToMil(layer.attribute("diameter", ""), ok);
 			if (!ok) return;
 
-			int elongation = layer.attribute("elongation", "0").toInt();
+			// int elongation = layer.attribute("elongation", "0").toInt();
 
 			QString shape = layer.attribute("shape", "");
 			if (shape.isEmpty()) return;

@@ -46,7 +46,7 @@ protected:
 	void genArc(QDomElement & element, QString & svg);
 	void genPad(QDomElement & contact, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString, bool integrateVias);
 	void genPadAux(QDomElement & contact, QDomElement & pad, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString, bool integrateVias);
-	void genSmd(QDomElement & contact, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString);
+	void genSmd(QDomElement & contact, QString & svg, const QString & copperColor, const QString & padString);
 	void genCopperElements(QDomElement &root, QDomElement & paramsRoot, QString & svg, const QString & layerID, const QString & copperColor, const QString & padString, bool integrateVias, bool isBreadboard);
 	void genText(QDomElement & element, const QString & text, QString & svg, QDomElement & paramsRoot, const QString & textColor);
 	qreal flipy(qreal y);
@@ -75,7 +75,7 @@ protected:
 	void addSubparts(QDomElement & root, QDomElement & paramsRoot, QString & svg, QHash<QString, QString> & subpartAliases);
 	bool bigEnough(QDomElement & package, qreal minArea);
 	void loadDifParams(QDir & workingFolder, QHash<QString, class DifParam *> & csvParams);
-	bool getArcBounds(QDomElement wire, QDomElement arc, qreal & x1, qreal & y1, qreal & x2, qreal & y2);
+	bool getArcBounds(QDomElement arc, qreal & x1, qreal & y1, qreal & x2, qreal & y2);
 	void includeSvg(QDomDocument & doc, const QString & path, const QString & name, qreal x, qreal y);
 	void getPackagesBounds(QDomElement & root, QRectF & bounds, const QString & layer, bool reset, bool deep);
 	void addElements(QDomElement & root, QList<QDomElement> & to, qreal minArea);
