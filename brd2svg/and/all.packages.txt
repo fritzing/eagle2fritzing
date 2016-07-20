@@ -332,4 +332,11 @@
 <map package='termblock_1x5-3.5mm' to='1x05-3.5mm' />
 <map package='to252' to='d-pak_to252aa' />
 <map package='1x02M' to='jp1' />
+<map package='arduinor3_icsp' to='arduinor3_icsp_nodim' />
+<map package='tactile-pth-3x6mm' to='tact_pana-evq' />
+<map package='tft_28in_240x320' to='tft_2.83in_240x320_50pin' />
+<map package='MDBT40' to='ble_module_raytac_mdbt40' />
+<map package='qfn_8mm' to='qfn48_8mm' />
+<map package='ws2812b' to='ws2812b-narrow' />
 </packages>
+

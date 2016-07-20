@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="15.839192"
-     inkscape:cx="-4.0930924"
-     inkscape:cy="10.717902"
+     inkscape:cx="15.275405"
+     inkscape:cy="16.389123"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -58,121 +58,119 @@
      id="layer1"
      transform="translate(-372.58632,-519.46721)">
     <g
-       id="g13095"
-       transform="matrix(0,-1,1,0,-148.65184,911.54101)">
+       id="g8119">
       <g
-         id="g13076">
-        <g
-           id="g12969"
-           transform="matrix(2.1075844,0,0,2.1168521,-408.89885,-596.8356)">
-          <rect
-             transform="matrix(0,1,-1,0,0,0)"
-             style="fill:#303030;stroke:none;stroke-width:0"
-             id="rect30"
-             height="6.3886251"
-             y="-378.19431"
-             x="528.17755"
-             width="8.3692503" />
-          <polygon
-             transform="matrix(0,0.625,-0.625,0,381.5925,528.04221)"
-             style="fill:#1f1f1f;stroke-width:0"
-             id="polygon32"
-             points="12.8874,6.15713 0.936569,6.15713 0.216567,5.43713 13.6074,5.43713 " />
-          <polygon
-             transform="matrix(0,0.625,-0.625,0,381.5925,528.04221)"
-             style="fill:#1f1f1f;stroke-width:0"
-             id="polygon34"
-             points="12.8874,14.9388 0.936569,14.9388 0.216567,15.6588 13.6074,15.6588 " />
-          <polygon
-             transform="matrix(0,0.625,-0.625,0,381.5925,528.04221)"
-             style="fill:#000000;stroke-width:0"
-             id="polygon36"
-             points="0.936569,14.9388 0.936569,6.15713 0.216567,5.43713 0.216567,15.6588 " />
-          <polygon
-             transform="matrix(0,0.625,-0.625,0,381.5925,528.04221)"
-             style="fill:#3d3d3d;stroke-width:0"
-             id="polygon38"
-             points="12.8874,14.9388 12.8874,6.15713 13.6074,5.43713 13.6074,15.6588 " />
-          <circle
-             transform="matrix(0,1,-1,0,0,0)"
-             style="fill:#1f1f1f;stroke:none;stroke-width:0"
-             id="circle40"
-             r="0.45000002"
-             cy="-373.15576"
-             cx="529.52759" />
-        </g>
-        <g
-           id="g13034"
-           transform="translate(0,-1.3392857)">
-          <rect
-             transform="matrix(0,1,-1,0,0,0)"
-             style="fill:#8c8c8c;stroke:none;stroke-width:0"
-             id="rect14-8"
-             height="3.8976378"
-             y="-374.71301"
-             x="537.53735"
-             width="1.4173229" />
-          <rect
-             width="1.4173229"
-             x="533.03735"
-             y="-374.71301"
-             height="3.8976378"
-             id="rect13010"
-             style="fill:#8c8c8c;stroke:none;stroke-width:0"
-             transform="matrix(0,1,-1,0,0,0)" />
-          <rect
-             width="1.4173229"
-             x="528.53735"
-             y="-374.71301"
-             height="3.8976378"
-             id="rect13030"
-             style="fill:#8c8c8c;stroke:none;stroke-width:0"
-             transform="matrix(0,1,-1,0,0,0)" />
-          <rect
-             transform="matrix(0,1,-1,0,0,0)"
-             style="fill:#8c8c8c;stroke:none;stroke-width:0"
-             id="rect13032"
-             height="3.8976378"
-             y="-374.71301"
-             x="524.03735"
-             width="1.4173229" />
-        </g>
-        <g
-           transform="translate(17.360784,-1.3464376)"
-           id="g13066">
-          <rect
-             width="1.4173229"
-             x="537.53735"
-             y="-374.71301"
-             height="3.8976378"
-             id="rect13068"
-             style="fill:#8c8c8c;stroke:none;stroke-width:0"
-             transform="matrix(0,1,-1,0,0,0)" />
-          <rect
-             transform="matrix(0,1,-1,0,0,0)"
-             style="fill:#8c8c8c;stroke:none;stroke-width:0"
-             id="rect13070"
-             height="3.8976378"
-             y="-374.71301"
-             x="533.03735"
-             width="1.4173229" />
-          <rect
-             transform="matrix(0,1,-1,0,0,0)"
-             style="fill:#8c8c8c;stroke:none;stroke-width:0"
-             id="rect13072"
-             height="3.8976378"
-             y="-374.71301"
-             x="528.53735"
-             width="1.4173229" />
-          <rect
-             width="1.4173229"
-             x="524.03735"
-             y="-374.71301"
-             height="3.8976378"
-             id="rect13074"
-             style="fill:#8c8c8c;stroke:none;stroke-width:0"
-             transform="matrix(0,1,-1,0,0,0)" />
-        </g>
+         transform="matrix(0,-2.1075844,2.1168521,0,-745.48744,1320.4399)"
+         id="g12969">
+        <rect
+           width="8.3692503"
+           x="528.17755"
+           y="-378.19431"
+           height="6.3886251"
+           id="rect30"
+           style="fill:#303030;stroke:none;stroke-width:0"
+           transform="matrix(0,1,-1,0,0,0)" />
+        <polygon
+           points="12.8874,6.15713 0.936569,6.15713 0.216567,5.43713 13.6074,5.43713 "
+           id="polygon32"
+           style="fill:#1f1f1f;stroke-width:0"
+           transform="matrix(0,0.625,-0.625,0,381.5925,528.04221)" />
+        <polygon
+           points="12.8874,14.9388 0.936569,14.9388 0.216567,15.6588 13.6074,15.6588 "
+           id="polygon34"
+           style="fill:#1f1f1f;stroke-width:0"
+           transform="matrix(0,0.625,-0.625,0,381.5925,528.04221)" />
+        <polygon
+           points="0.936569,14.9388 0.936569,6.15713 0.216567,5.43713 0.216567,15.6588 "
+           id="polygon36"
+           style="fill:#000000;stroke-width:0"
+           transform="matrix(0,0.625,-0.625,0,381.5925,528.04221)" />
+        <polygon
+           points="12.8874,14.9388 12.8874,6.15713 13.6074,5.43713 13.6074,15.6588 "
+           id="polygon38"
+           style="fill:#3d3d3d;stroke-width:0"
+           transform="matrix(0,0.625,-0.625,0,381.5925,528.04221)" />
+        <circle
+           cx="529.52759"
+           cy="-373.15576"
+           r="0.45000002"
+           id="circle40"
+           style="fill:#1f1f1f;stroke:none;stroke-width:0"
+           transform="matrix(0,1,-1,0,0,0)" />
+      </g>
+      <g
+         style="fill:#cccccc"
+         transform="matrix(0,-1,1,0,-149.99113,911.54101)"
+         id="g13034">
+        <rect
+           width="1.4173229"
+           x="537.53735"
+           y="-374.71301"
+           height="3.8976378"
+           id="rect14-8"
+           style="fill:#cccccc;stroke:none;stroke-width:0"
+           transform="matrix(0,1,-1,0,0,0)" />
+        <rect
+           transform="matrix(0,1,-1,0,0,0)"
+           style="fill:#cccccc;stroke:none;stroke-width:0"
+           id="rect13010"
+           height="3.8976378"
+           y="-374.71301"
+           x="533.03735"
+           width="1.4173229" />
+        <rect
+           transform="matrix(0,1,-1,0,0,0)"
+           style="fill:#cccccc;stroke:none;stroke-width:0"
+           id="rect13030"
+           height="3.8976378"
+           y="-374.71301"
+           x="528.53735"
+           width="1.4173229" />
+        <rect
+           width="1.4173229"
+           x="524.03735"
+           y="-374.71301"
+           height="3.8976378"
+           id="rect13032"
+           style="fill:#cccccc;stroke:none;stroke-width:0"
+           transform="matrix(0,1,-1,0,0,0)" />
+      </g>
+      <g
+         style="fill:#cccccc"
+         id="g13066"
+         transform="matrix(0,-1,1,0,-149.99828,894.18023)">
+        <rect
+           transform="matrix(0,1,-1,0,0,0)"
+           style="fill:#cccccc;stroke:none;stroke-width:0"
+           id="rect13068"
+           height="3.8976378"
+           y="-374.71301"
+           x="537.53735"
+           width="1.4173229" />
+        <rect
+           width="1.4173229"
+           x="533.03735"
+           y="-374.71301"
+           height="3.8976378"
+           id="rect13070"
+           style="fill:#cccccc;stroke:none;stroke-width:0"
+           transform="matrix(0,1,-1,0,0,0)" />
+        <rect
+           width="1.4173229"
+           x="528.53735"
+           y="-374.71301"
+           height="3.8976378"
+           id="rect13072"
+           style="fill:#cccccc;stroke:none;stroke-width:0"
+           transform="matrix(0,1,-1,0,0,0)" />
+        <rect
+           transform="matrix(0,1,-1,0,0,0)"
+           style="fill:#cccccc;stroke:none;stroke-width:0"
+           id="rect13074"
+           height="3.8976378"
+           y="-374.71301"
+           x="524.03735"
+           width="1.4173229" />
       </g>
     </g>
   </g>
