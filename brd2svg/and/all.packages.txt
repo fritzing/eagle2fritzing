@@ -286,6 +286,7 @@
 
 <!-- Adafruit additions/changes -->
 <map package='0805-res' to='0805' />
+<map package='0805-res' to='_0805mp' />
 <map package='0805-res' to='0805-NO' />
 <map package='0805-res' to='0805-thm' />
 <map package='0805-cap' to='_0805' />
@@ -325,6 +326,7 @@
 <map package='WINC1500-ufl' to='atwinc1500_mr210ub' />
 <map package='tqfn44_7mm' to='tqfn48_7mm' />
 <map package='tqfp48' to='lqfp48' />
+<map package='qfp100' to='s-pqfp-g100' />
 <map package='soic8wide' to='soic8_208mil' />
 <map package='soic8' to='soic8_150mil' />
 <map package='trimpot-3mm' to='trimpot_bourns_3303w' />
@@ -338,5 +340,11 @@
 <map package='MDBT40' to='ble_module_raytac_mdbt40' />
 <map package='qfn_8mm' to='qfn48_8mm' />
 <map package='ws2812b' to='ws2812b-narrow' />
+<map package='xtal3225' to='crystal_3.2x2.5' />
+<map package='hdmi' to='hdmi_molex_47151-0001_dimlayer' />
+<map package='tssop24_5.3mm' to='tssop20-5.3mmbody' />
+<map package='fpc40' to='4-1734839-0' />
+<map package='inductor_5x5mm_nr5040' to='inductor_5x5mm_nr5040_nothermals' />
+
 </packages>
 
