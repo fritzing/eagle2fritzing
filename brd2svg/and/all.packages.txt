@@ -285,9 +285,7 @@
 <map package='usb-microb' to='CON2_USB_MICRO_B_AT' />
 
 <!-- Adafruit additions/changes -->
-<map package='0805-res' to='0805' />
 <map package='0805-res' to='_0805mp' />
-<map package='0805-res' to='0805-NO' />
 <map package='0805-res' to='0805-thm' />
 <map package='0805-cap' to='_0805' />
 <map package='0805-cap' to='c0805k' />
@@ -345,6 +343,9 @@
 <map package='tssop24_5.3mm' to='tssop20-5.3mmbody' />
 <map package='fpc40' to='4-1734839-0' />
 <map package='inductor_5x5mm_nr5040' to='inductor_5x5mm_nr5040_nothermals' />
+<map package='0805-res' to='0805' />
+<map package='0805-res' to='0805-no' />
+<map package='0805-res' to='0805-NO' />
 
 </packages>
 

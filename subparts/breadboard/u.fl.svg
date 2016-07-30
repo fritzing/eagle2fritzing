@@ -10,13 +10,13 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="4.3688002mm"
-   height="3.4544017mm"
-   viewBox="0 0 15.480001 12.240006"
+   width="3.3019998mm"
+   height="4.0639987mm"
+   viewBox="0 0 11.7 14.399995"
    id="svg8690"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="ufl.svg">
+   sodipodi:docname="u.fl.svg">
   <defs
      id="defs8692">
     <linearGradient
@@ -90,14 +90,14 @@
   </defs>
   <sodipodi:namedview
      id="base"
-     pagecolor="#ffffff"
+     pagecolor="#80ffff"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="0.0"
+     inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="15.839192"
-     inkscape:cx="7.2233137"
-     inkscape:cy="11.347481"
+     inkscape:cx="-3.9790322"
+     inkscape:cy="12.157473"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -105,11 +105,11 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-width="1920"
-     inkscape:window-height="1138"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1" />
+     inkscape:window-width="1334"
+     inkscape:window-height="745"
+     inkscape:window-x="588"
+     inkscape:window-y="212"
+     inkscape:window-maximized="0" />
   <metadata
      id="metadata8695">
     <rdf:RDF>
@@ -126,59 +126,53 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(39.168571,-3.3850586)">
-    <g
-       id="g13218">
-      <rect
-         id="rect6953"
-         style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none"
-         height="9.8999968"
-         y="5.1850619"
-         x="-38.628567"
-         width="14.399997" />
-      <rect
-         id="rect6974"
-         style="display:inline;fill:none;stroke:#ffffff;stroke-width:0.18000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         height="10.8"
-         y="4.735065"
-         x="-39.078571"
-         width="15.3" />
-      <path
-         inkscape:connector-curvature="0"
-         d="m -29.178573,10.135062 a 2.25,2.25 0 0 1 -4.5,0 2.25,2.25 0 1 1 4.5,0 z"
-         id="path6976"
-         style="display:inline;fill:none;stroke:url(#linearGradient10751);stroke-width:1.79999995;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <path
-         inkscape:connector-curvature="0"
-         d="m -27.828573,10.135062 a 3.6000003,3.6000003 0 0 1 -7.2,0 3.6000003,3.6000003 0 1 1 7.2,0 z"
-         id="path6961"
-         style="display:inline;fill:none;stroke:#fbe8b0;stroke-width:0.89999998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <path
-         inkscape:connector-curvature="0"
-         d="m -30.078573,10.135062 a 1.35,1.35 0 0 1 -2.7,0 1.35,1.35 0 1 1 2.7,0 z"
-         id="connector10pin"
-         style="display:inline;fill:#decd87;fill-opacity:1;fill-rule:evenodd;stroke:url(#linearGradient10753);stroke-width:0.27000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         id="rect6966"
-         style="display:inline;fill:#decd87;fill-opacity:1;fill-rule:evenodd;stroke:none"
-         height="7.1999998"
-         y="6.5350528"
-         x="-38.628567"
-         width="1.35" />
-      <rect
-         id="rect6968"
-         style="display:inline;fill:#decd87;fill-opacity:1;fill-rule:evenodd;stroke:none"
-         height="7.1999998"
-         y="6.5350528"
-         x="-25.578571"
-         width="1.35" />
-      <rect
-         id="rect7013"
-         style="display:inline;fill:url(#linearGradient13332);fill-opacity:1;stroke:none"
-         height="1.8000035"
-         y="3.3850586"
-         x="-32.778568"
-         width="2.7" />
-    </g>
+     transform="translate(37.278569,-2.0350607)">
+    <rect
+       width="11.748346"
+       x="3.2977509"
+       y="27.378572"
+       height="9.8999968"
+       style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none"
+       id="rect6953"
+       transform="matrix(0,1,-1,0,0,0)" />
+    <path
+       style="display:inline;fill:#f2f2f2;stroke:#e3e3e3;stroke-width:1.79999995;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path6976"
+       d="m -32.328572,11.485054 a 2.25,2.25 0 1 1 0,-4.5 2.25,2.25 0 0 1 0,4.5 z"
+       inkscape:connector-curvature="0" />
+    <path
+       style="display:inline;fill:none;stroke:#fbe8b0;stroke-width:0.89999998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path6961"
+       d="m -32.328572,12.835054 a 3.6000003,3.6000003 0 0 1 0,-7.2 3.6000003,3.6000003 0 1 1 0,7.2 z"
+       inkscape:connector-curvature="0" />
+    <path
+       style="display:inline;fill:#fbe8b0;fill-opacity:1;fill-rule:evenodd;stroke:#c4c4c4;stroke-width:0.27000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="connector10pin"
+       d="m -32.328572,10.585054 a 1.35,1.35 0 1 1 0,-2.7 1.35,1.35 0 1 1 0,2.7 z"
+       inkscape:connector-curvature="0" />
+    <rect
+       width="1.35"
+       x="2.0350602"
+       y="28.728563"
+       height="7.1999998"
+       style="display:inline;fill:#decd87;fill-opacity:1;fill-rule:evenodd;stroke:none"
+       id="rect6966"
+       transform="matrix(0,1,-1,0,0,0)" />
+    <rect
+       width="1.35"
+       x="15.085055"
+       y="28.728563"
+       height="7.1999998"
+       style="display:inline;fill:#decd87;fill-opacity:1;fill-rule:evenodd;stroke:none"
+       id="rect6968"
+       transform="matrix(0,1,-1,0,0,0)" />
+    <rect
+       width="2.7"
+       x="7.8850589"
+       y="25.578569"
+       height="1.8000035"
+       style="display:inline;fill:#cccccc;fill-opacity:1;stroke:none"
+       id="rect7013"
+       transform="matrix(0,1,-1,0,0,0)" />
   </g>
 </svg>
