@@ -200,7 +200,6 @@
 <package name='tssop-24' ic='yes' />
 <package name='tssop20' ic='yes' />
 <package name='usb-a-s-silk-female' ic='no' />
-<package name='usb-minib' ic='no' />
 <package name='v-reg_dpack' ic='yes' />
 <package name='vnh2sp30' ic='yes' />
 <package name='wifly_gsx' ic='no' />
@@ -280,9 +279,7 @@
 <map package='trimpot-3mm' to='trimpot_tc33' />
 <map package='usb-a-s' to='usb-a-s-silk-female' />
 <map package='usb-b-pth' to='usb-b-pth-vertical' />
-<map package='usb-minib-nostop' to='usb-minib-old' />
 <map package='wifly-gsx' to='wifly_gsx' />
-<map package='usb-microb' to='CON2_USB_MICRO_B_AT' />
 
 <!-- Adafruit additions/changes -->
 <map package='0805-res' to='_0805mp' />
@@ -312,6 +309,7 @@
 <map package='mlf_5mm' to='mlf32-th' />
 <map package='soic8' to='hsop8' />
 <map package='qfn_7mm' to='tqfn48_7mm' />
+<map package='qfn_5mm' to='qfn32_5mm' />
 <map package='msop08' to='msop8_0.65mm' />
 <map package='lga14_3x5mm' to='lga14' />
 <map package='sod-323' to='sod-323f' />
@@ -346,6 +344,9 @@
 <map package='0805-res' to='0805' />
 <map package='0805-res' to='0805-no' />
 <map package='0805-res' to='0805-NO' />
-
+<map package='0603-res' to='_0603' />
+<map package='usb-minib' to='usb-minib_larger' />
+<map package='2X05_1.27mm' to='2X05_1.27MM_BOX_POSTS' />
+<map package='0402-res' to='_0402mp' />
 </packages>
 
