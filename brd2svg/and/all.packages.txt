@@ -348,5 +348,7 @@
 <map package='usb-minib' to='usb-minib_larger' />
 <map package='2X05_1.27mm' to='2X05_1.27MM_BOX_POSTS' />
 <map package='0402-res' to='_0402mp' />
+<map package='0805-led-red' to='chipled_0805' />
+<map package='jstph2' to='jst-ph-2-smt-ra' />
+<map package='usb-minib' to='usb-mini_medium' />
 </packages>
-
