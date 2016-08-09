@@ -352,4 +352,6 @@
 <map package='jstph2' to='jst-ph-2-smt-ra' />
 <map package='usb-minib' to='usb-mini_medium' />
 <map package='1210-cap' to='c1210' />
+<map package='esp-12e' to='esp-12' />
+<map package='sot32-wide' to='sot23-wide@1' />
 </packages>
