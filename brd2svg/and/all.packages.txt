@@ -354,4 +354,7 @@
 <map package='1210-cap' to='c1210' />
 <map package='esp-12e' to='esp-12' />
 <map package='sot32-wide' to='sot23-wide@1' />
+<map package='sot23-5' to='sot23-5@1' />
+<map package='simholder2' to='c707_10m006_512_2' />
+<map package='qfn_3mm' to='si471x' />
 </packages>
