@@ -389,11 +389,12 @@ void BrdApplication::start() {
 		}
 
 
+		SvgFileSplitter splitter;
+		double factor;
+
 		//qDebug() << "generating schematic";
 		QString schematicsvg = genSchematic(root, paramsRoot, difParam);
-		SvgFileSplitter splitter;
 		splitter.load(schematicsvg);
-		double factor;
 		splitter.normalize(72, "", false, factor);
 		saveFile(splitter.toString(), schematicFolder.absoluteFilePath(basename + "_schematic.svg"));
 
@@ -1062,10 +1063,7 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 	params += QString("</includes>\n");
 	params += QString("<!-- Add 'nudges' to modify how packages and texts are displayed  -->\n");
 	params += QString("<nudges>\n"
-			"<!-- <nudge package='ADAFRUIT_2.5MM' x='0.5mm' y='-0.5mm' /> -->\n"
-			"<!-- <nudge package='pvqfn-16' x='-0.21mm' /> -->\n"
 			"<!-- <nudge package='jstph2' y='0.25mm' /> -->\n"
-			"<!-- <nudge package='usb_host-pth' x='0.3mm' /> -->\n"
 		"</nudges>\n");
 
 	params += QString("</breadboard>\n");
@@ -1074,18 +1072,18 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 	QList<QDomElement> grounds;
 	QList<QDomElement> lefts;
 	QList<QDomElement> rights;
+	QList<QDomElement> mnts;
 	QList<QDomElement> unused;
 	QList<QDomElement> vias;
 	QDomElement paramsRoot;
 
 	QStringList busNames;
-	getSides(root, paramsRoot, powers, grounds, lefts, rights, unused, vias, busNames, false, true);
+	getSides(root, paramsRoot, powers, grounds, lefts, rights, mnts, unused, vias, busNames, false, true);
 	params += QString("<connectors>\n");
 
 	params += QString("<!-- Add 'rename' elements to modify how signals are named in fritzing  -->\n");
 	params += QString("<renames> -->\n");
-	params += QString("<!-- <rename signal='' to='lionel' package='MA06-1' element='FTDI' /> -->\n");
-	params += QString("<!-- <rename signal='N$12' to='i dunno' package='MA06-1' element='FTDI' /> -->\n");
+	params += QString("<!-- <rename signal='FROM' to='TO' package='PACKAGE' element='ELEMENT' /> -->\n");
 	params += QString("</renames>\n");
 
 
@@ -1113,6 +1111,14 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 		params += genContact(contact);
 	}
 	params += QString("</right>\n");
+
+	params += QString("<mnt>\n");
+	params += QString("<!-- mounting holes -->\n");
+	foreach(QDomElement contact, mnts) {
+		params += genContact(contact);
+	}
+	params += QString("</mnt>\n");
+
 	params += QString("<unused>\n");
 	foreach(QDomElement contact, unused) {
 		params += genContact(contact);
@@ -1312,7 +1318,27 @@ QString BrdApplication::genFZP(QDomElement & root, QDomElement & paramsRoot, Dif
 
 	QList<QDomElement> contacts;
 	QStringList busNames;
-	collectContacts(root, paramsRoot, contacts, busNames);
+
+	// 2016-08-11 ADAFRUIT: don't collect all contacts; only use
+	// those in the powers, grounds, lefts and rights lists.
+	// This prevents needing to manually delete mounting holes
+	// from connector list.
+	QList<QDomElement> powers;
+	QList<QDomElement> grounds;
+	QList<QDomElement> lefts;
+	QList<QDomElement> rights;
+	QList<QDomElement> mnts;
+	QList<QDomElement> unused;	
+	QList<QDomElement> vias;	
+	getSides(root, paramsRoot, powers, grounds, lefts, rights, mnts, unused, vias, busNames, false, true);
+	contacts = powers;
+	contacts.append(lefts);
+	contacts.append(rights);
+	contacts.append(grounds);
+
+	// Was previously:
+	// collectContacts(root, paramsRoot, contacts, busNames);
+
 	foreach (QDomElement contact, contacts) {
 		if (!isUsed(contact)) continue;
 
@@ -1542,10 +1568,11 @@ QString BrdApplication::genGenericBreadboard(QDomElement & root, QDomElement & p
 	QList<QDomElement> grounds;
 	QList<QDomElement> lefts;
 	QList<QDomElement> rights;
+	QList<QDomElement> mnts;
 	QList<QDomElement> unused;	
 	QList<QDomElement> vias;	
 	QStringList busNames;
-	getSides(root, paramsRoot, powers, grounds, lefts, rights, unused, vias, busNames, false, true);
+	getSides(root, paramsRoot, powers, grounds, lefts, rights, mnts, unused, vias, busNames, false, true);
 	powers.append(lefts);
 	powers.append(rights);
 	powers.append(grounds);
@@ -1825,13 +1852,14 @@ QString BrdApplication::genSchematic(QDomElement & root, QDomElement & paramsRoo
 	QList<QDomElement> grounds;
 	QList<QDomElement> lefts;
 	QList<QDomElement> rights;
+	QList<QDomElement> mnts;
 	QList<QDomElement> unused;
 	QList<QDomElement> vias;
 
 	// TODO: always leaves room on the left and right even if there are no connectors
 
 	QStringList busNames;
-	getSides(root, paramsRoot, powers, grounds, lefts, rights, unused, vias, busNames, true, false);
+	getSides(root, paramsRoot, powers, grounds, lefts, rights, mnts, unused, vias, busNames, true, false);
 
 	QString boardName = getBoardName(root);
 	bool usingParam = false;
@@ -1861,8 +1889,9 @@ QString BrdApplication::getBoardName(QDomElement & root)
 void BrdApplication::getSides(QDomElement & root, QDomElement & paramsRoot,
   QList<QDomElement> & powers, QList<QDomElement> & grounds,
   QList<QDomElement> & lefts, QList<QDomElement> & rights,
-  QList<QDomElement> & unused, QList<QDomElement> & vias,
-  QStringList & busNames, bool collectSpaces, bool integrateVias)
+  QList<QDomElement> & mnts, QList<QDomElement> & unused,
+  QList<QDomElement> & vias, QStringList & busNames,
+  bool collectSpaces, bool integrateVias)
 {
 	if (!paramsRoot.isNull()) {
 
@@ -1882,6 +1911,7 @@ void BrdApplication::getSides(QDomElement & root, QDomElement & paramsRoot,
 		}
 		
 		foreach (QDomElement connector, connectors) {
+
 			if (connector.attribute("space", "0").compare("1") == 0) {
 				QString parentName = connector.parentNode().toElement().tagName();
 				if (parentName.compare("power") == 0) {
@@ -1916,6 +1946,9 @@ void BrdApplication::getSides(QDomElement & root, QDomElement & paramsRoot,
 					}
 					else if (parentName.compare("right") == 0) {
 						rights.append(contact);
+					}
+					else if (parentName.compare("mnt") == 0) {
+						mnts.append(contact);
 					}
 					else if (parentName.compare("unused") == 0) {
 						unused.append(contact);
@@ -1956,6 +1989,7 @@ void BrdApplication::getSides(QDomElement & root, QDomElement & paramsRoot,
 		}
 
 		foreach (QDomElement contact, contacts) {
+
 			if (!isUsed(contact)) {
 				unused.append(contact);
 				continue;
@@ -1984,6 +2018,12 @@ void BrdApplication::getSides(QDomElement & root, QDomElement & paramsRoot,
 			}
 
 			QString signal = contact.attribute("signal", "");
+
+			if(!signal.length()) {
+				// No signal assigned to pad; presumably a mounting hole or such?
+				mnts.append(contact);
+				continue;
+			}
 
 			bool gotOne = false;
 			foreach (QString groundName, GroundNames) {
