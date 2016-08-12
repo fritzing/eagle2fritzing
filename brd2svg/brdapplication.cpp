@@ -1044,9 +1044,9 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 	params += QString("<breadboard breadboard-color='%1'>\n").arg("#014cb1");
 	params += QString("<extra-layers>\n");
 	params += ("<!-- to add extra layers to the breadboard,\n"
-					"uncomment the following <layer> elements,\n"
-					"and change the 'number' attribute to the appropriate eagle layer number.\n"
-					"You can add as many <layer> elements as you like -->\n");
+	           "uncomment the following <layer> elements,\n"
+	           "and change the 'number' attribute to the appropriate eagle layer number.\n"
+	           "You can add as many <layer> elements as you like -->\n");
 	
 	params += QString("<layer number='21' />\n");
 	params += QString("<!-- <layer number='1' /> -->\n");
@@ -1055,16 +1055,16 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 
 	params += QString("<includes>\n");
 	params += ("<!-- to include other svgs in the breadboard,\n"
-					"uncomment the following <include> elements,\n"
-					"and change the src and coordinates (coordinates without units are treated as 90 dpi px).\n"
-					"You can add as many <include> elements as you like -->\n");
+	           "uncomment the following <include> elements,\n"
+	           "and change the src and coordinates (coordinates without units are treated as 90 dpi px).\n"
+	           "You can add as many <include> elements as you like -->\n");
 	
 	params += QString("<!-- <include src='full path name to something.svg' x='0in' y='0in'/> -->\n");
 	params += QString("</includes>\n");
 	params += QString("<!-- Add 'nudges' to modify how packages and texts are displayed  -->\n");
 	params += QString("<nudges>\n"
-			"<!-- <nudge package='jstph2' y='0.25mm' /> -->\n"
-		"</nudges>\n");
+	                  "<!-- <nudge package='jstph2' y='0.25mm' /> -->\n"
+	                  "</nudges>\n");
 
 	params += QString("</breadboard>\n");
 
@@ -2146,7 +2146,12 @@ used = 1;
 			}
 			if (append) {
 				if (contact.attribute("connectorIndex", "").isEmpty()) {
-					contact.setAttribute("connectorIndex", contactsList.length());
+					// 2016-08-11 ADAFRUIT: kludge to make fritzing-app NOT add
+					// pin numbers to schematic: add an offset to the connectorIndex
+					// so it's not starting from zero.  fritzing-app code checks
+					// for presence of '0' and '1' as indices, and if present,
+					// will label pins.  So...just fake it out...
+					contact.setAttribute("connectorIndex", contactsList.length() + 5);
 				}
 				contact.setAttribute("used", used);
 				contactsList.append(contact);
@@ -2200,7 +2205,12 @@ used = 1;
 						via.setAttribute("signal", signal.attribute("name"));
 											
 						if (via.attribute("connectorIndex", "").isEmpty()) {
-							via.setAttribute("connectorIndex", contactsList.length());
+							// 2016-08-11 ADAFRUIT: kludge to make fritzing-app NOT add
+							// pin numbers to schematic: add an offset to the connectorIndex
+							// so it's not starting from zero.  fritzing-app code checks
+							// for presence of '0' and '1' as indices, and if present,
+							// will label pins.  So...just fake it out...
+							via.setAttribute("connectorIndex", contactsList.length() + 5);
 						}
 						//qDebug() << "via signal" << via.attribute("signal");
 						contactsList.append(via);
@@ -2231,7 +2241,12 @@ used = 1;
 								QString signalName = contact.attribute("signal");
 								via.setAttribute("signal", signalName.isEmpty() ? contact.attribute("name") : signalName);
 								if (via.attribute("connectorIndex", "").isEmpty()) {
-									via.setAttribute("connectorIndex", contactsList.length());
+									// 2016-08-11 ADAFRUIT: kludge to make fritzing-app NOT add
+									// pin numbers to schematic: add an offset to the connectorIndex
+									// so it's not starting from zero.  fritzing-app code checks
+									// for presence of '0' and '1' as indices, and if present,
+									// will label pins.  So...just fake it out...
+									via.setAttribute("connectorIndex", contactsList.length() + 5);
 								}
 								via.setAttribute("used", 1);
 								contactsList.append(via);
