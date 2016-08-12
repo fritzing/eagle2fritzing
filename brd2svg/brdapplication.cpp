@@ -1027,7 +1027,8 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 {
 	QString params = "<?xml version='1.0' encoding='UTF-8'?>\n";
 	// ADAFRUIT 2016-07-14: set include-vias 'true' by default
-	params += QString("<board-params board='%1' include-vias='true' shrink-holes-factor='1.0' >\n").arg(prefix);
+	// ADAFRUIT 2016-08-12: set gender 'male' by default
+	params += QString("<board-params board='%1' include-vias='true' shrink-holes-factor='1.0' gender='male' >\n").arg(prefix);
 
 	params += ("<!-- please fill in the author, title, description, tags, and properties elements-->\n");
 	params += QString("<author>%1</author>\n").arg(getenvUser());
