@@ -56,7 +56,8 @@ protected:
 	void collectContacts(QDomElement &root, QDomElement & paramsRoot, QList<QDomElement> & contacts, QStringList & busNames);
 	void collectPackages(QDomElement &root, QList<QDomElement> & packages);
 	void getSides(QDomElement & root, QDomElement & paramsRoot,
-	  QList<QDomElement> & powers, QList<QDomElement> & grounds, QList<QDomElement> & lefts, QList<QDomElement> & rights, QList<QDomElement> & unused, QList<QDomElement> & vias,
+	  QList<QDomElement> & powers, QList<QDomElement> & grounds, QList<QDomElement> & lefts, QList<QDomElement> & rights, 
+	  QList<QDomElement> & mnts, QList<QDomElement> & unused, QList<QDomElement> & vias,
 	  QStringList & busNames, bool collectSpaces, bool integrateVias);
 	void collectWires(QDomElement & element, QList<QDomElement> & wires, bool useFillings);
 	QString genContact(QDomElement & contact);

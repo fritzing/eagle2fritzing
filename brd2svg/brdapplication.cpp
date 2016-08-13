@@ -389,11 +389,12 @@ void BrdApplication::start() {
 		}
 
 
+		SvgFileSplitter splitter;
+		double factor;
+
 		//qDebug() << "generating schematic";
 		QString schematicsvg = genSchematic(root, paramsRoot, difParam);
-		SvgFileSplitter splitter;
 		splitter.load(schematicsvg);
-		double factor;
 		splitter.normalize(72, "", false, factor);
 		saveFile(splitter.toString(), schematicFolder.absoluteFilePath(basename + "_schematic.svg"));
 
@@ -1026,7 +1027,8 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 {
 	QString params = "<?xml version='1.0' encoding='UTF-8'?>\n";
 	// ADAFRUIT 2016-07-14: set include-vias 'true' by default
-	params += QString("<board-params board='%1' include-vias='true' shrink-holes-factor='1.0' >\n").arg(prefix);
+	// ADAFRUIT 2016-08-12: set gender 'male' by default
+	params += QString("<board-params board='%1' include-vias='true' shrink-holes-factor='1.0' gender='male' >\n").arg(prefix);
 
 	params += ("<!-- please fill in the author, title, description, tags, and properties elements-->\n");
 	params += QString("<author>%1</author>\n").arg(getenvUser());
@@ -1043,9 +1045,9 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 	params += QString("<breadboard breadboard-color='%1'>\n").arg("#014cb1");
 	params += QString("<extra-layers>\n");
 	params += ("<!-- to add extra layers to the breadboard,\n"
-					"uncomment the following <layer> elements,\n"
-					"and change the 'number' attribute to the appropriate eagle layer number.\n"
-					"You can add as many <layer> elements as you like -->\n");
+	           "uncomment the following <layer> elements,\n"
+	           "and change the 'number' attribute to the appropriate eagle layer number.\n"
+	           "You can add as many <layer> elements as you like -->\n");
 	
 	params += QString("<layer number='21' />\n");
 	params += QString("<!-- <layer number='1' /> -->\n");
@@ -1054,19 +1056,16 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 
 	params += QString("<includes>\n");
 	params += ("<!-- to include other svgs in the breadboard,\n"
-					"uncomment the following <include> elements,\n"
-					"and change the src and coordinates (coordinates without units are treated as 90 dpi px).\n"
-					"You can add as many <include> elements as you like -->\n");
+	           "uncomment the following <include> elements,\n"
+	           "and change the src and coordinates (coordinates without units are treated as 90 dpi px).\n"
+	           "You can add as many <include> elements as you like -->\n");
 	
 	params += QString("<!-- <include src='full path name to something.svg' x='0in' y='0in'/> -->\n");
 	params += QString("</includes>\n");
 	params += QString("<!-- Add 'nudges' to modify how packages and texts are displayed  -->\n");
 	params += QString("<nudges>\n"
-			"<!-- <nudge package='ADAFRUIT_2.5MM' x='0.5mm' y='-0.5mm' /> -->\n"
-			"<!-- <nudge package='pvqfn-16' x='-0.21mm' /> -->\n"
-			"<!-- <nudge package='jstph2' y='0.25mm' /> -->\n"
-			"<!-- <nudge package='usb_host-pth' x='0.3mm' /> -->\n"
-		"</nudges>\n");
+	                  "<!-- <nudge package='jstph2' y='0.25mm' /> -->\n"
+	                  "</nudges>\n");
 
 	params += QString("</breadboard>\n");
 
@@ -1074,18 +1073,18 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 	QList<QDomElement> grounds;
 	QList<QDomElement> lefts;
 	QList<QDomElement> rights;
+	QList<QDomElement> mnts;
 	QList<QDomElement> unused;
 	QList<QDomElement> vias;
 	QDomElement paramsRoot;
 
 	QStringList busNames;
-	getSides(root, paramsRoot, powers, grounds, lefts, rights, unused, vias, busNames, false, true);
+	getSides(root, paramsRoot, powers, grounds, lefts, rights, mnts, unused, vias, busNames, false, true);
 	params += QString("<connectors>\n");
 
 	params += QString("<!-- Add 'rename' elements to modify how signals are named in fritzing  -->\n");
 	params += QString("<renames> -->\n");
-	params += QString("<!-- <rename signal='' to='lionel' package='MA06-1' element='FTDI' /> -->\n");
-	params += QString("<!-- <rename signal='N$12' to='i dunno' package='MA06-1' element='FTDI' /> -->\n");
+	params += QString("<!-- <rename signal='FROM' to='TO' package='PACKAGE' element='ELEMENT' /> -->\n");
 	params += QString("</renames>\n");
 
 
@@ -1113,6 +1112,14 @@ QString BrdApplication::genParams(QDomElement & root, const QString & prefix)
 		params += genContact(contact);
 	}
 	params += QString("</right>\n");
+
+	params += QString("<mnt>\n");
+	params += QString("<!-- mounting holes -->\n");
+	foreach(QDomElement contact, mnts) {
+		params += genContact(contact);
+	}
+	params += QString("</mnt>\n");
+
 	params += QString("<unused>\n");
 	foreach(QDomElement contact, unused) {
 		params += genContact(contact);
@@ -1312,7 +1319,27 @@ QString BrdApplication::genFZP(QDomElement & root, QDomElement & paramsRoot, Dif
 
 	QList<QDomElement> contacts;
 	QStringList busNames;
-	collectContacts(root, paramsRoot, contacts, busNames);
+
+	// 2016-08-11 ADAFRUIT: don't collect all contacts; only use
+	// those in the powers, grounds, lefts and rights lists.
+	// This prevents needing to manually delete mounting holes
+	// from connector list.
+	QList<QDomElement> powers;
+	QList<QDomElement> grounds;
+	QList<QDomElement> lefts;
+	QList<QDomElement> rights;
+	QList<QDomElement> mnts;
+	QList<QDomElement> unused;	
+	QList<QDomElement> vias;	
+	getSides(root, paramsRoot, powers, grounds, lefts, rights, mnts, unused, vias, busNames, false, true);
+	contacts = powers;
+	contacts.append(lefts);
+	contacts.append(rights);
+	contacts.append(grounds);
+
+	// Was previously:
+	// collectContacts(root, paramsRoot, contacts, busNames);
+
 	foreach (QDomElement contact, contacts) {
 		if (!isUsed(contact)) continue;
 
@@ -1542,10 +1569,11 @@ QString BrdApplication::genGenericBreadboard(QDomElement & root, QDomElement & p
 	QList<QDomElement> grounds;
 	QList<QDomElement> lefts;
 	QList<QDomElement> rights;
+	QList<QDomElement> mnts;
 	QList<QDomElement> unused;	
 	QList<QDomElement> vias;	
 	QStringList busNames;
-	getSides(root, paramsRoot, powers, grounds, lefts, rights, unused, vias, busNames, false, true);
+	getSides(root, paramsRoot, powers, grounds, lefts, rights, mnts, unused, vias, busNames, false, true);
 	powers.append(lefts);
 	powers.append(rights);
 	powers.append(grounds);
@@ -1825,13 +1853,14 @@ QString BrdApplication::genSchematic(QDomElement & root, QDomElement & paramsRoo
 	QList<QDomElement> grounds;
 	QList<QDomElement> lefts;
 	QList<QDomElement> rights;
+	QList<QDomElement> mnts;
 	QList<QDomElement> unused;
 	QList<QDomElement> vias;
 
 	// TODO: always leaves room on the left and right even if there are no connectors
 
 	QStringList busNames;
-	getSides(root, paramsRoot, powers, grounds, lefts, rights, unused, vias, busNames, true, false);
+	getSides(root, paramsRoot, powers, grounds, lefts, rights, mnts, unused, vias, busNames, true, false);
 
 	QString boardName = getBoardName(root);
 	bool usingParam = false;
@@ -1861,8 +1890,9 @@ QString BrdApplication::getBoardName(QDomElement & root)
 void BrdApplication::getSides(QDomElement & root, QDomElement & paramsRoot,
   QList<QDomElement> & powers, QList<QDomElement> & grounds,
   QList<QDomElement> & lefts, QList<QDomElement> & rights,
-  QList<QDomElement> & unused, QList<QDomElement> & vias,
-  QStringList & busNames, bool collectSpaces, bool integrateVias)
+  QList<QDomElement> & mnts, QList<QDomElement> & unused,
+  QList<QDomElement> & vias, QStringList & busNames,
+  bool collectSpaces, bool integrateVias)
 {
 	if (!paramsRoot.isNull()) {
 
@@ -1882,6 +1912,7 @@ void BrdApplication::getSides(QDomElement & root, QDomElement & paramsRoot,
 		}
 		
 		foreach (QDomElement connector, connectors) {
+
 			if (connector.attribute("space", "0").compare("1") == 0) {
 				QString parentName = connector.parentNode().toElement().tagName();
 				if (parentName.compare("power") == 0) {
@@ -1916,6 +1947,9 @@ void BrdApplication::getSides(QDomElement & root, QDomElement & paramsRoot,
 					}
 					else if (parentName.compare("right") == 0) {
 						rights.append(contact);
+					}
+					else if (parentName.compare("mnt") == 0) {
+						mnts.append(contact);
 					}
 					else if (parentName.compare("unused") == 0) {
 						unused.append(contact);
@@ -1956,6 +1990,7 @@ void BrdApplication::getSides(QDomElement & root, QDomElement & paramsRoot,
 		}
 
 		foreach (QDomElement contact, contacts) {
+
 			if (!isUsed(contact)) {
 				unused.append(contact);
 				continue;
@@ -1984,6 +2019,12 @@ void BrdApplication::getSides(QDomElement & root, QDomElement & paramsRoot,
 			}
 
 			QString signal = contact.attribute("signal", "");
+
+			if(!signal.length()) {
+				// No signal assigned to pad; presumably a mounting hole or such?
+				mnts.append(contact);
+				continue;
+			}
 
 			bool gotOne = false;
 			foreach (QString groundName, GroundNames) {
@@ -2106,7 +2147,12 @@ used = 1;
 			}
 			if (append) {
 				if (contact.attribute("connectorIndex", "").isEmpty()) {
-					contact.setAttribute("connectorIndex", contactsList.length());
+					// 2016-08-11 ADAFRUIT: kludge to make fritzing-app NOT add
+					// pin numbers to schematic: add an offset to the connectorIndex
+					// so it's not starting from zero.  fritzing-app code checks
+					// for presence of '0' and '1' as indices, and if present,
+					// will label pins.  So...just fake it out...
+					contact.setAttribute("connectorIndex", contactsList.length() + 5);
 				}
 				contact.setAttribute("used", used);
 				contactsList.append(contact);
@@ -2160,7 +2206,12 @@ used = 1;
 						via.setAttribute("signal", signal.attribute("name"));
 											
 						if (via.attribute("connectorIndex", "").isEmpty()) {
-							via.setAttribute("connectorIndex", contactsList.length());
+							// 2016-08-11 ADAFRUIT: kludge to make fritzing-app NOT add
+							// pin numbers to schematic: add an offset to the connectorIndex
+							// so it's not starting from zero.  fritzing-app code checks
+							// for presence of '0' and '1' as indices, and if present,
+							// will label pins.  So...just fake it out...
+							via.setAttribute("connectorIndex", contactsList.length() + 5);
 						}
 						//qDebug() << "via signal" << via.attribute("signal");
 						contactsList.append(via);
@@ -2191,7 +2242,12 @@ used = 1;
 								QString signalName = contact.attribute("signal");
 								via.setAttribute("signal", signalName.isEmpty() ? contact.attribute("name") : signalName);
 								if (via.attribute("connectorIndex", "").isEmpty()) {
-									via.setAttribute("connectorIndex", contactsList.length());
+									// 2016-08-11 ADAFRUIT: kludge to make fritzing-app NOT add
+									// pin numbers to schematic: add an offset to the connectorIndex
+									// so it's not starting from zero.  fritzing-app code checks
+									// for presence of '0' and '1' as indices, and if present,
+									// will label pins.  So...just fake it out...
+									via.setAttribute("connectorIndex", contactsList.length() + 5);
 								}
 								via.setAttribute("used", 1);
 								contactsList.append(via);
