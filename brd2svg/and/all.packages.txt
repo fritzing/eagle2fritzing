@@ -301,6 +301,7 @@
 <map package='qfn_4mm' to='16lcsp' />
 <map package='qfn_3mm' to='lfcsp16_lq' />
 <map package='qfn_3mm' to='qfn16_3mm' />
+<map package='qfn_3mm' to='qfn20_3mm_nothermal' />
 <map package='sod-123' to='sod-123fl' />
 <map package='SOT23-5' to='SOT23-5l' />
 <map package='SOT23-wide' to='sot23-r' />
@@ -348,5 +349,6 @@
 <map package='usb-minib' to='usb-minib_larger' />
 <map package='2X05_1.27mm' to='2X05_1.27MM_BOX_POSTS' />
 <map package='0402-res' to='_0402mp' />
+<map package='0207_5v' to='0207/5v' />
 </packages>
 
