@@ -359,4 +359,5 @@
 <map package='sot23-5' to='sot23-5@1' />
 <map package='simholder2' to='c707_10m006_512_2' />
 <map package='qfn_3mm' to='si471x' />
+<map package='qfn_4mm' to='wqfn20' />
 </packages>
