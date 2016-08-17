@@ -361,4 +361,5 @@
 <map package='qfn_3mm' to='si471x' />
 <map package='qfn_4mm' to='wqfn20' />
 <map package='qfn_3mm' to='hmc5883l' />
+<map package='tdfn_3x4mm' to='tdfn10_3x4mm' />
 </packages>
