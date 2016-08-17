@@ -362,4 +362,8 @@
 <map package='qfn_4mm' to='wqfn20' />
 <map package='qfn_3mm' to='hmc5883l' />
 <map package='tdfn_3x4mm' to='tdfn10_3x4mm' />
+<map package='qfn_3mm' to='l3gd20h_lga16l' />
+<map package='xtal3225' to='tsx-3225' />
+<map package='sot23-6' to='sot23-6l' />
+<map package='0805-led-green' to='chip-led0805' />
 </packages>
