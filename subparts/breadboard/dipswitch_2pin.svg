@@ -50,8 +50,8 @@
      inkscape:zoom="17.824"
      inkscape:cx="5.4289678"
      inkscape:cy="13.221238"
-     inkscape:window-x="106"
-     inkscape:window-y="139"
+     inkscape:window-x="-176"
+     inkscape:window-y="154"
      inkscape:window-maximized="0"
      inkscape:current-layer="Layer_1"
      units="mm"
@@ -59,7 +59,8 @@
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0" /><g
+     fit-margin-bottom="0"
+     showguides="false" /><g
      transform="matrix(0,-1.2499993,1.2499993,0,-78.874292,56.482646)"
      id="g28213"><g
        id="g28064"><rect

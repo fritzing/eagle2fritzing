@@ -300,6 +300,7 @@
 <map package='qfn_4mm' to='qfn20_4mm' />
 <map package='qfn_4mm' to='16lcsp' />
 <map package='qfn_3mm' to='lfcsp16_lq' />
+<map package='qfn_3mm' to='tdfn14_3x3mm' />
 <map package='qfn_3mm' to='qfn16_3mm' />
 <map package='qfn_3mm' to='qfn20_3mm_nothermal' />
 <map package='sod-123' to='sod-123fl' />
