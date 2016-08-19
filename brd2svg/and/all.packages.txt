@@ -367,4 +367,7 @@
 <map package='xtal3225' to='tsx-3225' />
 <map package='sot23-6' to='sot23-6l' />
 <map package='0805-led-green' to='chip-led0805' />
+<map package='termblock_1x4-3.5mm' to='1x04-3.5mm' />
+<map package='termblock_1x6-3.5mm' to='1x06-3.5mm' />
+<map package='termblock_1x8-3.5mm' to='1x08-3.5mm' />
 </packages>
