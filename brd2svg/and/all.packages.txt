@@ -375,4 +375,5 @@
 <map package='termblock_1x4-3.5mm' to='1x04-3.5mm' />
 <map package='termblock_1x6-3.5mm' to='1x06-3.5mm' />
 <map package='termblock_1x8-3.5mm' to='1x08-3.5mm' />
+<map package='relay_ee2_latch' to='relay_ee2_nolatch' />
 </packages>
