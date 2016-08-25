@@ -312,6 +312,7 @@
 <map package='resonator-smd' to='resonator' />
 <map package='mlf_5mm' to='mlf32-th' />
 <map package='soic8' to='hsop8' />
+<map package='soic14' to='so14' />
 <map package='soic16' to='so16' />
 <map package='soic18wide' to='so18w' />
 <map package='qfn_7mm' to='tqfn48_7mm' />
@@ -377,4 +378,5 @@
 <map package='termblock_1x6-3.5mm' to='1x06-3.5mm' />
 <map package='termblock_1x8-3.5mm' to='1x08-3.5mm' />
 <map package='relay_ee2_latch' to='relay_ee2_nolatch' />
+<map package='0207_10' to='0207/10' />
 </packages>
