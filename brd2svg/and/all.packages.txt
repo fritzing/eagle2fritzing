@@ -379,4 +379,6 @@
 <map package='termblock_1x8-3.5mm' to='1x08-3.5mm' />
 <map package='relay_ee2_latch' to='relay_ee2_nolatch' />
 <map package='0207_10' to='0207/10' />
+<map package='tssop20' to='htssop20dap' />
+<map package='tssop32' to='htssop32dap' />
 </packages>
