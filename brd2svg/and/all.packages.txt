@@ -381,4 +381,5 @@
 <map package='0207_10' to='0207/10' />
 <map package='tssop20' to='htssop20dap' />
 <map package='tssop32' to='htssop32dap' />
+<map package='dil28' to='dil28/3' />
 </packages>
