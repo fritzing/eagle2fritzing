@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Generator: Adobe Illustrator 15.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 
@@ -207,3 +208,38 @@
            id="path11322"
            inkscape:connector-curvature="0"
            style="opacity:0.6;fill:#ffffff" /></g></g></g></svg>
+=======
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 20.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.2" baseProfile="tiny"
+	 id="Ebene_1" inkscape:version="0.91 r13725" sodipodi:docname="b3f-10xx.svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="17.008px"
+	 height="17.008px" viewBox="0 0 17.008 17.008" xml:space="preserve">
+<sodipodi:namedview  bordercolor="#666666" borderopacity="1" fit-margin-bottom="0" fit-margin-left="0" fit-margin-right="0" fit-margin-top="0" gridtolerance="10" guidetolerance="10" id="namedview38" inkscape:current-layer="Ebene_1" inkscape:cx="-8.7354486" inkscape:cy="5.8380002" inkscape:document-units="mm" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-height="650" inkscape:window-maximized="0" inkscape:window-width="1745" inkscape:window-x="0" inkscape:window-y="0" inkscape:zoom="9.9966114" objecttolerance="10" pagecolor="#ffffff" showgrid="false" units="mm">
+	</sodipodi:namedview>
+<g id="g4149" transform="matrix(1.2049334,0,0,1.20507,0,-4.3597552)">
+	<path id="path5" inkscape:connector-curvature="0" fill="#999999" d="M14.113,16.581c0,0.634-0.517,1.15-1.15,1.15H1.15
+		c-0.632,0-1.15-0.517-1.15-1.15L0,4.768c0.002-0.634,0.518-1.15,1.15-1.15h11.814c0.634,0,1.15,0.517,1.15,1.15L14.113,16.581
+		C14.113,16.581,14.113,16.581,14.113,16.581z"/>
+	<circle id="circle7" fill="#141414" cx="2.056" cy="5.674" r="1.223"/>
+	<circle id="circle9" fill="#141414" cx="12.093" cy="5.695" r="1.223"/>
+	<circle id="circle11" fill="#141414" cx="12.072" cy="15.731" r="1.222"/>
+	<circle id="circle13" fill="#141414" cx="2.036" cy="15.709" r="1.222"/>
+	<circle id="circle22" fill="#323232" cx="7.057" cy="10.675" r="4.116"/>
+	<circle id="circle26" fill="#141414" cx="7.063" cy="10.699" r="3.53"/>
+	<path id="path28" inkscape:connector-curvature="0" fill="#C8C8C8" d="M1.899,5.61c0.022-0.057,0.068-0.102,0.13-0.114l-0.12-0.77
+		C1.862,4.735,1.814,4.728,1.768,4.743V4.738C1.482,4.825,1.27,5.039,1.16,5.31L1.899,5.61z"/>
+	<path id="path30" inkscape:connector-curvature="0" fill="#C8C8C8" d="M11.934,5.631c0.022-0.058,0.068-0.103,0.131-0.114
+		l-0.119-0.77c-0.048,0.009-0.094,0.002-0.142,0.016l-0.002-0.005c-0.283,0.086-0.498,0.299-0.606,0.572
+		C11.197,5.33,11.934,5.631,11.934,5.631z"/>
+	<path id="path32" inkscape:connector-curvature="0" fill="#C8C8C8" d="M11.913,15.666c0.023-0.058,0.066-0.103,0.13-0.114
+		l-0.117-0.77c-0.05,0.01-0.094,0.002-0.143,0.017l-0.001-0.006c-0.283,0.085-0.498,0.3-0.607,0.572
+		C11.175,15.363,11.913,15.666,11.913,15.666z"/>
+	<path id="path34" inkscape:connector-curvature="0" fill="#C8C8C8" d="M1.877,15.646c0.023-0.058,0.068-0.102,0.132-0.114
+		l-0.121-0.771c-0.047,0.011-0.094,0.002-0.141,0.017l-0.002-0.006c-0.283,0.086-0.498,0.3-0.608,0.571L1.877,15.646z"/>
+	<path id="path36" inkscape:connector-curvature="0" fill="#C8C8C8" d="M8.325,7.41c-0.274-0.107-0.56-0.183-0.864-0.218
+		C6.702,7.107,5.976,7.275,5.356,7.619L5.279,7.819c0.693-0.37,1.498-0.542,2.338-0.45c0.258,0.03,0.511,0.088,0.75,0.164
+		C8.368,7.534,8.325,7.41,8.325,7.41z"/>
+</g>
+</svg>
+>>>>>>> 927c8f3437dbfd721b948d6bea0932baa13a95ce

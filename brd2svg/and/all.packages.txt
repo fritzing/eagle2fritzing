@@ -389,4 +389,7 @@
 <map package='trimpot-6mm' to='6mm' />
 <map package='2x13_shrouded' to='rasberrypi_idc' />
 <map package='2x20_shrouded' to='raspberrypi_b+_idc' />
+<map package='tssop20' to='htssop20dap' />
+<map package='tssop32' to='htssop32dap' />
+<map package='dil28' to='dil28/3' />
 </packages>
