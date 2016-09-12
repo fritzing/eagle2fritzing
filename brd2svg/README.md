@@ -7,6 +7,8 @@ cheerfully ignore all questions, bug reports and feature requests.
 We release brd2svg under the same open-source license as that of the
 overall Fritzing project (GPL2/GPL3).
 
+See the [excellent Adafruit tutorial](https://learn.adafruit.com/make-beautiful-fritzing-parts-with-eagle2fritzing-brd2svg/) or continuer reading here:
+
 ## How to build it
 
 Brd2svg relies on the Qt Framework, and should work with versions 4 and 5.
