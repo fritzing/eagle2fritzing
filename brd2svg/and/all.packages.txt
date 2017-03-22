@@ -347,6 +347,7 @@
 <map package='tactile-pth-3x6mm' to='tact_pana-evq' />
 <map package='tft_28in_240x320' to='tft_2.83in_240x320_50pin' />
 <map package='MDBT40' to='ble_module_raytac_mdbt40' />
+<map package='MDBT42' to='ble_module_raytac_mdbt42' />
 <map package='qfn_8mm' to='qfn48_8mm' />
 <map package='ws2812b' to='ws2812b-narrow' />
 <map package='xtal3225' to='crystal_3.2x2.5' />
