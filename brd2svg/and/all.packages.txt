@@ -287,6 +287,7 @@
 <map package='0805-cap' to='_0805no' />
 <map package='0805-cap' to='c0805k' />
 <map package='0805-led-red' to='CHIPLED_0805_NOOUTLINE' />
+<map package='1206-led' to='chipled_1206' />
 <map package='eia3528' to='eia3528-21/b-r' />
 <map package='4uconn_20329' to='4uconn_20329_v2' />
 <map package='respack_4x0603' to='respack_4x0603_no' />
@@ -308,6 +309,7 @@
 <map package='qfn_3mm' to='qfn16_3mm' />
 <map package='qfn_3mm' to='qfn16_3mm_freescale_5x3' />
 <map package='qfn_3mm' to='qfn20_3mm_nothermal' />
+<map package='qfn_2mm' to='vsop383' />
 <map package='sod-123' to='sod-123fl' />
 <map package='SOT23-5' to='SOT23-5l' />
 <map package='SOT23-wide' to='sot23-r' />
@@ -399,5 +401,5 @@
 <map package='tssop16' to='htssop16' />
 <map package='vl53l0x' to='lga12_st' />
 <map package='trimpot-3mm' to='trimpot_bourns_tc33x-2' />
-
+<map package='pdm_mic' to='spk0415hm4h' />
 </packages>
