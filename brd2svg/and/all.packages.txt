@@ -288,6 +288,7 @@
 <map package='0805-cap' to='c0805k' />
 <map package='0805-led-red' to='CHIPLED_0805_NOOUTLINE' />
 <map package='1206-led' to='chipled_1206' />
+<map package='1206-led' to='chipled_1206_nooutline' />
 <map package='eia3528' to='eia3528-21/b-r' />
 <map package='4uconn_20329' to='4uconn_20329_v2' />
 <map package='respack_4x0603' to='respack_4x0603_no' />
@@ -327,6 +328,7 @@
 <map package='lga14_3x5mm' to='lga14' />
 <map package='sod-323' to='sod-323f' />
 <map package='1206-res' to='r1206' />
+<map package='1206-res' to='1206-no' />
 <map package='1206-res' to='_1206' />
 <map package='evq-q2_smaller' to='evq-q2' />
 <map package='sot23' to='sot23-dbv' />
@@ -402,4 +404,11 @@
 <map package='vl53l0x' to='lga12_st' />
 <map package='trimpot-3mm' to='trimpot_bourns_tc33x-2' />
 <map package='pdm_mic' to='spk0415hm4h' />
+<map package='wroom32' to='wroom32_skinny' />
+<map package='1x08' to='1x08_oval' />
+<map package='1x10' to='1x10_oval' />
+<map package='1x06' to='1x06_oval' />
+<map package='2x03' to='2x03_round_70mil' />
+<map package='right_angle_slide_switch' to='spdt_smt_ssss811101' />
+
 </packages>
