@@ -26,10 +26,14 @@ fi
 # Check if EXEC value really points to EAGLE binary file
 if ! [ -f "$EXEC" ]
 then
-  echo "Error: Invalid value of EXEC variable."
-  echo "Please, make sure that the EXEC variable in this (run.sh) script contains a FULL path to the EAGLE executable. \
-  For example, for linux users it can look like that: /opt/eagle/bin/eagle. And for Mac OS users: \
-  /Applications/EAGLE-7.3.0/EAGLE.app/Contents/MacOS/EAGLE."
+  printf "\
+  Error: Invalid value of EXEC variable.
+
+  Please, make sure that the EXEC variable in this (run.sh) script contains a FULL path to the EAGLE executable FILE.
+
+  For example, for linux users it can look like that: /opt/eagle/bin/eagle.
+  And for Mac OS users: /Applications/EAGLE-7.3.0/EAGLE.app/Contents/MacOS/EAGLE.
+"
   exit 1
 fi
 
