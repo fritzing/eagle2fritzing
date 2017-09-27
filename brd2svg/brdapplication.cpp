@@ -636,9 +636,19 @@ bool BrdApplication::initArguments() {
         return false;
     }
 
-    QFile file(m_eaglePath);
+    QFileInfo file(m_eaglePath);
     if (!file.exists()) {
         message(QString("eagle executable '%1' not found").arg(m_eaglePath));
+        return false;
+    }
+
+    if (!file.isFile()) {
+        message(QString("The specified path '%1' points to something that is not a file").arg(m_eaglePath));
+        return false;
+    }
+
+    if (!file.isExecutable()) {
+        message(QString("The specified path '%1' points to non-executable file").arg(m_eaglePath));
         return false;
     }
 
