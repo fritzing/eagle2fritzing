@@ -402,6 +402,7 @@
 <map package='dil28' to='dil28/3' />
 <map package='tssop16' to='htssop16' />
 <map package='vl53l0x' to='lga12_st' />
+<map package='vl53l0x' to='apds-9960' />
 <map package='trimpot-3mm' to='trimpot_bourns_tc33x-2' />
 <map package='pdm_mic' to='spk0415hm4h' />
 <map package='wroom32' to='wroom32_skinny' />
