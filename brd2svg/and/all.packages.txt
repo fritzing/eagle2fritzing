@@ -411,4 +411,16 @@
 <map package='2x03' to='2x03_round_70mil' />
 <map package='right_angle_slide_switch' to='spdt_smt_ssss811101' />
 
+<!-- sino:bit hacks -->
+<map package='0402-cap' to='c0402' />
+<map package='sod-123' to='sod123' />
+<map package='0402-res' to='r0402' />
+<map package='4uconn_20329' to='47642-0001' />
+<map package='sot23-6' to='ps7516' />
+<!-- Made/modified existing parts for these: -->
+<map package='0603-led-red-90' to='D0603' /> <!-- 0603 red; 90 deg rot -->
+<map package='jstph2-180' to='jst-smd-2.0-90d' /> <!-- JST; 180, recolor -->
+<!-- <map package='b3f-40xx' to='switch' /> --> <!-- made 'switch' part -->
+<!-- <map package='b3f-10xx' to='switc4.5x4.5' /> --> <!-- made part -->
+
 </packages>
