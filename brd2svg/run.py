@@ -8,8 +8,8 @@ from sys import platform as _platform
 
 # Location of EAGLE executable
 #EXEC = "/Applications/EAGLE-6.6.0/EAGLE.app/Contents/MacOS/EAGLE"
-#EXEC = "C:\\Program Files (x86)\\EAGLE-6.4.0\\bin\\eagle.exe"
-EXEC = "C:\\Program Files (x86)\\EAGLE-6.6.0\\bin\\eagle.exe"
+EXEC = "C:\\Program Files (x86)\\EAGLE-6.4.0\\bin\\eagle.exe"
+#EXEC = "C:\\Program Files (x86)\\EAGLE-6.6.0\\bin\\eagle.exe"
 # Default brd2svg working path (override by passing argument to this script)
 WORKPATH = "FritzingTest"
 # Other paths used by brd2svg:
@@ -40,8 +40,8 @@ if __name__ == '__main__':
         BRDPATH = WORKPATH + "/brds"
         #print BRDPATH+"/*.brd"
         files = glob.glob(BRDPATH+"/*.brd")
-        print files
-        print _platform
+        print(files)
+        print(_platform)
         for FILENAME in files:
             os.system("python preprocess.py \""+FILENAME+"\" \""+FILENAME+".tmp\"")
             OLDSIZE = os.stat(FILENAME)[6]
@@ -62,7 +62,7 @@ if __name__ == '__main__':
                # Windows
                cmd = 'brd2svg -c contrib -w "'+WORKPATH+'" -e "'+EXEC+'" -s "'+PARTPATH+'" -a "'+ANDPATH+'"'
 
-            print cmd
+            print(cmd)
             # run twice!
             os.system(cmd)
             os.system(cmd)

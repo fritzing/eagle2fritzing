@@ -31,7 +31,7 @@ def adjustNodes(root):
 # --------------------------------------------------------------------------
 
 if len(sys.argv) < 3 :
-	print "syntax: " + sys.argv[0] + " infile outfile"
+	print("syntax: " + sys.argv[0] + " infile outfile")
 	exit(1)
 
 dom = parse(sys.argv[1])    # infile

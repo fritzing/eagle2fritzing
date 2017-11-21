@@ -8,7 +8,7 @@ import sys
 from xml.dom.minidom import parse
 
 if len(sys.argv) < 3 :
-	print "syntax: " + sys.argv[0] + " infile outfile"
+	print("syntax: " + sys.argv[0] + " infile outfile")
 	exit(1)
 
 # SVG file format from brd2xml is typically like this:
