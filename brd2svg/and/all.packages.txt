@@ -297,6 +297,7 @@
 <map package='bmp18x_extended' to='bmp180_extended' />
 <map package='btn_kmr2_4.6x2.8' to='kmr2' />
 <map package='qfn_6mm' to='hvqfn40-6x6' />
+<map package='qfn_4mm' to='qfn24_4mm' />
 <map package='qfn_4mm' to='qfn28_4mm_0.4mm' />
 <map package='qfn_4mm' to='qfn20_4mm_0.65mm' />
 <map package='qfn_4mm' to='qfn24_4mm_smsc' />
