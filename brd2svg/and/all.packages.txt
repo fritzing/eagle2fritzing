@@ -361,6 +361,7 @@
 <map package='hdmi' to='hdmi_molex_47151-0001_dimlayer' />
 <map package='tssop24_5.3mm' to='tssop20-5.3mmbody' />
 <map package='tssop28' to='ssop28' />
+<map package='tssop16' to='ssop16_4.4mm' />
 <map package='fpc40' to='4-1734839-0' />
 <map package='inductor_5x5mm_nr5040' to='inductor_5x5mm_nr5040_nothermals' />
 <map package='0805-res' to='0805' />
