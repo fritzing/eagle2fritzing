@@ -312,6 +312,7 @@
 <map package='qfn_3mm' to='qfn16_3mm' />
 <map package='qfn_3mm' to='qfn16_3mm_freescale_5x3' />
 <map package='qfn_3mm' to='qfn20_3mm_nothermal' />
+<map package='qfn_2mm' to='wson8' />
 <map package='qfn_2mm' to='vsop383' />
 <map package='sod-123' to='sod-123fl' />
 <map package='SOT23-5' to='SOT23-5l' />
