@@ -421,6 +421,7 @@
 <map package='2x03' to='2x03_round_70mil' />
 <map package='right_angle_slide_switch' to='spdt_smt_ssss811101' />
 <map package='0805-led-white' to='als-pt26-21c' />
+<map package='veml6070' to='veml6075' />
 
 <!-- sino:bit hacks -->
 <map package='0402-cap' to='c0402' />
