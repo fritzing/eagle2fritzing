@@ -442,5 +442,6 @@
 <map package='jstph2-180' to='jst-smd-2.0-90d' /> <!-- JST; 180, recolor -->
 <!-- <map package='b3f-40xx' to='switch' /> --> <!-- made 'switch' part -->
 <!-- <map package='b3f-10xx' to='switc4.5x4.5' /> --> <!-- made part -->
+<map package='p-2060-403' to='p-2060-403/998-404' /> <!-- made part -->
 
 </packages>
