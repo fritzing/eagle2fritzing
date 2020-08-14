@@ -4,19 +4,17 @@
 	 width="22.677px" height="30.2623px" viewBox="0 0 22.677 30.2623" enable-background="new 0 0 22.677 30.2623"
 	 xml:space="preserve">
 <g>
-	<g>
-		<polygon fill="#666666" points="19.843,4.7503 2.835,4.7503 2.835,6.8763 0,6.8763 0,21.7583 22.677,21.7583 22.677,6.8763 
-			19.843,6.8763 		"/>
-		<rect x="4.252" y="10.4193" width="2.835" height="8.504"/>
-		<rect x="15.591" y="10.4193" width="2.835" height="8.504"/>
-		<rect x="4.252" y="18.9233" fill="#333333" width="2.835" height="2.835"/>
-		<rect x="15.591" y="18.9233" fill="#333333" width="2.835" height="2.835"/>
-		<rect y="21.7583" fill="#333333" width="2.268" height="4.252"/>
-		<rect x="20.409" y="21.7583" fill="#333333" width="2.268" height="4.252"/>
-		<rect x="7.512" y="21.7583" fill="#DCDCDC" width="1.984" height="7.087"/>
-		<rect x="13.181" y="21.7583" fill="#DCDCDC" width="1.984" height="7.087"/>
-	</g>
-	<circle fill="#1E1E1E" cx="7.087" cy="2.3738" r="2.3326"/>
-	<circle fill="#1E1E1E" cx="15.591" cy="2.3738" r="2.3326"/>
+	<polygon fill="#666666" points="19.843,6.1181 2.835,6.1181 2.835,8.2441 0,8.2441 0,23.1261 22.677,23.1261 22.677,8.2441 
+		19.843,8.2441 	"/>
+	<rect x="4.252" y="11.7871" width="2.835" height="8.504"/>
+	<rect x="15.591" y="11.7871" width="2.835" height="8.504"/>
+	<rect x="4.252" y="20.2911" fill="#333333" width="2.835" height="2.835"/>
+	<rect x="15.591" y="20.2911" fill="#333333" width="2.835" height="2.835"/>
+	<rect y="23.1261" fill="#333333" width="2.268" height="4.252"/>
+	<rect x="20.409" y="23.1261" fill="#333333" width="2.268" height="4.252"/>
+	<rect x="7.512" y="23.1261" fill="#DCDCDC" width="1.984" height="7.087"/>
+	<rect x="13.181" y="23.1261" fill="#DCDCDC" width="1.984" height="7.087"/>
 </g>
+<circle fill="#1E1E1E" cx="7.0865" cy="2.3818" r="2.3326"/>
+<circle fill="#1E1E1E" cx="15.5905" cy="2.3818" r="2.3326"/>
 </svg>
