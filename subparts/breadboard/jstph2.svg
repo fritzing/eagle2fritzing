@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 19.2.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.2" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-	 x="0px" y="0px" width="22.677px" height="25.512px" viewBox="0 0 22.677 25.512" xml:space="preserve">
+<!-- Generator: Adobe Illustrator 24.2.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="22.677px" height="30.2623px" viewBox="0 0 22.677 30.2623" enable-background="new 0 0 22.677 30.2623"
+	 xml:space="preserve">
 <g>
-	<polygon fill="#666666" points="19.843,0 2.835,0 2.835,2.126 0,2.126 0,17.008 22.677,17.008 22.677,2.126 19.843,2.126 	"/>
-	<rect x="4.252" y="5.669" width="2.835" height="8.504"/>
-	<rect x="15.591" y="5.669" width="2.835" height="8.504"/>
-	<rect x="4.252" y="14.173" fill="#333333" width="2.835" height="2.835"/>
-	<rect x="15.591" y="14.173" fill="#333333" width="2.835" height="2.835"/>
-	<rect x="0" y="17.008" fill="#333333" width="2.268" height="4.252"/>
-	<rect x="20.409" y="17.008" fill="#333333" width="2.268" height="4.252"/>
-	<rect x="7.512" y="17.008" fill="#DCDCDC" width="1.984" height="7.087"/>
-	<rect x="13.181" y="17.008" fill="#DCDCDC" width="1.984" height="7.087"/>
+	<g>
+		<polygon fill="#666666" points="19.843,4.7503 2.835,4.7503 2.835,6.8763 0,6.8763 0,21.7583 22.677,21.7583 22.677,6.8763 
+			19.843,6.8763 		"/>
+		<rect x="4.252" y="10.4193" width="2.835" height="8.504"/>
+		<rect x="15.591" y="10.4193" width="2.835" height="8.504"/>
+		<rect x="4.252" y="18.9233" fill="#333333" width="2.835" height="2.835"/>
+		<rect x="15.591" y="18.9233" fill="#333333" width="2.835" height="2.835"/>
+		<rect y="21.7583" fill="#333333" width="2.268" height="4.252"/>
+		<rect x="20.409" y="21.7583" fill="#333333" width="2.268" height="4.252"/>
+		<rect x="7.512" y="21.7583" fill="#DCDCDC" width="1.984" height="7.087"/>
+		<rect x="13.181" y="21.7583" fill="#DCDCDC" width="1.984" height="7.087"/>
+	</g>
+	<circle fill="#1E1E1E" cx="7.087" cy="2.3738" r="2.3326"/>
+	<circle fill="#1E1E1E" cx="15.591" cy="2.3738" r="2.3326"/>
 </g>
 </svg>
