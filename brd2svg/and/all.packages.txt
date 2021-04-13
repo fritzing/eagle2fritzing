@@ -310,6 +310,7 @@
 <map package='qfn_7mm' to='aqfn50p700x800x85_hs-74n_smallcenter' />
 <map package='qfn_7mm' to='qfn56_7mm_reducedepad' />
 <map package='qfn_6mm' to='qfn28-ml_6x6mm' />
+<map package='qfn_4mm' to='uson8_4x4' />
 <map package='qfn_4mm' to='qfn24_4mm' />
 <map package='qfn_4mm' to='qfn28_4mm_0.4mm' />
 <map package='qfn_4mm' to='qfn20_4mm_0.65mm' />

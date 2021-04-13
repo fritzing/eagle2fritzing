@@ -8,35 +8,31 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
-   sodipodi:docname="sod-323_mini.svg"
+   sodipodi:docname="sk6805_1515.svg"
    xml:space="preserve"
-   enable-background="new 0 0 4.252 8.0818"
-   viewBox="0 0 8.0787003 4.2519996"
-   height="4.2519999"
-   width="8.0787001"
+   style="enable-background:new 0 0 5.669 5.669;"
+   viewBox="0 0 5.669 5.669"
+   height="5.669px"
+   width="5.669px"
    y="0px"
    x="0px"
    id="Layer_1"
    version="1.1"><metadata
-   id="metadata17"><rdf:RDF><cc:Work
+   id="metadata15"><rdf:RDF><cc:Work
        rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
          rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
-   id="defs15" /><sodipodi:namedview
+   id="defs13" /><sodipodi:namedview
    inkscape:current-layer="Layer_1"
    inkscape:window-maximized="0"
-   inkscape:window-y="59"
-   inkscape:window-x="11"
-   inkscape:cy="1.7933961"
-   inkscape:cx="6.9864406"
-   inkscape:zoom="26.293646"
-   fit-margin-bottom="0"
-   fit-margin-right="0"
-   fit-margin-left="0"
-   fit-margin-top="0"
+   inkscape:window-y="0"
+   inkscape:window-x="0"
+   inkscape:cy="1.1516833"
+   inkscape:cx="0.63863232"
+   inkscape:zoom="53.011179"
    showgrid="false"
-   id="namedview13"
-   inkscape:window-height="764"
-   inkscape:window-width="1225"
+   id="namedview11"
+   inkscape:window-height="822"
+   inkscape:window-width="1430"
    inkscape:pageshadow="2"
    inkscape:pageopacity="0"
    guidetolerance="10"
@@ -45,38 +41,25 @@
    borderopacity="1"
    bordercolor="#666666"
    pagecolor="#ffffff" />
+<style
+   id="style2"
+   type="text/css">
+	.st0{fill:#9C8F6D;}
+	.st1{fill:#807C73;}
+</style>
 <g
-   transform="rotate(-90,2.1244499,2.1275499)"
-   id="g10">
-	
-		<rect
-   id="rect2"
-   height="4.2519999"
-   width="5.5275998"
-   fill="#333333"
-   transform="rotate(-90,2.126,4.0425)"
-   y="1.9165"
-   x="-0.63779998" />
+   id="g8">
 	<rect
    id="rect4"
-   height="1.2756"
-   width="1.1339"
-   fill="#dcdcdc"
-   y="0.0031000001"
-   x="1.5591" />
+   height="5.669"
+   width="5.669"
+   class="st0" />
 	<rect
    id="rect6"
-   height="1.2756"
-   width="1.1339"
-   fill="#dcdcdc"
-   y="6.8062"
-   x="1.5591" />
-	<rect
-   x="0"
-   id="rect8"
-   height="0.99470001"
-   width="4.2519999"
-   fill="#111111"
-   y="2.2869" />
+   height="3.402"
+   width="3.402"
+   class="st1"
+   y="1.134"
+   x="0.425" />
 </g>
 </svg>
