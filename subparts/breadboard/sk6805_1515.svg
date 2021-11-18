@@ -26,13 +26,13 @@
    inkscape:window-maximized="0"
    inkscape:window-y="0"
    inkscape:window-x="0"
-   inkscape:cy="1.1516833"
-   inkscape:cx="0.63863232"
+   inkscape:cy="1.9022539"
+   inkscape:cx="3.7803238"
    inkscape:zoom="53.011179"
    showgrid="false"
    id="namedview11"
-   inkscape:window-height="822"
-   inkscape:window-width="1430"
+   inkscape:window-height="896"
+   inkscape:window-width="1616"
    inkscape:pageshadow="2"
    inkscape:pageopacity="0"
    guidetolerance="10"
@@ -40,26 +40,43 @@
    objecttolerance="10"
    borderopacity="1"
    bordercolor="#666666"
-   pagecolor="#ffffff" />
+   pagecolor="#ffffff"
+   inkscape:document-rotation="0" />
 <style
    id="style2"
    type="text/css">
 	.st0{fill:#9C8F6D;}
 	.st1{fill:#807C73;}
 </style>
+
 <g
-   id="g8">
+   id="g853"><g
+     id="g8">
 	<rect
-   id="rect4"
-   height="5.669"
+   class="st0"
    width="5.669"
-   class="st0" />
+   height="5.669"
+   id="rect4" />
 	<rect
-   id="rect6"
-   height="3.402"
-   width="3.402"
-   class="st1"
+   x="0.425"
    y="1.134"
-   x="0.425" />
-</g>
-</svg>
+   class="st1"
+   width="3.402"
+   height="3.402"
+   id="rect6" />
+</g><circle
+     r="0.5847823"
+     cy="2.1976495"
+     cx="1.7071872"
+     id="path833"
+     style="fill:#ff0000" /><circle
+     style="fill:#00ff00"
+     id="circle835"
+     cx="1.754347"
+     cy="3.4803979"
+     r="0.5847823" /><circle
+     r="0.5847823"
+     cy="2.8295918"
+     cx="2.9239116"
+     id="circle837"
+     style="fill:#0000ff" /></g></svg>
