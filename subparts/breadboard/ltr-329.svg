@@ -15,14 +15,16 @@
 	<rect x="0.6248" y="2.9611" fill="#FFC200" width="0.7722" height="0.7009"/>
 	<rect x="0.6248" y="4.2462" fill="#FFC200" width="0.7722" height="0.7009"/>
 	<rect x="1.5796" fill="#025608" width="3.9082" height="5.5054"/>
-	<rect x="2.0218" y="0.8249" fill="#4C3410" width="2.9535" height="3.8555"/>
+	<g>
+		<rect x="2.0218" y="0.8249" fill="#4C3410" width="2.9535" height="3.8555"/>
+		<rect x="2.1226" y="0.9111" fill="#FFC200" width="0.235" height="0.2133"/>
+		<rect x="2.1226" y="2.5623" fill="#FFC200" width="0.235" height="0.2133"/>
+		<rect x="2.1226" y="3.7818" fill="#FFC200" width="0.235" height="0.2133"/>
+		<rect x="2.1226" y="4.3801" fill="#FFC200" width="0.235" height="0.2133"/>
+		
+			<line fill="#FFC200" stroke="#CE9D00" stroke-width="0.05" stroke-linecap="round" stroke-miterlimit="10" x1="1.0027" y1="0.9111" x2="2.2401" y2="1.0178"/>
+	</g>
 	<rect x="2.654" y="2.8374" fill="#93601D" width="2.248" height="1.7593"/>
-	<rect x="2.1226" y="0.9111" fill="#FFC200" width="0.235" height="0.2133"/>
-	<rect x="2.1226" y="2.5623" fill="#FFC200" width="0.235" height="0.2133"/>
-	<rect x="2.1226" y="3.7818" fill="#FFC200" width="0.235" height="0.2133"/>
-	<rect x="2.1226" y="4.3801" fill="#FFC200" width="0.235" height="0.2133"/>
-	
-		<line fill="#FFC200" stroke="#CE9D00" stroke-width="0.05" stroke-linecap="round" stroke-miterlimit="10" x1="1.0027" y1="0.9111" x2="2.2401" y2="1.0178"/>
 	
 		<line fill="#FFC200" stroke="#CE9D00" stroke-width="0.05" stroke-linecap="round" stroke-miterlimit="10" x1="1.011" y1="2.0264" x2="2.2401" y2="2.669"/>
 	
