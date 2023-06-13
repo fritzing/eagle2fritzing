@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 27.5.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="17.9417px" height="19.6132px" viewBox="0 0 17.9417 19.6132" enable-background="new 0 0 17.9417 19.6132"
+	 width="14.0801px" height="19.6132px" viewBox="0 0 14.0801 19.6132" enable-background="new 0 0 14.0801 19.6132"
 	 xml:space="preserve">
-<rect id="rect16" x="12.7043" y="10.9787" fill="#DCDCDC" width="5.2373" height="1.716"/>
-<rect id="rect18" x="12.7043" y="6.9788" fill="#DCDCDC" width="5.2373" height="1.716"/>
-<polygon id="polygon2" fill="#666666" points="4.3544,2.4511 4.3544,17.1612 5.5911,17.1612 5.5911,19.6132 14.2479,19.6132 
-	14.2479,0 5.5911,0 5.5911,2.4511 "/>
-<rect id="rect14-6" x="4.351" y="5.9359" fill="#333333" width="4.6344" height="7.8629"/>
-<circle fill="#FF0000" cx="2.1772" cy="12.6947" r="2.1772"/>
-<circle cx="2.1772" cy="6.9788" r="2.1772"/>
+<g>
+	<rect id="rect16" x="8.8428" y="10.9787" fill="#DCDCDC" width="5.2373" height="1.716"/>
+	<rect id="rect18" x="8.8428" y="6.9788" fill="#DCDCDC" width="5.2373" height="1.716"/>
+	<polygon id="polygon2" fill="#666666" points="0.4929,2.4511 0.4929,17.1612 1.7296,17.1612 1.7296,19.6132 10.3864,19.6132 
+		10.3864,0 1.7296,0 1.7296,2.4511 	"/>
+	<rect id="rect14-6" x="0.4894" y="5.9359" fill="#333333" width="4.6344" height="7.8629"/>
+	<circle fill="#FF0000" cx="2.2272" cy="12.6947" r="2.1772"/>
+	<circle stroke="#C1C1C1" stroke-width="0.1" stroke-miterlimit="10" cx="2.2272" cy="6.9788" r="2.1772"/>
+</g>
 </svg>
