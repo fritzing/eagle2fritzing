@@ -58,5 +58,4 @@ Note about `<nudge>` elements in the `.params` file: I'm trying to avoid some/mo
 
 Subparts Art Attribution
 ============================================
-MicroSD Card holder, ESP-12E module, and Bluefruit LE (MDBT40) art is from PigHixx's lovely diagrams!
-http://www.pighixxx.com/
+MicroSD Card holder, ESP-12E module, and Bluefruit LE (MDBT40) art by @AlbertoPiganti (PighiXXX).
